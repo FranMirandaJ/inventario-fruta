@@ -1,16 +1,20 @@
 import { prisma } from "../lib/prisma";
 import { RolUsuario } from "@/generated/prisma";
 import bcrypt from "bcryptjs";
+import { createLogger } from "@/lib/logger";
 
-const LOG_PREFIX = "[SEED]";
+const LOG_PREFIX = "SEED";
+
+const logger = createLogger(LOG_PREFIX);
 
 async function main() {
+  logger.info("Iniciando seed...");
   try {
     await crearAdmin();
     await crearCategorias();
-    console.log(`${LOG_PREFIX} - ¡Seed completado con éxito! 🎉`);
+    logger.success(`¡Seed completado con éxito!`);
   } catch (e) {
-    console.error(`${LOG_PREFIX} - Error crítico durante el seed:`, e);
+    logger.error(`Error crítico durante el seed: ${e}`);
     process.exit(1);
   } finally {
     await prisma.$disconnect();
@@ -22,13 +26,10 @@ const crearAdmin = async () => {
   const passwordAdmin = process.env.ADMIN_PASSWORD;
 
   if (!correoAdmin || !passwordAdmin) {
-    console.warn(
-      `${LOG_PREFIX} - ⚠️ No se encontraron ADMIN_MAIL o ADMIN_PASSWORD. Se saltará la creación del admin.`,
-    );
+    logger.warn(`No se encontraron ADMIN_MAIL o ADMIN_PASSWORD. Se saltará la creación del admin.`,);
     return;
   }
 
-  try {
     const hashedPassword = await bcrypt.hash(passwordAdmin, 10);
 
     const admin = await prisma.usuario.upsert({
@@ -42,11 +43,8 @@ const crearAdmin = async () => {
       },
     });
 
-    console.log(`${LOG_PREFIX} - ✅ Usuario administrador asegurado: ${admin.email}`);
-  } catch (error) {
-    console.error(`${LOG_PREFIX} - ❌ Error al hacer upsert del admin:`, error);
-    throw error; 
-  }
+    logger.success(`Usuario administrador asegurado: ${admin.email}`);
+
 };
 
 const crearCategorias = async () => {
@@ -57,21 +55,16 @@ const crearCategorias = async () => {
     { nombre: "Concentrados" },
   ];
 
-  try {
     const resultado = await prisma.categoria.createMany({
       data: categoriasBase,
       skipDuplicates: true, 
     });
 
     if (resultado.count > 0) {
-      console.log(`${LOG_PREFIX} - ✅ Se insertaron ${resultado.count} categorías nuevas.`);
+      logger.success(`Se insertaron ${resultado.count} categorías nuevas.`);
     } else {
-      console.log(`${LOG_PREFIX} - ℹ️ Las categorías ya estaban creadas.`);
+      logger.info(`Las categorías ya estaban creadas.`);
     }
-  } catch (error) {
-    console.error(`${LOG_PREFIX} - ❌ Error al crear las categorías:`, error);
-    throw error;
-  }
 };
 
 main();
