@@ -1,7 +1,7 @@
-import { PrismaClient, RolUsuario } from "@/generated/prisma";
+import { prisma } from "../lib/prisma";
+import { RolUsuario } from "@/generated/prisma";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
 const LOG_PREFIX = "[SEED]";
 
 async function main() {
