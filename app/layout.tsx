@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Inventario de fruta congelada",
+  title: "FrutaStock",
   description: "Sistema de inventario de fruta congelada de la familia Miranda Jaramillo.",
 };
 
