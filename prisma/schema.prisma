@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum RolUsuario {
+  ADMIN
+  VENDEDOR
+}
+
+model Usuario {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  email     String     @unique
+  password  String
+  rol       RolUsuario @default(VENDEDOR)
+  activo    Boolean    @default(true)
+
+  ventas    Venta[]
+  movimientos MovimientoInventario[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique // Ej: "Bolis de Agua", "Pulpas", "Concentrados"
+  descripcion String?
+  productos   Producto[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Producto {
+  id              Int          @id @default(autoincrement())
+  nombre          String       
+  presentacion    String
+  
+  precio          Decimal      @db.Decimal(10, 2) 
+  stock_actual    Int          @default(0)
+  stock_minimo    Int          @default(0) // Para alertas de reabastecimiento
+  
+  categoria_id    Int
+  categoria       Categoria    @relation(fields: [categoria_id], references: [id])
+  activo          Boolean      @default(true)
+
+  movimientos     MovimientoInventario[]
+  detalles_venta  DetalleVenta[]
+  
+  created_at       DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  @@index([categoria_id])
+}
+
+enum TipoMovimiento {
+  ENTRADA  // Cuando se mete nuevo producto al congelador
+  SALIDA   // Cuando se venden
+  AJUSTE   // Si te comes uno, se rompe una bolsa, etc.
+}
+
+model MovimientoInventario {
+  id              Int @id @default(autoincrement())
+
+  producto_id     Int
+  producto        Producto @relation(fields: [producto_id], references: [id])
+
+  usuario_id  Int
+  usuario     Usuario @relation(fields: [usuario_id], references: [id])
+
+  tipo            TipoMovimiento
+  cantidad        Int            // Cuántas bolsitas entraron/salieron
+  motivo          String?        // Ej: "Producción semanal", "Venta #42", "Bolsa rota"
+  fecha           DateTime @default(now())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([producto_id])
+  @@index([usuario_id])
+  @@index([fecha])
+}
+
+
+model Venta {
+  id              Int            @id @default(autoincrement())
+  total           Decimal        @db.Decimal(10, 2) // La suma de todos los subtotales
+  fecha           DateTime       @default(now())
+  detalles        DetalleVenta[]
+
+  usuario_id Int
+  usuario    Usuario @relation(fields: [usuario_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([fecha])
+}
+
+model DetalleVenta {
+  id              Int      @id @default(autoincrement())
+  venta_id        Int
+  venta           Venta    @relation(fields: [venta_id], references: [id], onDelete: Cascade)
+  producto_id     Int
+  producto        Producto @relation(fields: [producto_id], references: [id])
+  
+  cantidad        Int      
+  precio_unitario Decimal  @db.Decimal(10, 2) 
+  subtotal        Decimal  @db.Decimal(10, 2) // cantidad * precio_unitario
+
+  @@index([venta_id])
+  @@index([producto_id])
+}
