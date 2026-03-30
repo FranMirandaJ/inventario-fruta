@@ -3,6 +3,9 @@
 import bcrypt from "bcryptjs";
 import { LoginFormSchema, FormState } from "./login.schema";
 import { prisma } from "@/lib/prisma";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("Auth/Login");
 
 export const login = async (
   _state: FormState,
@@ -42,9 +45,13 @@ export const login = async (
       };
     }
 
-    return {
-      message: `¡Bienvenido de nuevo, ${usuario.nombre.split(" ")[0]}!`,
-    };
+    // TODO: Justo aquí es donde se generará y guardará
+    // la cookie de sesión
 
-  } catch (error) {}
+  } catch (error) {
+    log.error(`${error instanceof Error ? error.message : String(error)}`);
+    return {
+      message: "Ocurrió un error en el servidor. Intenta de nuevo.",
+    };
+  }
 };

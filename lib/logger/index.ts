@@ -11,7 +11,20 @@ export const createLogger = (prefix: string) => {
 
   const format = (color: string, level: string, msg: string) => {
     const hora = getTime();
-    return `${color}[${prefix}] [${level}] [${hora}] ${colors.reset} ${msg}`;
+
+    /* * process.env.NODE_ENV indica el entorno de ejecución actual de Node.js.
+     * - En la nube (AWS, Vercel, etc.) siempre se fuerza automáticamente a "production".
+     * - En Next.js local (pnpm dev) vale "development".
+     * - En scripts aislados (como el seed de Prisma) suele ser 'undefined'.
+     * Por lo tanto, si NO es explícitamente "production", asumimos que estamos 
+     * en local y encendemos los colores para la terminal.
+     */
+    const useColors = process.env.NODE_ENV !== "production"; 
+
+    const activeColor = useColors ? color : "";
+    const resetColor = useColors ? colors.reset : "";
+
+    return `${activeColor}[${prefix}] [${level}] [${hora}] ${resetColor} ${msg}`;
   };
 
   return {
