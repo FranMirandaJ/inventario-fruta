@@ -23,8 +23,7 @@ export async function decrypt(session: string | undefined = "") {
     });
     return payload as SessionPayload;
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     log.warn(`Token de sesión rechazado: ${errorMessage}`);
     return null;
   }
@@ -63,8 +62,16 @@ export async function updateSession() {
 
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // expiración en 7 días
 
+  const dataSession: SessionPayload = {
+    id_usuario: payload.id_usuario,
+    nombre: payload.nombre,
+    rol: payload.rol,
+  };
+
+  const newSession = await encrypt(dataSession);
+
   const cookieStore = await cookies();
-  cookieStore.set("session", session, {
+  cookieStore.set("session", newSession, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     expires: expires,
@@ -74,6 +81,6 @@ export async function updateSession() {
 }
 
 export async function deleteSession() {
-  const cookieStore = await cookies()
-  cookieStore.delete('session')
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
 }
