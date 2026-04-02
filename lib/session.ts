@@ -24,7 +24,7 @@ export async function decrypt(session: string | undefined = "") {
     return payload as SessionPayload;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    log.warn(`Token de sesión rechazado: ${errorMessage}`);
+    log.warn(`Token de sesión rechazado/no encontrado: ${errorMessage}`);
     return null;
   }
 }
