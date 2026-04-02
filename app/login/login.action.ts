@@ -5,6 +5,9 @@ import { LoginFormSchema, FormState } from "./login.schema";
 import { prisma } from "@/lib/prisma";
 import { createLogger } from "@/lib/logger";
 
+import { createSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+
 const log = createLogger("Auth/Login");
 
 export const login = async (
@@ -45,8 +48,7 @@ export const login = async (
       };
     }
 
-    // TODO: Justo aquí es donde se generará y guardará
-    // la cookie de sesión
+    await createSession(usuario.id.toString(), usuario.nombre, usuario.rol);
 
   } catch (error) {
     log.error(`${error instanceof Error ? error.message : String(error)}`);
@@ -54,4 +56,7 @@ export const login = async (
       message: "Ocurrió un error en el servidor. Intenta de nuevo.",
     };
   }
+
+  redirect("/dashboard");
+
 };
