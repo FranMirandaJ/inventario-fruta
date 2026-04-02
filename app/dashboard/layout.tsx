@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardNavbar />
+      <DashboardNavbar sessionData={session}/>
       <main className="grow bg-gray-50">{children}</main>
     </div>
   );
