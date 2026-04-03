@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { cerrarSesion } from "../_actions/dashboardNavbar.action";
 
 const obtenerInicialesAvatar = (nombre: string) => {
   if (!nombre) return "US";
@@ -36,7 +37,7 @@ export default function DashboardNavbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="px-4 py-2 bg-white sm:flex sm:items-center sm:justify-between shadow-xl ring-1 ring-gray-900/5 relative z-10">
+    <nav className="px-4 py-2 bg-white/80 backdrop-blur-md sm:flex sm:items-center sm:justify-between shadow-xl ring-1 ring-gray-900/5 sticky top-0 z-50">
       <section className="flex w-full justify-between items-center sm:w-auto">
         <div className="flex items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-2xl bg-primary  bg-green-600">
@@ -57,7 +58,7 @@ export default function DashboardNavbar({
 
         <Button
           variant="ghost"
-          className="size-12 p-0 text-gray-700 sm:hidden cursor-pointer"
+          className="size-12 p-0 text-gray-700 sm:hidden cursor-pointer hover:bg-gray-200 hover:text-gray-900"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="size-8" /> : <Menu className="size-8" />}
@@ -71,6 +72,7 @@ export default function DashboardNavbar({
             : "max-h-0 opacity-0 sm:max-h-none sm:opacity-100 sm:mt-0"
         }`}
       >
+        <Separator className="mb-2 bg-gray-300 sm:hidden" />
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
           <Button
             variant={"ghost"}
@@ -111,12 +113,17 @@ export default function DashboardNavbar({
             setIsMenuOpen(false);
           }}
         >
-          <User className="mr-2 size-4" />
+          <Avatar className="mr-2 size-6 border border-gray-400">
+            <AvatarFallback className="bg-green-100 text-green-700 font-bold text-[11px]">
+              {inicialesUsuario}
+            </AvatarFallback>
+          </Avatar>
           Mi Perfil
         </Button>
         <Button
           variant="ghost"
           className="text-red-600 hover:text-red-700 hover:bg-red-200 w-full justify-start px-3 rounded mt-1"
+          onClick={async () => await cerrarSesion()}
         >
           <LogOut className="mr-2 size-4" />
           Cerrar Sesión
@@ -143,12 +150,15 @@ export default function DashboardNavbar({
           >
             <DropdownMenuItem className="cursor-pointer text-gray-700 hover:text-gray-900 hover:bg-gray-200">
               <User className="mr-2 size-4" />
-              <span>Mi Perfil</span>
+              <span>Mi perfil</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 hover:text-red-700 hover:bg-red-200">
+            <DropdownMenuItem 
+              className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 hover:bg-red-200 hover:text-red-700"
+              onClick={async() => await cerrarSesion()}
+            >
               <LogOut className="mr-2 size-4" />
-              <span>Cerrar Sesión</span>
+              <span>Cerrar sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
