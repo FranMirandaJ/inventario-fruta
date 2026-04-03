@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import ContenedorPagina from "./_components/ContenedorPagina";
-// import AutoBreadcrumb from "./_components/AutoBreadcrumb";
+// import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
 
   return (
     <ContenedorPagina
@@ -15,42 +15,10 @@ export default async function DashboardPage() {
           <Button variant={'outline'}>Hola</Button>
         </>
       }
-      // breadcrumbs={<AutoBreadcrumb/>}
+      //breadcrumbs={<AutoBreadcrumb/>}
     >
       <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
+      
     </ContenedorPagina>
   );
 }
