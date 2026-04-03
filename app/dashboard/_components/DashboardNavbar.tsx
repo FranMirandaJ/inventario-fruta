@@ -47,7 +47,7 @@ export default function DashboardNavbar({
           </div>
 
           <div className="flex flex-col justify-center">
-            <span className="font-bold text-gray-900 text-lg leading-none">
+            <span className="font-bold text-gray-900 text-md leading-none">
               FrutaStock
             </span>
             <span className="text-sm text-gray-500 capitalize mt-1 leading-none">
@@ -131,7 +131,7 @@ export default function DashboardNavbar({
       </div>
 
       <div className="hidden sm:block">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -145,8 +145,8 @@ export default function DashboardNavbar({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            align="end"
-            className="w-48 bg-white border-gray-400 hidden sm:block"
+            align="end" 
+            className="w-48 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl hidden sm:block"
           >
             <DropdownMenuItem className="cursor-pointer text-gray-700 hover:text-gray-900 hover:bg-gray-200">
               <User className="mr-2 size-4" />
