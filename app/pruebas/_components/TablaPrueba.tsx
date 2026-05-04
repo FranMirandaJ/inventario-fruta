@@ -15,13 +15,11 @@ const misColumnas: ColumnDef<Periodo>[] = [
   {
     header: "Periodo Escolar",
     accessorKey: "periodoEscolar",
-    searchable: true,
     sortable: true,
   },
   {
     header: "Total de Eventos",
     accessorKey: "totalEventos",
-    searchable: true,
     sortable: true,
   },
   {
@@ -48,6 +46,10 @@ export default function TablaPeriodos({ data }: { data: Periodo[] }) {
       columns={misColumnas}
       data={data}
       itemsPerPage={5}
+      searchableColumns={[
+        { accessorKey: "periodoEscolar", title: "Periodo Escolar" },
+        { accessorKey: "totalEventos", title: "Total de Eventos" },
+      ]}
     />
   );
 }

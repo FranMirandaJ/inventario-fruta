@@ -19,14 +19,14 @@ enum RolUsuario {
 }
 
 model Usuario {
-  id        Int        @id @default(autoincrement())
-  nombre    String
-  email     String     @unique
-  password  String
-  rol       RolUsuario @default(VENDEDOR)
-  activo    Boolean    @default(true)
+  id       Int        @id @default(autoincrement())
+  nombre   String
+  email    String     @unique
+  password String
+  rol      RolUsuario @default(VENDEDOR)
+  activo   Boolean    @default(true)
 
-  ventas    Venta[]
+  ventas      Venta[]
   movimientos MovimientoInventario[]
 
   created_at DateTime @default(now())
@@ -44,46 +44,54 @@ model Categoria {
 }
 
 model Producto {
-  id              Int          @id @default(autoincrement())
-  nombre          String       
-  presentacion    String
-  
-  precio          Decimal      @db.Decimal(10, 2) 
-  stock_actual    Int          @default(0)
-  stock_minimo    Int          @default(0) // Para alertas de reabastecimiento
-  
-  categoria_id    Int
-  categoria       Categoria    @relation(fields: [categoria_id], references: [id])
-  activo          Boolean      @default(true)
+  id           Int    @id @default(autoincrement())
+  nombre       String
+  presentacion String
 
-  movimientos     MovimientoInventario[]
-  detalles_venta  DetalleVenta[]
-  
-  created_at       DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
+  precio       Decimal @db.Decimal(10, 2)
+  stock_actual Int     @default(0)
+  stock_minimo Int     @default(0) // Para alertas de reabastecimiento
+
+  categoria_id Int
+  categoria    Categoria @relation(fields: [categoria_id], references: [id])
+  activo       Boolean   @default(true)
+
+  movimientos    MovimientoInventario[]
+  detalles_venta DetalleVenta[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@index([categoria_id])
 }
 
 enum TipoMovimiento {
-  ENTRADA  // Cuando se mete nuevo producto al congelador
-  SALIDA   // Cuando se venden
-  AJUSTE   // Si te comes uno, se rompe una bolsa, etc.
+  ENTRADA // Cuando se mete nuevo producto al congelador
+  SALIDA // Cuando se venden
+  AJUSTE // Si te comes uno, se rompe una bolsa, etc.
+}
+
+enum EstadoVenta {
+  ACTIVA
+  CANCELADA
 }
 
 model MovimientoInventario {
-  id              Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  producto_id     Int
-  producto        Producto @relation(fields: [producto_id], references: [id])
+  producto_id Int
+  producto    Producto @relation(fields: [producto_id], references: [id])
 
-  usuario_id  Int
-  usuario     Usuario @relation(fields: [usuario_id], references: [id])
+  usuario_id Int
+  usuario    Usuario @relation(fields: [usuario_id], references: [id])
 
-  tipo            TipoMovimiento
-  cantidad        Int            // Cuántas bolsitas entraron/salieron
-  motivo          String?        // Ej: "Producción semanal", "Venta #42", "Bolsa rota"
-  fecha           DateTime @default(now())
+  venta_id Int?
+  venta    Venta? @relation(fields: [venta_id], references: [id])
+
+  tipo     TipoMovimiento
+  cantidad Int
+  motivo   String?
+  fecha    DateTime       @default(now())
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -91,34 +99,35 @@ model MovimientoInventario {
   @@index([producto_id])
   @@index([usuario_id])
   @@index([fecha])
+  @@index([venta_id])
 }
 
-
 model Venta {
-  id              Int            @id @default(autoincrement())
-  total           Decimal        @db.Decimal(10, 2) // La suma de todos los subtotales
-  fecha           DateTime       @default(now())
-  detalles        DetalleVenta[]
-
+  id         Int            @id @default(autoincrement())
+  total      Decimal        @db.Decimal(10, 2)
+  fecha      DateTime       @default(now())
+  detalles   DetalleVenta[]
+  estado     EstadoVenta    @default(ACTIVA)
   usuario_id Int
   usuario    Usuario @relation(fields: [usuario_id], references: [id])
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @updatedAt
+  movimientoInventarios MovimientoInventario[]
 
   @@index([fecha])
 }
 
 model DetalleVenta {
-  id              Int      @id @default(autoincrement())
-  venta_id        Int
-  venta           Venta    @relation(fields: [venta_id], references: [id], onDelete: Cascade)
-  producto_id     Int
-  producto        Producto @relation(fields: [producto_id], references: [id])
-  
-  cantidad        Int      
-  precio_unitario Decimal  @db.Decimal(10, 2) 
-  subtotal        Decimal  @db.Decimal(10, 2) // cantidad * precio_unitario
+  id          Int      @id @default(autoincrement())
+  venta_id    Int
+  venta       Venta    @relation(fields: [venta_id], references: [id], onDelete: Cascade)
+  producto_id Int
+  producto    Producto @relation(fields: [producto_id], references: [id])
+
+  cantidad        Int
+  precio_unitario Decimal @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(10, 2)
 
   @@index([venta_id])
   @@index([producto_id])

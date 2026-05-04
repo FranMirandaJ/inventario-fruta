@@ -17,7 +17,6 @@ import {
 export type ColumnDef<T> = {
   header: string; // Título de la columna
   accessorKey: keyof T; // La llave del objeto de datos
-  searchable?: boolean; // ¿Aparecerá un input para buscar por esta columna?
   sortable?: boolean; // ¿Se puede ordenar haciendo clic en el título?
   renderCell?: (item: T) => React.ReactNode; // Para formatear cosas personalizadas (como botones de acción)
 };
@@ -27,6 +26,10 @@ interface DataTableProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   itemsPerPage?: number;
+  searchableColumns?: Array<{
+    accessorKey: keyof T;
+    title: string;
+  }>;
 }
 
 export default function DataTable<T>({
@@ -34,6 +37,7 @@ export default function DataTable<T>({
   columns,
   data,
   itemsPerPage = 5,
+  searchableColumns = [],
 }: DataTableProps<T>) {
   const [filtros, setFiltros] = useState<Partial<Record<keyof T, string>>>({});
   const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: "asc" | "desc" } | null>(null);
@@ -84,7 +88,7 @@ export default function DataTable<T>({
     setCurrentPage(1); // Regresa a la página 1 al buscar
   };
 
-  const columnasBuscables = columns.filter((col) => col.searchable).slice(0, 3); // Máximo 3 inputs
+  const columnasBuscables = searchableColumns.slice(0, 3); // Máximo 3 inputs
 
   return (
     // Usamos fieldset y legend para replicar exactamente el borde con el título incrustado de tu imagen
@@ -101,7 +105,7 @@ export default function DataTable<T>({
           {columnasBuscables.map((col) => (
             <Input
               key={String(col.accessorKey)}
-              placeholder={`Filtrar por ${col.header}...`}
+              placeholder={`Filtrar por ${col.title}...`}
               value={filtros[col.accessorKey] || ""}
               onChange={(e) => handleFilterChange(col.accessorKey, e.target.value)}
               className="w-full sm:w-64"

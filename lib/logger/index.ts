@@ -3,14 +3,20 @@ import { colors } from "./consoleColors";
 const TIME_ZONE = "America/Mazatlan";
 
 export const createLogger = (prefix: string) => {
-  const getTime = () =>
-    new Date().toLocaleTimeString("es-MX", {
+  const getDateTime = () =>
+    new Date().toLocaleString("es-MX", {
       timeZone: TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
       hour12: false,
     });
 
   const format = (color: string, level: string, msg: string) => {
-    const hora = getTime();
+    const fechaHora = getDateTime();
 
     /* * process.env.NODE_ENV indica el entorno de ejecución actual de Node.js.
      * - En la nube (AWS, Vercel, etc.) siempre se fuerza automáticamente a "production".
@@ -24,7 +30,7 @@ export const createLogger = (prefix: string) => {
     const activeColor = useColors ? color : "";
     const resetColor = useColors ? colors.reset : "";
 
-    return `${activeColor}[${prefix}] [${level}] [${hora}] ${resetColor} ${msg}`;
+    return `${activeColor}[${prefix}] [${level}] [${fechaHora}] ${resetColor} ${msg}`;
   };
 
   return {

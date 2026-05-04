@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import ContenedorPagina from "./../dashboard/_components/ContenedorPagina";
-// import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
+import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
 
 export default function DashboardPage() {
 
 
-// atos de prueba (Aquí normalmente vendrían de tu base de datos)
+// datos de prueba (Aquí normalmente vendrían de tu base de datos)
 const dataDePrueba: Periodo[] = [
   { id: "1", periodoEscolar: "ENE-JUN/2026", totalEventos: 0, totalHoras: 0 },
   { id: "2", periodoEscolar: "AGO-DIC/2025", totalEventos: 4, totalHoras: 8 },
