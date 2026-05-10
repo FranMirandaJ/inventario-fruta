@@ -4,6 +4,8 @@ import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Package, History } from "lucide-react";
+import Modal from "@/components/Modal";
+import { Trash } from "lucide-react";
 
 export default function DashboardPage() {
   // datos de prueba (Aquí normalmente vendrían de tu base de datos)
@@ -69,6 +71,15 @@ export default function DashboardPage() {
     >
       <p>esto es una prueba</p>
       <p>esto es una prueba</p>
+
+       <Modal 
+        title="¿Estás completamente seguro?"
+        description="Esta acción no se puede deshacer y borrará los datos permanentemente."
+        textTriggerButton="Eliminar"
+        iconTriggerButton={<Trash className="size-4" />}
+        triggerButtonVariant="destructive" 
+        footer={<Button variant="destructive">Sí, eliminar</Button>}
+        />
 
       <TablaPeriodos data={dataDePrueba} />
       <Tabs defaultValue="metricas" className="w-full">
