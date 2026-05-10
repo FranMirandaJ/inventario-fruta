@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { ReactNode } from "react";
+import Image from "next/image";
 
 export type ModalProps = {
   showTriggerButton?: boolean;
@@ -21,6 +22,8 @@ export type ModalProps = {
   description?: string;
   children?: ReactNode;
   footer?: ReactNode;
+  headerImgSrc?: string; 
+  headerImgAlt?: string; 
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
@@ -47,6 +50,8 @@ export default function Modal({
   description,
   children,
   footer,
+  headerImgSrc,
+  headerImgAlt = "Ilustración del modal",
   open,
   onOpenChange,
   size = "md",
@@ -66,7 +71,18 @@ export default function Modal({
 
       <DialogContent className={`${sizeClasses[size]} ${contentClassName}`}>
 
-        <DialogHeader>
+        <DialogHeader className="flex flex-col sm:items-start gap-2">
+          {headerImgSrc && (
+            <div className="relative w-12 h-12 mb-2">
+              <Image 
+                src={headerImgSrc} 
+                alt={headerImgAlt}
+                fill
+                className="object-contain"
+              />
+            </div>
+          )}
+
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
