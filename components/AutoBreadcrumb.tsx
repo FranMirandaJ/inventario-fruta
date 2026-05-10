@@ -15,6 +15,7 @@ import {
 // Aquí se traduce cómo se llama la carpeta en la URL a cómo se quiere que lo lea el usuario.
 const nombresRutas: Record<string, string> = {
   dashboard: "Inicio",
+  productos: "Productos",
   catalogos: "Catálogos",
   ventas: "Ventas",
 };

@@ -51,7 +51,7 @@ export default function ContenedorPagina({
           </div>
         )}
 
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-6">
           {children}
         </div>
 
