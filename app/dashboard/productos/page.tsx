@@ -1,19 +1,16 @@
-import { Plus } from "lucide-react";
+import { verifySession } from "@/lib/dal/auth";
+import { obtenerProductos } from "@/lib/dal/productos";
 import ContenedorPagina from "../_components/ContenedorPagina";
-import { Button } from "@/components/ui/button";
+//import TablaProductos from "./_components/TablaProductos";
 
-export default function ProductosPage() {
+export default async function ProductosPage() {
+  await verifySession();
+  const productos = await obtenerProductos();
+  console.log(productos);
   return (
-    <ContenedorPagina 
-      titulo="Productos"
-      acciones={
-        <Button >
-          <Plus/>
-          Nuevo
-        </Button>
-      }
-    >
-      hola
+    <ContenedorPagina titulo="Productos">
+      {/* <TablaProductos data={productos} /> */}
+      Productos
     </ContenedorPagina>
   );
 }

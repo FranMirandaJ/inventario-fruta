@@ -1,11 +1,11 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
-import type { Producto, Categoria } from "@/generated/prisma";
+import type { Prisma } from "@/generated/prisma";
 
-export type ProductoConCategoria = Producto & {
-  categoria: Pick<Categoria, 'id' | 'nombre'>;
-};
+export type ProductoConCategoria = Prisma.ProductoGetPayload<{
+  include: { categoria: { select: { id: true; nombre: true } } }
+}>;
 
 export const obtenerProductos = cache(async (): Promise<ProductoConCategoria[]> => {
     return prisma.producto.findMany({
