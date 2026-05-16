@@ -6,30 +6,29 @@ import Modal from "@/components/Modal";
 import { Plus } from "lucide-react";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
   FieldError,
 } from "@/components/ui/field";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
 import { CategoriaOption } from "@/lib/dal/categorias";
+import { useActionState, useState } from "react";
+import { crearProducto } from "../_actions/productos.action";
+import type { FormState } from "../_actions/productos.schema";
 
 type PropsModalNuevoProducto = {
     categorias : CategoriaOption[];
 };
 
 export default function ModalNuevoProducto({categorias} : PropsModalNuevoProducto) {
+
 
   return (
     <Modal
@@ -38,48 +37,49 @@ export default function ModalNuevoProducto({categorias} : PropsModalNuevoProduct
       textTriggerButton="Nuevo"
       iconTriggerButton={<Plus className="size-4" />}
       triggerButtonVariant="default"
-      footer={<Button>Guardar</Button>}
+      footer={<Button type="submit" form="producto-form">Guardar</Button>}
       headerImgSrc="/icecream.svg"
-      //size="4xl"
     >
-      <form>
+      <form >
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="nombre">Nombre</FieldLabel>
-            <Input id="nombre" type="text" placeholder="Nombre del producto" />
-            {/* <FieldError>Mensaje de validación</FieldError> */}
+            <Input id="nombre" type="text" name="nombre" placeholder="Nombre del producto" />
+            {/* <FieldError>Error de validación</FieldError> */}
           </Field>
 
           <Field>
             <FieldLabel htmlFor="categoria">Categoría</FieldLabel>
-            <Select>
-                <SelectTrigger className="w-full">
-                    <SelectValue id="categoria" placeholder="Seleccione una categoría." />
-                </SelectTrigger>
-                <SelectContent>
-                <SelectGroup>
-                    <SelectLabel>Categorías</SelectLabel>
-                    {categorias.map((categoria) => (
-                        <SelectItem 
-                            key={categoria.id} 
-                            value={String(categoria.id)}
-                        >
-                            {categoria.nombre}
-                        </SelectItem>
-                    ))}
-                </SelectGroup>
-                </SelectContent>
-            </Select>
-            {/* <FieldError>Mensaje de validación</FieldError> */}
+            <Combobox
+              items={categorias}
+              itemToStringValue={(c: CategoriaOption | null) => c?.nombre ?? ""}
+            >
+              <ComboboxInput placeholder="Seleccione una categoría." showClear />
+              <ComboboxContent
+                onWheel={(e) => e.stopPropagation()}
+                className="pointer-events-auto"
+              >
+                <ComboboxEmpty>No se encontraron categorías.</ComboboxEmpty>
+                <ComboboxList>
+                  {(categoria: CategoriaOption) => (
+                    <ComboboxItem key={categoria.id} value={categoria.nombre}>
+                      {categoria.nombre}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+            {/* <FieldError>Error de validación</FieldError> */}
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="nombre">Presentación</FieldLabel>
-            <Input id="nombre" type="text" placeholder="Opcional" />
-            {/* <FieldError>Mensaje de validación</FieldError> */}
+            <FieldLabel htmlFor="presentacion">Presentación</FieldLabel>
+            <Input id="presentacion" type="text" name="presentacion" placeholder="Opcional" />
+            {/* <FieldError>Error de validación</FieldError> */}
           </Field>
+          
         </FieldGroup>
-        {/* Aquí irían tus inputs */}
+
       </form>
     </Modal>
   );

@@ -88,7 +88,7 @@ export default function Modal({
         </DialogHeader>
 
         {children && (
-          <div className="py-4 max-h-[70vh] overflow-y-auto px-1">
+          <div className="py-4 max-h-[70vh] overflow-y-auto px-1" style={{ overflow: "hidden auto" }}>
             {children}
           </div>
         )}
