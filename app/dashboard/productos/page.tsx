@@ -1,35 +1,20 @@
 import { verifySession } from "@/lib/dal/auth";
 import { obtenerProductos } from "@/lib/dal/productos";
+import { obtenerOpcionesCategoriasProductos } from "@/lib/dal/categorias";
 import ContenedorPagina from "../_components/ContenedorPagina";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash } from "lucide-react";
-import Modal from "@/components/Modal";
-import { Input } from "@/components/ui/input";
+import ModalNuevoProducto from "./_components/ModalNuevoProducto";
 //import TablaProductos from "./_components/TablaProductos";
 
 export default async function ProductosPage() {
   await verifySession();
   const productos = await obtenerProductos();
+  const opcionesCategorias = await obtenerOpcionesCategoriasProductos();
 
   return (
     <ContenedorPagina 
       titulo="Productos"
       acciones= {
-        <Modal 
-          title="Crear Nuevo Producto"
-          description="Llena los datos para registrar un nuevo artículo en el inventario."
-          textTriggerButton="Nuevo"
-          iconTriggerButton={<Plus className="size-4" />}
-          triggerButtonVariant="default"
-          footer={<Button>Guardar</Button>}
-          headerImgSrc="/icecream.svg"
-          //size="4xl"
-        >
-        <form>
-          {/* Aquí irían tus inputs */}
-          <Input type="text" placeholder="Nombre del producto" />
-        </form>
-      </Modal>
+        <ModalNuevoProducto categorias={opcionesCategorias}/>
       }
     >
       {/* <TablaProductos data={productos} /> */}
