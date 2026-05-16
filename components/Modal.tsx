@@ -69,7 +69,7 @@ export default function Modal({
         </DialogTrigger>
       )}
 
-      <DialogContent className={`${sizeClasses[size]} ${contentClassName}`}>
+      <DialogContent className={`flex flex-col max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}>
 
         <DialogHeader className="flex flex-col sm:items-start gap-2">
           {headerImgSrc && (
@@ -88,7 +88,7 @@ export default function Modal({
         </DialogHeader>
 
         {children && (
-          <div className="py-4 max-h-[70vh] overflow-y-auto px-1" style={{ overflow: "hidden auto" }}>
+          <div className="py-4 overflow-y-auto px-1" style={{ overflow: "hidden auto" }}>
             {children}
           </div>
         )}

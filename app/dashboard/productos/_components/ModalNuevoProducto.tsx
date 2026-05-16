@@ -77,6 +77,17 @@ export default function ModalNuevoProducto({categorias} : PropsModalNuevoProduct
             <Input id="presentacion" type="text" name="presentacion" placeholder="Opcional" />
             {/* <FieldError>Error de validación</FieldError> */}
           </Field>
+          <Field>
+            <FieldLabel htmlFor="presentacion">Presentación</FieldLabel>
+            <Input id="presentacion" type="text" name="presentacion" placeholder="Opcional" />
+            {/* <FieldError>Error de validación</FieldError> */}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="presentacion">Presentación</FieldLabel>
+            <Input id="presentacion" type="text" name="presentacion" placeholder="Opcional" />
+            {/* <FieldError>Error de validación</FieldError> */}
+          </Field>
+          
           
         </FieldGroup>
 
