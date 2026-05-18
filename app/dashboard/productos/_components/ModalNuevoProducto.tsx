@@ -20,7 +20,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { CategoriaOption } from "@/lib/dal/categorias";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
 
 type PropsModalNuevoProducto = {
@@ -32,8 +32,6 @@ export default function ModalNuevoProducto({
 }: PropsModalNuevoProducto) {
 
   const [state, action, pending] = useActionState(crearProducto, undefined);
-
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>("");
 
   return (
     <Modal
@@ -71,22 +69,11 @@ export default function ModalNuevoProducto({
             <FieldLabel htmlFor="categoria_combo">
               Categoría <span className="text-destructive">*</span>
             </FieldLabel>
-            <input
-              type="hidden"
-              name="categoria"
-              value={categoriaSeleccionada}
-            />
             <Combobox
+              name="categoria" // <--- este nombre es el nombre del atributo que se manda al server action
               items={categorias}
               itemToStringLabel={(c: CategoriaOption) => c.nombre}
               itemToStringValue={(c: CategoriaOption) => String(c.id)}
-              onValueChange={(value) => {
-                if (value) {
-                  setCategoriaSeleccionada(String(value.id));
-                } else {
-                  setCategoriaSeleccionada("");
-                }
-              }}
             >
               <ComboboxInput
                 id="categoria_combo"
