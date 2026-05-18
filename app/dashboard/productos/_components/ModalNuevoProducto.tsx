@@ -78,7 +78,15 @@ export default function ModalNuevoProducto({
             />
             <Combobox
               items={categorias}
-              itemToStringValue={(c: CategoriaOption) => c.nombre}
+              itemToStringLabel={(c: CategoriaOption) => c.nombre}
+              itemToStringValue={(c: CategoriaOption) => String(c.id)}
+              onValueChange={(value) => {
+                if (value) {
+                  setCategoriaSeleccionada(String(value.id));
+                } else {
+                  setCategoriaSeleccionada("");
+                }
+              }}
             >
               <ComboboxInput
                 id="categoria_combo"
@@ -95,10 +103,7 @@ export default function ModalNuevoProducto({
                   {(categoria: CategoriaOption) => (
                     <ComboboxItem
                       key={categoria.id}
-                      value={categoria.nombre}
-                      onClick={() =>
-                        setCategoriaSeleccionada(String(categoria.id))
-                      }
+                      value={categoria}
                     >
                       {categoria.nombre}
                     </ComboboxItem>
