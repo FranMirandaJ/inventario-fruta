@@ -15,9 +15,8 @@ export const createLogger = (prefix: string) => {
       hour12: false,
     });
 
-  const format = (color: string, level: string, msg: string) => {
+  const getTag = (color: string, level: string) => {
     const fechaHora = getDateTime();
-
     /* * process.env.NODE_ENV indica el entorno de ejecución actual de Node.js.
      * - En la nube (AWS, Vercel, etc.) siempre se fuerza automáticamente a "production".
      * - En Next.js local (pnpm dev) vale "development".
@@ -30,13 +29,13 @@ export const createLogger = (prefix: string) => {
     const activeColor = useColors ? color : "";
     const resetColor = useColors ? colors.reset : "";
 
-    return `${activeColor}[${prefix}] [${level}] [${fechaHora}] ${resetColor} ${msg}`;
+    return `${activeColor}[${prefix}] [${level}] [${fechaHora}]${resetColor}`;
   };
 
   return {
-    info:    (msg: string) => console.info(format(colors.fg.blue, "INFO", msg)),
-    success: (msg: string) => console.log(format(colors.fg.green, "OK", msg)),
-    warn:    (msg: string) => console.warn(format(colors.fg.yellow, "WARN", msg)),
-    error:   (msg: string) => console.error(format(colors.fg.red, "ERROR", msg)),
+    info:    (...args: any[]) => console.info(getTag(colors.fg.blue, "INFO"), ...args),
+    success: (...args: any[]) => console.log(getTag(colors.fg.green, "OK"), ...args),
+    warn:    (...args: any[]) => console.warn(getTag(colors.fg.yellow, "WARN"), ...args),
+    error:   (...args: any[]) => console.error(getTag(colors.fg.red, "ERROR"), ...args),
   };
 };

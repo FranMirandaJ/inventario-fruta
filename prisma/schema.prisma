@@ -46,7 +46,6 @@ model Categoria {
 model Producto {
   id           Int    @id @default(autoincrement())
   nombre       String
-  presentacion String
 
   precio       Decimal @db.Decimal(10, 2)
   stock_actual Int     @default(0)
