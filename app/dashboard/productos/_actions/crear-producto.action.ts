@@ -7,7 +7,7 @@ import { createLogger } from "@/lib/logger";
 
 const log = createLogger("Productos/Crear");
 
-export const crearProducto = async (_state: FormState, formData: FormData) => {
+export const crearProducto = async (_state: FormState, formData: FormData): Promise<FormState> => {
 
   log.info(formData);
 
@@ -21,8 +21,10 @@ export const crearProducto = async (_state: FormState, formData: FormData) => {
 
   if (!validatedFields.success) {
     return {
+      success: false,
       errors: validatedFields.error.flatten((issue) => issue.message).fieldErrors,
       message: "Faltan campos por llenar o hay errores.",
+      timestamp: Date.now()
     };
   }
 

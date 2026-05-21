@@ -20,8 +20,9 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { CategoriaOption } from "@/lib/dal/categorias";
-import { useActionState } from "react";
+import { useActionState, useEffect, } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
+import { toast } from "sonner";
 
 type PropsModalNuevoProducto = {
   categorias: CategoriaOption[];
@@ -32,6 +33,21 @@ export default function ModalNuevoProducto({
 }: PropsModalNuevoProducto) {
 
   const [state, action, pending] = useActionState(crearProducto, undefined);
+
+  useEffect(() => {
+    if (!state) return;
+
+    if (!state.success) {
+      toast.error(state.message);
+    }
+
+    if (state.success) {
+      toast.success(state.message);
+      
+      // Opcional: Cerrar el modal o limpiar estados aquí
+    }
+
+  }, [state, state?.timestamp]);
 
   return (
     <Modal

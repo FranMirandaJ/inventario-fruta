@@ -30,6 +30,7 @@ export const CrearProductoFormSchema = z.object({
 
 export type FormState =
   | {
+      success: boolean;
       errors?: {
         nombre?: string[];
         categoria?: string[];
@@ -38,5 +39,6 @@ export type FormState =
         stock_minimo?: string[];
       };
       message?: string;
+      timestamp?: number;
     }
   | undefined;
