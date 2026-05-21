@@ -16,9 +16,9 @@ export default function ContenedorPagina({
   breadcrumbs,
 }: ContenedorPaginaProps) {
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 sm:py-8">
       
-      <div className="w-full bg-white border border-gray-200 rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm">
+      <div className="w-full bg-white border-0 sm:border border-gray-200 sm:rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm">
 
         {breadcrumbs && (
           <div className="mb-4">
