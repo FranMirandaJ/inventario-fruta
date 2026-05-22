@@ -1,7 +1,7 @@
 {
   "name": "app-inventario-fruta",
   "version": "0.1.0",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.2.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,13 +17,13 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "10.33.0",
+      "version": "11.2.2",
       "onFail": "error"
     }
   },
   "engines": {
     "node": "^24.0.0",
-    "pnpm": ">=10.33.0"
+    "pnpm": ">=11.2.2"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
