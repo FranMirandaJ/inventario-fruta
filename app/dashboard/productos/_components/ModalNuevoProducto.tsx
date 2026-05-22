@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Modal from "@/components/Modal";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import {
   Field,
   FieldGroup,
@@ -20,7 +20,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { CategoriaOption } from "@/lib/dal/categorias";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
 import { toast } from "sonner";
 
@@ -31,22 +31,26 @@ type PropsModalNuevoProducto = {
 function FormContent({
   categorias,
   onSuccess,
+  onPendingChange,
 }: {
   categorias: CategoriaOption[];
   onSuccess: () => void;
+  onPendingChange?: (pending: boolean) => void;
 }) {
   const [state, action, pending] = useActionState(crearProducto, undefined);
 
   useEffect(() => {
-    if (!state) return;
+    onPendingChange?.(pending);
+  }, [pending, onPendingChange]);
 
-    if (!state.success) {
-      toast.error(state.message);
-    }
+  useEffect(() => {
+    if (!state) return;
 
     if (state.success) {
       toast.success(state.message);
       onSuccess();
+    } else {
+      toast.error(state.message);
     }
   }, [state?.timestamp, onSuccess]);
 
@@ -63,6 +67,8 @@ function FormContent({
             name="nombre"
             placeholder="Nombre del producto"
             aria-invalid={!!state?.errors?.nombre}
+            disabled={pending}
+            defaultValue={state?.inputs?.nombre || ""}
           />
           {state?.errors?.nombre && (
             <FieldError>{state.errors.nombre[0]}</FieldError>
@@ -84,6 +90,7 @@ function FormContent({
               placeholder="Seleccione una categoría."
               showClear
               aria-invalid={!!state?.errors?.categoria}
+              disabled={pending}
             />
             <ComboboxContent
               onWheel={(e) => e.stopPropagation()}
@@ -120,6 +127,8 @@ function FormContent({
               className="pl-7"
               placeholder="0.00"
               aria-invalid={!!state?.errors?.precio}
+              disabled={pending}
+              defaultValue={state?.inputs?.precio || ""}
               onInput={(e) => {
                 const input = e.currentTarget;
                 const validValue =
@@ -149,6 +158,8 @@ function FormContent({
             inputMode="numeric"
             placeholder="0"
             aria-invalid={!!state?.errors?.stock_actual}
+            disabled={pending}
+            defaultValue={state?.inputs?.stock_actual || ""}
             onInput={(e) => {
               const input = e.currentTarget;
               const validValue = input.value.replace(/[^0-9]/g, "");
@@ -175,6 +186,8 @@ function FormContent({
             inputMode="numeric"
             placeholder="1"
             aria-invalid={!!state?.errors?.stock_minimo}
+            disabled={pending}
+            defaultValue={state?.inputs?.stock_minimo || ""}
             onInput={(e) => {
               const input = e.currentTarget;
               const validValue = input.value.replace(/[^0-9]/g, "");
@@ -197,6 +210,9 @@ export default function ModalNuevoProducto({
 }: PropsModalNuevoProducto) {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const [isPending, setIsPending] = useState(false);
+
+  const handlePendingChange = useCallback((p: boolean) => setIsPending(p), []);
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -207,9 +223,9 @@ export default function ModalNuevoProducto({
     }
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   return (
     <Modal
@@ -221,8 +237,15 @@ export default function ModalNuevoProducto({
       open={open}
       onOpenChange={handleOpenChange}
       footer={
-        <Button type="submit" form="crear-producto">
-          Guardar
+        <Button type="submit" form="crear-producto" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Guardando...
+            </>
+          ) : (
+            "Guardar"
+          )}
         </Button>
       }
       headerImgSrc="/icecream.svg"
@@ -231,6 +254,7 @@ export default function ModalNuevoProducto({
         key={formKey}
         categorias={categorias}
         onSuccess={handleSuccess}
+        onPendingChange={handlePendingChange}
       />
     </Modal>
   );

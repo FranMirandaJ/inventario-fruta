@@ -31,14 +31,14 @@ export type ModalProps = {
 };
 
 const sizeClasses = {
-  sm: "sm:max-w-sm",           // 384px
-  md: "sm:max-w-md",           // 448px (Estándar)
-  lg: "sm:max-w-lg",           // 512px
-  xl: "sm:max-w-xl",           // 576px
-  "2xl": "sm:max-w-2xl",       // 672px
-  "3xl": "sm:max-w-3xl",       // 768px
-  "4xl": "sm:max-w-4xl",       // 896px
-  full: "sm:max-w-[95vw]",     // Casi pantalla completa
+  sm: "max-w-[min(384px,100%)]",           // 384px
+  md: "max-w-[min(448px,100%)]",           // 448px (Estándar)
+  lg: "max-w-[min(512px,100%)]",           // 512px
+  xl: "max-w-[min(576px,100%)]",           // 576px
+  "2xl": "max-w-[min(672px,100%)]",        // 672px
+  "3xl": "max-w-[min(768px,100%)]",        // 768px
+  "4xl": "max-w-[min(896px,100%)]",        // 896px
+  full: "max-w-[min(95vw,100%)]",          // Casi pantalla completa
 };
 
 export default function Modal({

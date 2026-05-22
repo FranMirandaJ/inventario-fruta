@@ -40,5 +40,12 @@ export type FormState =
       };
       message?: string;
       timestamp?: number;
+      inputs?: {
+        nombre: string;
+        categoria: string;
+        precio: string;
+        stock_actual: string;
+        stock_minimo: string;
+      };
     }
   | undefined;
