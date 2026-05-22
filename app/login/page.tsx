@@ -8,12 +8,12 @@ import {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4 bg-gray-100">
+    <div className="flex min-h-dvh flex-col items-center justify-center px-4 bg-gray-100">
 
       {/* MARCA */}
       <div className="mb-8 flex flex-col items-center gap-3">
-        <div className="flex size-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20 bg-green-600">
-          <span className="text-2xl font-extrabold text-primary-foreground text-white">
+        <div className="flex size-16 items-center justify-center rounded-2xl shadow-lg shadow-primary/20 bg-green-600">
+          <span className="text-2xl font-extrabold text-white">
             F
           </span>
         </div>

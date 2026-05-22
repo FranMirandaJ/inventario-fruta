@@ -14,7 +14,7 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <div className="fixed inset-0 -z-10 bg-gray-50"> 
+      <div className="fixed inset-0 -z-10 bg-gray-50">
         <Image
           src="/fondo.jpg"
           alt="Background"
@@ -27,10 +27,8 @@ export default async function DashboardLayout({
       <div className="min-h-screen flex flex-col">
         <DashboardNavbar sessionData={session} />
 
-        <main className="grow">
-          {children}
-        </main>
-        
+        <main className="grow">{children}</main>
+
         <DashboardFooter />
       </div>
     </>

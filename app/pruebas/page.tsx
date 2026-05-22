@@ -1,73 +1,126 @@
 import { Button } from "@/components/ui/button";
-import ContenedorPagina from "./../dashboard/_components/ContenedorPagina";
+import ContenedorPagina from "../dashboard/_components/ContenedorPagina";
 import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LayoutDashboard, Package, History } from "lucide-react";
+import Modal from "@/components/Modal";
+import { Trash } from "lucide-react";
 
 export default function DashboardPage() {
-
-
-// datos de prueba (Aquí normalmente vendrían de tu base de datos)
-const dataDePrueba: Periodo[] = [
-  { id: "1", periodoEscolar: "ENE-JUN/2026", totalEventos: 0, totalHoras: 0 },
-  { id: "2", periodoEscolar: "AGO-DIC/2025", totalEventos: 4, totalHoras: 8 },
-  { id: "3", periodoEscolar: "ENE-JUN/2027", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2028", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2029", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2030", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2031", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2032", totalEventos: 2, totalHoras: 10 },
-  { id: "3", periodoEscolar: "ENE-JUN/2033", totalEventos: 2, totalHoras: 10 },
-];
-
+  // datos de prueba (Aquí normalmente vendrían de tu base de datos)
+  const dataDePrueba: Periodo[] = [
+    { id: "1", periodoEscolar: "ENE-JUN/2026", totalEventos: 0, totalHoras: 0 },
+    { id: "2", periodoEscolar: "AGO-DIC/2025", totalEventos: 4, totalHoras: 8 },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2027",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2028",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2029",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2030",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2031",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2032",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+    {
+      id: "3",
+      periodoEscolar: "ENE-JUN/2033",
+      totalEventos: 2,
+      totalHoras: 10,
+    },
+  ];
 
   return (
     <ContenedorPagina
-      titulo="Inicio"
+      titulo="Pruebas"
       descripcion="Esto es una prueba para probar las cosas"
       acciones={
         <>
-          <Button variant={'outline'}>Hola</Button>
-          <Button variant={'outline'}>Hola</Button>
-          <Button variant={'outline'}>Hola</Button>
+          <Button variant={"outline"}>Hola</Button>
+          <Button variant={"outline"}>Hola</Button>
+          <Button variant={"outline"}>Hola</Button>
         </>
       }
       //breadcrumbs={<AutoBreadcrumb/>}
     >
       <p>esto es una prueba</p>
       <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <p>esto es una prueba</p>
-      <TablaPeriodos data={dataDePrueba}/>
+
+       <Modal 
+        title="¿Estás completamente seguro?"
+        description="Esta acción no se puede deshacer y borrará los datos permanentemente."
+        textTriggerButton="Eliminar"
+        iconTriggerButton={<Trash className="size-4" />}
+        triggerButtonVariant="destructive" 
+        footer={<Button variant="destructive">Sí, eliminar</Button>}
+        />
+
+      <TablaPeriodos data={dataDePrueba} />
+      <Tabs defaultValue="metricas" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger
+            value="metricas"
+            className="flex items-center gap-2 h-full"
+          >
+            <LayoutDashboard className="size-4" />
+            <span className="hidden sm:inline">Métricas</span>
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="productos"
+            className="flex items-center gap-2 h-full"
+          >
+            <Package className="size-4" />
+            <span className="hidden sm:inline">Productos</span>
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="ventas"
+            className="flex items-center gap-2 h-full"
+          >
+            <History className="size-4" />
+            <span className="hidden sm:inline">Ventas</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="metricas">
+          <p className="text-muted-foreground">metricas</p>
+        </TabsContent>
+
+        <TabsContent value="productos">
+          <p className="text-muted-foreground">productos</p>
+        </TabsContent>
+
+        <TabsContent value="ventas">
+          <p className="text-muted-foreground">ventas</p>
+        </TabsContent>
+      </Tabs>
     </ContenedorPagina>
   );
 }

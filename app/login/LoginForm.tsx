@@ -52,7 +52,7 @@ export default function LoginForm({}) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 variant="ghost"
-                className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 hover:bg-transparent"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5" />
@@ -85,8 +85,8 @@ export default function LoginForm({}) {
       <CardFooter className="mt-6">
         <Button
           type="submit"
-          className="w-full bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-          variant="secondary"
+          className="w-full cursor-pointer"
+          variant="default"
           disabled={pending}
         >
           {pending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}

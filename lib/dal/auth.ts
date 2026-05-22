@@ -6,7 +6,6 @@ import { decrypt } from '@/lib/session';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 
-// metodo que desencripta la información de sesión del JWT almacenado en la cookie
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get('session')?.value;
   const session = await decrypt(cookie);

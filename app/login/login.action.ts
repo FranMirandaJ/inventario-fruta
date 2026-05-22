@@ -22,7 +22,7 @@ export const login = async (
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: validatedFields.error.flatten((issue) => issue.message).fieldErrors,
       message: "Faltan campos por llenar o hay errores.",
     };
   }

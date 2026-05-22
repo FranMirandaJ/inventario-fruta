@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, User, LogOut, X } from "lucide-react";
 import { SessionPayload } from "@/lib/definitions";
@@ -35,15 +37,22 @@ export default function DashboardNavbar({
   const inicialesUsuario = obtenerInicialesAvatar(sessionData.nombre);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const enlaces = [
+    { label: "Inicio", href: "/dashboard" },
+    { label: "Productos", href: "/dashboard/productos" },
+    { label: "Ventas", href: "/dashboard/ventas" },
+  ];
+
+  const estaActivo = (href: string) => href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
   return (
     <nav className="px-4 py-2 bg-white/80 backdrop-blur-md sm:flex sm:items-center sm:justify-between shadow-xl ring-1 ring-gray-900/5 sticky top-0 z-50">
       <section className="flex w-full justify-between items-center sm:w-auto">
         <div className="flex items-center gap-3">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary  bg-green-600">
-            <span className="text-2xl font-extrabold text-primary-foreground text-white">
-              F
-            </span>
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-green-600">
+            <span className="text-2xl font-extrabold text-white">F</span>
           </div>
 
           <div className="flex flex-col justify-center">
@@ -74,33 +83,22 @@ export default function DashboardNavbar({
       >
         <Separator className="mb-2 bg-gray-300 sm:hidden" />
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-          <Button
-            variant={"ghost"}
-            className="text-gray-600 hover:bg-gray-200 w-full justify-start px-2 rounded hover:text-gray-900 sm:w-auto sm:justify-center"
-            onClick={() => {
-              setIsMenuOpen(false);
-            }}
-          >
-            Inicio
-          </Button>
-          <Button
-            variant={"ghost"}
-            className="text-gray-600 hover:bg-gray-200 w-full justify-start px-2 rounded hover:text-gray-900 sm:w-auto sm:justify-center"
-            onClick={() => {
-              setIsMenuOpen(false);
-            }}
-          >
-            Catálogos
-          </Button>
-          <Button
-            variant={"ghost"}
-            className="text-gray-600 hover:bg-gray-200 w-full justify-start px-2 rounded hover:text-gray-900 sm:w-auto sm:justify-center"
-            onClick={() => {
-              setIsMenuOpen(false);
-            }}
-          >
-            Ventas
-          </Button>
+          {enlaces.map((enlace) => (
+            <Button
+              key={enlace.href}
+              variant="ghost"
+              className={`w-full justify-start px-2 rounded sm:w-auto sm:justify-center transition-all duration-200 ${
+                estaActivo(enlace.href)
+                  ? "text-green-700 font-bold hover:bg-transparent hover:text-green-700"
+                  : "text-gray-600 hover:bg-gray-300 hover:text-gray-900"
+              }`}
+              asChild
+            >
+              <Link href={enlace.href} onClick={() => setIsMenuOpen(false)}>
+                {enlace.label}
+              </Link>
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -145,7 +143,7 @@ export default function DashboardNavbar({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            align="end" 
+            align="end"
             className="w-48 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl hidden sm:block"
           >
             <DropdownMenuItem className="cursor-pointer text-gray-700 hover:text-gray-900 hover:bg-gray-200">
@@ -153,11 +151,11 @@ export default function DashboardNavbar({
               <span>Mi perfil</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 hover:bg-red-200 hover:text-red-700"
-              onClick={async() => await cerrarSesion()}
+              onClick={async () => await cerrarSesion()}
             >
-              <LogOut className="mr-2 size-4" />
+              <LogOut className="mr-2 size-4" color="red" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
