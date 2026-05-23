@@ -69,7 +69,10 @@ export default function Modal({
         </DialogTrigger>
       )}
 
-      <DialogContent className={`flex flex-col max-h-[calc(100vh-12rem)] sm:max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}>
+      <DialogContent
+        className={`flex flex-col max-h-[calc(100vh-12rem)] sm:max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
 
         <DialogHeader className="flex flex-col sm:items-start gap-2">
           {headerImgSrc && (

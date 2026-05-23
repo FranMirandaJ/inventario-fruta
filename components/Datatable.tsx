@@ -133,7 +133,6 @@ export default function DataTable<T>({
   const columnasBuscables = searchableColumns.slice(0, 3); // Máximo 3 inputs
 
   return (
-    // Usamos fieldset y legend para replicar exactamente el borde con el título incrustado de tu imagen
     <fieldset className="w-full border border-gray-300 rounded-lg p-4 sm:p-6 bg-white mt-6 shadow-sm">
       {titulo && (
         <legend className="text-sm font-bold text-slate-800 px-2 uppercase tracking-wide">
@@ -145,10 +144,19 @@ export default function DataTable<T>({
       {columnasBuscables.length > 0 && (
         <div className="flex flex-col sm:flex-row justify-end gap-3 mb-6">
           {columnasBuscables.map((col) => {
+            const label = (
+              <label
+                className={`text-xs text-gray-500 font-medium ml-1 ${col.type !== "select" ? "invisible" : ""}`}
+              >
+                {col.title}
+              </label>
+            );
+
+            let control: React.ReactNode;
+
             if (col.type === "select") {
-              return (
+              control = (
                 <Select
-                  key={String(col.accessorKey)}
                   value={filtros[col.accessorKey] || "__all__"}
                   onValueChange={(val) =>
                     handleFilterChange(
@@ -157,7 +165,7 @@ export default function DataTable<T>({
                     )
                   }
                 >
-                  <SelectTrigger className="w-full sm:w-64">
+                  <SelectTrigger className="w-full text-sm">
                     <SelectValue placeholder={`Filtrar por ${col.title}...`} />
                   </SelectTrigger>
                   <SelectContent>
@@ -170,17 +178,14 @@ export default function DataTable<T>({
                   </SelectContent>
                 </Select>
               );
-            }
-
-            if (col.type === "combobox") {
+            } else if (col.type === "combobox") {
               const items = col.options || [];
               const currentValue = items.find(
                 (o) => o.value === (filtros[col.accessorKey] || "")
               );
 
-              return (
+              control = (
                 <Combobox
-                  key={String(col.accessorKey)}
                   items={items}
                   itemToStringLabel={(opt: { value: string; label: string }) => opt.label}
                   itemToStringValue={(opt: { value: string; label: string }) => opt.value}
@@ -192,7 +197,7 @@ export default function DataTable<T>({
                   <ComboboxInput
                     placeholder={`Filtrar por ${col.title}...`}
                     showClear
-                    className="w-full sm:w-64"
+                    className="w-full text-sm"
                   />
                   <ComboboxContent>
                     <ComboboxEmpty>Sin resultados</ComboboxEmpty>
@@ -206,16 +211,22 @@ export default function DataTable<T>({
                   </ComboboxContent>
                 </Combobox>
               );
+            } else {
+              control = (
+                <Input
+                  placeholder={`Filtrar por ${col.title}...`}
+                  value={filtros[col.accessorKey] || ""}
+                  onChange={(e) => handleFilterChange(col.accessorKey, e.target.value)}
+                  className="w-full"
+                />
+              );
             }
 
             return (
-              <Input
-                key={String(col.accessorKey)}
-                placeholder={`Filtrar por ${col.title}...`}
-                value={filtros[col.accessorKey] || ""}
-                onChange={(e) => handleFilterChange(col.accessorKey, e.target.value)}
-                className="w-full sm:w-64"
-              />
+              <div key={String(col.accessorKey)} className="flex flex-col gap-0.5 w-full sm:w-64">
+                {label}
+                {control}
+              </div>
             );
           })}
         </div>
