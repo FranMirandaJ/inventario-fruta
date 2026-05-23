@@ -20,9 +20,9 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { CategoriaOption } from "@/lib/dal/categorias";
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
-import { CrearProductoFormSchema } from "../_schemas/crear-producto.schema";
+import { CrearProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { toast } from "sonner";
 
 type PropsModalNuevoProducto = {
@@ -32,21 +32,24 @@ type PropsModalNuevoProducto = {
 function FormContent({
   categorias,
   onSuccess,
-  onPendingChange,
+  state,
+  action,
+  pending,
 }: {
   categorias: CategoriaOption[];
   onSuccess: () => void;
-  onPendingChange?: (pending: boolean) => void;
+  state: ProductoFormState;
+  action: (payload: FormData) => void;
+  pending: boolean;
 }) {
-  const [state, action, pending] = useActionState(crearProducto, undefined);
   const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const processedTimestamp = useRef(state?.timestamp);
 
   useEffect(() => {
-    onPendingChange?.(pending);
-  }, [pending, onPendingChange]);
-
-  useEffect(() => {
-    if (!state) return;
+    if (!state || !hasSubmitted) return;
+    if (processedTimestamp.current === state.timestamp) return;
+    processedTimestamp.current = state.timestamp;
 
     if (state.success) {
       toast.success(state.message);
@@ -54,9 +57,10 @@ function FormContent({
     } else {
       toast.error(state.message);
     }
-  }, [state?.timestamp, onSuccess]);
+  }, [state?.timestamp, onSuccess, hasSubmitted]);
 
-  const getFieldErrors = (field: string) => clientErrors[field] ?? state?.errors?.[field as keyof typeof state.errors] ?? undefined;
+  const getFieldErrors = (field: string) =>
+    clientErrors[field] ?? state?.errors?.[field as keyof typeof state.errors] ?? undefined;
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
@@ -78,6 +82,7 @@ function FormContent({
     }
 
     setClientErrors({});
+    setHasSubmitted(true);
   };
 
   return (
@@ -236,22 +241,15 @@ export default function ModalNuevoProducto({
 }: PropsModalNuevoProducto) {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  const [isPending, setIsPending] = useState(false);
-
-  const handlePendingChange = useCallback((p: boolean) => setIsPending(p), []);
+  const [state, action, pending] = useActionState(crearProducto, undefined);
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
 
-    // Resetear completamente el formulario cuando se cierra
     if (!isOpen) {
       setFormKey((prev) => prev + 1);
     }
   };
-
-  const handleSuccess = useCallback(() => {
-    setOpen(false);
-  }, []);
 
   return (
     <Modal
@@ -263,8 +261,8 @@ export default function ModalNuevoProducto({
       open={open}
       onOpenChange={handleOpenChange}
       footer={
-        <Button type="submit" form="crear-producto" disabled={isPending}>
-          {isPending ? (
+        <Button type="submit" form="crear-producto" disabled={pending}>
+          {pending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
               Guardando...
@@ -279,8 +277,10 @@ export default function ModalNuevoProducto({
       <FormContent
         key={formKey}
         categorias={categorias}
-        onSuccess={handleSuccess}
-        onPendingChange={handlePendingChange}
+        state={state}
+        action={action}
+        pending={pending}
+        onSuccess={() => setOpen(false)}
       />
     </Modal>
   );
