@@ -1,3 +1,4 @@
+import type { FormState } from "@/lib/form-state";
 import * as z from "zod";
 
 export const CrearProductoFormSchema = z.object({
@@ -28,24 +29,13 @@ export const CrearProductoFormSchema = z.object({
     .catch(1),
 });
 
-export type FormState =
-  | {
-      success: boolean;
-      errors?: {
-        nombre?: string[];
-        categoria?: string[];
-        precio?: string[];
-        stock_actual?: string[];
-        stock_minimo?: string[];
-      };
-      message?: string;
-      timestamp?: number;
-      inputs?: {
-        nombre: string;
-        categoria: string;
-        precio: string;
-        stock_actual: string;
-        stock_minimo: string;
-      };
-    }
-  | undefined;
+export type ProductoFormState = FormState<
+  {
+    nombre: string;
+    categoria: string;
+    precio: string;
+    stock_actual: string;
+    stock_minimo: string;
+  },
+  "nombre" | "categoria" | "precio" | "stock_actual" | "stock_minimo"
+>;

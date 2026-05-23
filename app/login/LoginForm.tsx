@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2, AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FieldError } from "@/components/ui/field";
 
 export default function LoginForm({}) {
 
@@ -27,13 +28,11 @@ export default function LoginForm({}) {
               type="email"
               placeholder="m@example.com"
               required
+              aria-invalid={!!state?.errors?.email}
+              disabled={pending}
             />
             {state?.errors?.email && (
-              <Label
-                className={state?.errors?.email ? "text-red-500" : "text-black"}
-              >
-                {state.errors.email[0]}
-              </Label>
+              <FieldError>{state.errors.email[0]}</FieldError>
             )}
           </div>
           <div className="grid gap-2">
@@ -47,6 +46,8 @@ export default function LoginForm({}) {
                 type={showPassword ? "text" : "password"}
                 className="pr-10"
                 required
+                aria-invalid={!!state?.errors?.password}
+                disabled={pending}
               />
               <Button
                 type="button"
@@ -63,13 +64,7 @@ export default function LoginForm({}) {
             </div>
 
             {state?.errors?.password && (
-              <Label
-                className={
-                  state?.errors?.password ? "text-red-500" : "text-black"
-                }
-              >
-                {state.errors.password[0]}
-              </Label>
+              <FieldError>{state.errors.password[0]}</FieldError>
             )}
 
             {state?.message && (

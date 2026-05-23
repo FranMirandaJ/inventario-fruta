@@ -3,19 +3,15 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { CrearProductoFormSchema, FormState } from "../_schemas/crear-producto.schema";
+import { CrearProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
 
 const log = createLogger("Productos/Crear");
 
-export const crearProducto = async (_state: FormState, formData: FormData): Promise<FormState> => {
+export const crearProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
 
-  const session = await verifySession();
-
-  if (!session?.isAuth){
-    throw new Error('Unauthorized')
-  }
+  await verifySession();
 
   const rawFormData  = {
     nombre: formData.get("nombre")?.toString() || "",

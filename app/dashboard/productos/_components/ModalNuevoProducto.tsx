@@ -22,6 +22,7 @@ import {
 import { CategoriaOption } from "@/lib/dal/categorias";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
+import { CrearProductoFormSchema } from "../_schemas/crear-producto.schema";
 import { toast } from "sonner";
 
 type PropsModalNuevoProducto = {
@@ -38,6 +39,7 @@ function FormContent({
   onPendingChange?: (pending: boolean) => void;
 }) {
   const [state, action, pending] = useActionState(crearProducto, undefined);
+  const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     onPendingChange?.(pending);
@@ -54,8 +56,32 @@ function FormContent({
     }
   }, [state?.timestamp, onSuccess]);
 
+  const getFieldErrors = (field: string) => clientErrors[field] ?? state?.errors?.[field as keyof typeof state.errors] ?? undefined;
+
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      nombre: formData.get("nombre")?.toString() || "",
+      categoria: formData.get("categoria")?.toString() || "",
+      precio: formData.get("precio")?.toString() || "",
+      stock_actual: formData.get("stock_actual")?.toString() || "",
+      stock_minimo: formData.get("stock_minimo")?.toString() || "",
+    };
+
+    const result = CrearProductoFormSchema.safeParse(data);
+    
+    if (!result.success) {
+      e.preventDefault();
+      setClientErrors(result.error.flatten((issue) => issue.message).fieldErrors);
+      toast.error("Faltan campos por llenar o hay errores.");
+      return;
+    }
+
+    setClientErrors({});
+  };
+
   return (
-    <form id="crear-producto" action={action}>
+    <form id="crear-producto" action={action} onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="nombre">
@@ -66,12 +92,12 @@ function FormContent({
             type="text"
             name="nombre"
             placeholder="Nombre del producto"
-            aria-invalid={!!state?.errors?.nombre}
+            aria-invalid={!!getFieldErrors("nombre")}
             disabled={pending}
             defaultValue={state?.inputs?.nombre || ""}
           />
-          {state?.errors?.nombre && (
-            <FieldError>{state.errors.nombre[0]}</FieldError>
+          {getFieldErrors("nombre") && (
+            <FieldError>{getFieldErrors("nombre")![0]}</FieldError>
           )}
         </Field>
 
@@ -89,7 +115,7 @@ function FormContent({
               id="categoria_combo"
               placeholder="Seleccione una categoría."
               showClear
-              aria-invalid={!!state?.errors?.categoria}
+              aria-invalid={!!getFieldErrors("categoria")}
               disabled={pending}
             />
             <ComboboxContent
@@ -106,8 +132,8 @@ function FormContent({
               </ComboboxList>
             </ComboboxContent>
           </Combobox>
-          {state?.errors?.categoria && (
-            <FieldError>{state.errors.categoria[0]}</FieldError>
+          {getFieldErrors("categoria") && (
+            <FieldError>{getFieldErrors("categoria")![0]}</FieldError>
           )}
         </Field>
 
@@ -126,7 +152,7 @@ function FormContent({
               inputMode="decimal"
               className="pl-7"
               placeholder="0.00"
-              aria-invalid={!!state?.errors?.precio}
+              aria-invalid={!!getFieldErrors("precio")}
               disabled={pending}
               defaultValue={state?.inputs?.precio || ""}
               onInput={(e) => {
@@ -141,8 +167,8 @@ function FormContent({
               }}
             />
           </div>
-          {state?.errors?.precio && (
-            <FieldError>{state.errors.precio[0]}</FieldError>
+          {getFieldErrors("precio") && (
+            <FieldError>{getFieldErrors("precio")![0]}</FieldError>
           )}
         </Field>
 
@@ -157,7 +183,7 @@ function FormContent({
             type="text"
             inputMode="numeric"
             placeholder="0"
-            aria-invalid={!!state?.errors?.stock_actual}
+            aria-invalid={!!getFieldErrors("stock_actual")}
             disabled={pending}
             defaultValue={state?.inputs?.stock_actual || ""}
             onInput={(e) => {
@@ -168,8 +194,8 @@ function FormContent({
               }
             }}
           />
-          {state?.errors?.stock_actual && (
-            <FieldError>{state.errors.stock_actual[0]}</FieldError>
+          {getFieldErrors("stock_actual") && (
+            <FieldError>{getFieldErrors("stock_actual")![0]}</FieldError>
           )}
         </Field>
 
@@ -185,7 +211,7 @@ function FormContent({
             type="text"
             inputMode="numeric"
             placeholder="1"
-            aria-invalid={!!state?.errors?.stock_minimo}
+            aria-invalid={!!getFieldErrors("stock_minimo")}
             disabled={pending}
             defaultValue={state?.inputs?.stock_minimo || ""}
             onInput={(e) => {
@@ -196,8 +222,8 @@ function FormContent({
               }
             }}
           />
-          {state?.errors?.stock_minimo && (
-            <FieldError>{state.errors.stock_minimo[0]}</FieldError>
+          {getFieldErrors("stock_minimo") && (
+            <FieldError>{getFieldErrors("stock_minimo")![0]}</FieldError>
           )}
         </Field>
       </FieldGroup>

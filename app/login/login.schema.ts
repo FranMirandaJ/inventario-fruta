@@ -1,3 +1,4 @@
+import type { FormState } from "@/lib/form-state";
 import * as z from "zod";
 
 export const LoginFormSchema = z.object({
@@ -12,12 +13,4 @@ export const LoginFormSchema = z.object({
     .trim(),
 });
 
-export type FormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
-  | undefined;
+export type LoginFormState = FormState<never, "email" | "password">;

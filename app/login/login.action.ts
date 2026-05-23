@@ -1,7 +1,7 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { LoginFormSchema, FormState } from "./login.schema";
+import { LoginFormSchema, type LoginFormState } from "./login.schema";
 import { prisma } from "@/lib/prisma";
 import { createLogger } from "@/lib/logger";
 
@@ -11,9 +11,9 @@ import { redirect } from "next/navigation";
 const log = createLogger("Auth/Login");
 
 export const login = async (
-  _state: FormState,
+  _state: LoginFormState,
   formData: FormData,
-): Promise<FormState> => {
+): Promise<LoginFormState> => {
 
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.get("email"),
@@ -22,8 +22,10 @@ export const login = async (
 
   if (!validatedFields.success) {
     return {
+      success: false,
       errors: validatedFields.error.flatten((issue) => issue.message).fieldErrors,
       message: "Faltan campos por llenar o hay errores.",
+      timestamp: Date.now(),
     };
   }
 
@@ -36,7 +38,9 @@ export const login = async (
 
     if (!usuario) {
       return {
+        success: false,
         message: "Correo o contraseña incorrectos.",
+        timestamp: Date.now(),
       };
     }
 
@@ -44,7 +48,9 @@ export const login = async (
 
     if (!passwordValido) {
       return {
+        success: false,
         message: "Correo o contraseña incorrectos.",
+        timestamp: Date.now(),
       };
     }
 
@@ -53,7 +59,9 @@ export const login = async (
   } catch (error) {
     log.error(`${error instanceof Error ? error.message : String(error)}`);
     return {
+      success: false,
       message: "Ocurrió un error en el servidor. Intenta de nuevo.",
+      timestamp: Date.now(),
     };
   }
 
