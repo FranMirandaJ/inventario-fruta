@@ -12,6 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { capitalizeFirstLetter, capitalizeWords, normalizeForSearch } from "@/lib/text";
+import { formatCurrency } from "@/lib/money";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 
 // Definimos la forma que tendrán nuestras columnas
 export type ColumnDef<T> = {
@@ -19,7 +36,25 @@ export type ColumnDef<T> = {
   accessorKey: keyof T; // La llave del objeto de datos
   sortable?: boolean; // ¿Se puede ordenar haciendo clic en el título?
   renderCell?: (item: T) => React.ReactNode; // Para formatear cosas personalizadas (como botones de acción)
+  formatter?: "capitalize" | "capitalize-words" | "currency"; // Formateo automático del valor
 };
+
+function formatCellValue<T>(col: ColumnDef<T>, item: T): React.ReactNode {
+  if (col.renderCell) return col.renderCell(item);
+
+  const raw = item[col.accessorKey];
+
+  switch (col.formatter) {
+    case "capitalize":
+      return capitalizeFirstLetter(String(raw ?? ""));
+    case "capitalize-words":
+      return capitalizeWords(String(raw ?? ""));
+    case "currency":
+      return formatCurrency(Number(raw) || 0);
+    default:
+      return String(raw ?? "");
+  }
+}
 
 interface DataTableProps<T> {
   titulo?: string;
@@ -29,6 +64,8 @@ interface DataTableProps<T> {
   searchableColumns?: Array<{
     accessorKey: keyof T;
     title: string;
+    type?: "text" | "select" | "combobox";
+    options?: Array<{ value: string; label: string }>;
   }>;
 }
 
@@ -48,8 +85,8 @@ export default function DataTable<T>({
     return data.filter((item) => {
       return Object.entries(filtros).every(([key, value]) => {
         if (!value) return true;
-        const itemValue = String(item[key as keyof T] || "").toLowerCase();
-        return itemValue.includes((value as string).toLowerCase());
+        const itemValue = normalizeForSearch(String(item[key as keyof T] ?? ""));
+        return itemValue.includes(normalizeForSearch(value as string));
       });
     });
   }, [data, filtros]);
@@ -58,10 +95,15 @@ export default function DataTable<T>({
   const sortedData = useMemo(() => {
     if (!sortConfig) return filteredData;
     return [...filteredData].sort((a, b) => {
-      const valA = String(a[sortConfig.key] || "").toLowerCase();
-      const valB = String(b[sortConfig.key] || "").toLowerCase();
-      if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-      if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+      const valA = a[sortConfig.key];
+      const valB = b[sortConfig.key];
+      if (typeof valA === "number" && typeof valB === "number") {
+        return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+      }
+      const strA = String(valA ?? "").toLowerCase();
+      const strB = String(valB ?? "").toLowerCase();
+      if (strA < strB) return sortConfig.direction === "asc" ? -1 : 1;
+      if (strA > strB) return sortConfig.direction === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredData, sortConfig]);
@@ -102,15 +144,80 @@ export default function DataTable<T>({
       {/* --- ZONA DE BÚSQUEDA --- */}
       {columnasBuscables.length > 0 && (
         <div className="flex flex-col sm:flex-row justify-end gap-3 mb-6">
-          {columnasBuscables.map((col) => (
-            <Input
-              key={String(col.accessorKey)}
-              placeholder={`Filtrar por ${col.title}...`}
-              value={filtros[col.accessorKey] || ""}
-              onChange={(e) => handleFilterChange(col.accessorKey, e.target.value)}
-              className="w-full sm:w-64"
-            />
-          ))}
+          {columnasBuscables.map((col) => {
+            if (col.type === "select") {
+              return (
+                <Select
+                  key={String(col.accessorKey)}
+                  value={filtros[col.accessorKey] || "__all__"}
+                  onValueChange={(val) =>
+                    handleFilterChange(
+                      col.accessorKey,
+                      val === "__all__" ? "" : val
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-full sm:w-64">
+                    <SelectValue placeholder={`Filtrar por ${col.title}...`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">Todos</SelectItem>
+                    {col.options?.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              );
+            }
+
+            if (col.type === "combobox") {
+              const items = col.options || [];
+              const currentValue = items.find(
+                (o) => o.value === (filtros[col.accessorKey] || "")
+              );
+
+              return (
+                <Combobox
+                  key={String(col.accessorKey)}
+                  items={items}
+                  itemToStringLabel={(opt: { value: string; label: string }) => opt.label}
+                  itemToStringValue={(opt: { value: string; label: string }) => opt.value}
+                  value={currentValue ?? null}
+                  onValueChange={(opt: { value: string; label: string } | null) =>
+                    handleFilterChange(col.accessorKey, opt?.value ?? "")
+                  }
+                >
+                  <ComboboxInput
+                    placeholder={`Filtrar por ${col.title}...`}
+                    showClear
+                    className="w-full sm:w-64"
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>Sin resultados</ComboboxEmpty>
+                    <ComboboxList>
+                      {(opt: { value: string; label: string }) => (
+                        <ComboboxItem key={opt.value} value={opt}>
+                          {opt.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              );
+            }
+
+            return (
+              <Input
+                key={String(col.accessorKey)}
+                placeholder={`Filtrar por ${col.title}...`}
+                value={filtros[col.accessorKey] || ""}
+                onChange={(e) => handleFilterChange(col.accessorKey, e.target.value)}
+                className="w-full sm:w-64"
+              />
+            );
+          })}
         </div>
       )}
 
@@ -152,7 +259,7 @@ export default function DataTable<T>({
                 <TableRow key={rowIndex} className="border-b border-gray-300 hover:bg-green-100 bg-white transition-colors">
                   {columns.map((col) => (
                     <TableCell key={String(col.accessorKey)} className="py-4 text-gray-700">
-                      {col.renderCell ? col.renderCell(row) : String(row[col.accessorKey] ?? "")}
+                      {formatCellValue(col, row)}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -178,7 +285,7 @@ export default function DataTable<T>({
                 >
                   <span className="text-sm font-semibold text-gray-500">{col.header}</span>
                   <div className="text-sm text-gray-900 text-right">
-                    {col.renderCell ? col.renderCell(row) : String(row[col.accessorKey] ?? "")}
+                    {formatCellValue(col, row)}
                   </div>
                 </div>
               ))}
