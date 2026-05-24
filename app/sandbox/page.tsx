@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import ContenedorPagina from "../dashboard/_components/ContenedorPagina";
-import AutoBreadcrumb from "./../../components/AutoBreadcrumb";
+import AutoBreadcrumb from "../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Package, History } from "lucide-react";
@@ -58,8 +58,8 @@ export default function DashboardPage() {
 
   return (
     <ContenedorPagina
-      titulo="Pruebas"
-      descripcion="Esto es una prueba para probar las cosas"
+      titulo="Sandbox"
+      descripcion="Esto es una página de prueba para probar componentes"
       acciones={
         <>
           <Button variant={"outline"}>Hola</Button>
@@ -72,14 +72,14 @@ export default function DashboardPage() {
       <p>esto es una prueba</p>
       <p>esto es una prueba</p>
 
-       <Modal 
+      <Modal
         title="¿Estás completamente seguro?"
         description="Esta acción no se puede deshacer y borrará los datos permanentemente."
         textTriggerButton="Eliminar"
         iconTriggerButton={<Trash className="size-4" />}
-        triggerButtonVariant="destructive" 
+        triggerButtonVariant="destructive"
         footer={<Button variant="destructive">Sí, eliminar</Button>}
-        />
+      />
 
       <TablaPeriodos data={dataDePrueba} />
       <Tabs defaultValue="metricas" className="w-full">

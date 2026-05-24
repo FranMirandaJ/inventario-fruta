@@ -1,8 +1,8 @@
-"use client"; 
+"use client";
 
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
-import DataTable, { ColumnDef } from "./../../../components/Datatable"; 
+import { Eye, Pencil, Ban, Trash2, CheckCircleIcon } from "lucide-react";
+import DataTable, { ColumnDef } from "../../../components/Datatable";
 
 export interface Periodo {
   id: string;
@@ -30,16 +30,22 @@ const misColumnas: ColumnDef<Periodo>[] = [
   {
     header: "Acciones",
     accessorKey: "id",
-    renderCell: (item) => (
-      <div className="flex items-center gap-1">
-        <Button variant="outline" size="icon" className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400">
+    renderCell: () => (
+      <div className="flex items-center gap-1 flex-wrap">
+        <Button variant="outline" size="icon" color="blue" title="Ver detalles">
           <Eye className="size-4" />
         </Button>
-        <Button variant="outline" size="icon" className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400">
+        <Button variant="outline" size="icon" color="green" title="Activar">
+          <CheckCircleIcon className="size-4" />
+        </Button>
+        <Button variant="outline" size="icon" color="red" title="Desactivar">
+          <Ban className="size-4" />
+        </Button>
+        <Button variant="outline" size="icon" title="Editar">
           <Pencil className="size-4" />
         </Button>
-        <Button variant="outline" size="icon" className="hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20">
-          <Trash2 className="size-4 text-destructive" />
+        <Button variant="outline" size="icon" color="red" title="Eliminar">
+          <Trash2 className="size-4" />
         </Button>
       </div>
     ),
