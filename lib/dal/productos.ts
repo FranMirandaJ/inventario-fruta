@@ -22,8 +22,9 @@ export const obtenerProductos = cache(async (): Promise<ProductoRow[]> => {
       categoria: { select: { id: true, nombre: true } },
     },
     orderBy: [
-      { categoria: { nombre: "asc" } }, // Primero agrupa por Categoría (A-Z)
-      { nombre: "asc" }                 // Luego por Nombre del producto (A-Z)
+      { activo: "desc" },               // Activos primero
+      { categoria: { nombre: "asc" } }, // Luego agrupa por Categoría (A-Z)
+      { nombre: "asc" }                 // Finalmente por Nombre (A-Z)
     ]
   });
 

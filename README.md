@@ -27,7 +27,7 @@ Este proyecto está construido con tecnologías modernas para garantizar rendimi
 - **[Tailwind CSS v4](https://tailwindcss.com/)** - Framework de utilidades CSS
 - **[shadcn/ui](https://ui.shadcn.com/)** - Componentes de UI accesibles y personalizables
 - **[Lucide React](https://lucide.dev/)** - Iconos modernos
-- **[next-themes](https://github.com/pacocoursey/next-themes)** - Soporte para tema claro/oscuro
+- **[@teispace/next-themes](https://github.com/teispace/next-themes)** - Soporte para tema claro/oscuro
 
 ### Backend
 - **[Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)** - API serverless integrada

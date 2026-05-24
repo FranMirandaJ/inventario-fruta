@@ -8,7 +8,7 @@ import {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-4 bg-gray-100">
+    <div className="flex min-h-dvh flex-col items-center justify-center px-4 bg-muted">
 
       {/* MARCA */}
       <div className="mb-8 flex flex-col items-center gap-3">
@@ -26,7 +26,7 @@ export default function LoginPage() {
       </div>
 
       {/* TARJETA */}
-      <Card className="w-full max-w-sm bg-white">
+      <Card className="w-full max-w-sm bg-card">
         <CardHeader className="">
           <CardTitle className="text-center">Iniciar sesión</CardTitle>
           <CardDescription className="text-center">Introduce tus datos para continuar</CardDescription>

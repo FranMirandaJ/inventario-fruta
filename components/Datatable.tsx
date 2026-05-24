@@ -30,13 +30,12 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 
-// Definimos la forma que tendrán nuestras columnas
 export type ColumnDef<T> = {
-  header: string; // Título de la columna
-  accessorKey: keyof T; // La llave del objeto de datos
-  sortable?: boolean; // ¿Se puede ordenar haciendo clic en el título?
-  renderCell?: (item: T) => React.ReactNode; // Para formatear cosas personalizadas (como botones de acción)
-  formatter?: "capitalize" | "capitalize-words" | "currency"; // Formateo automático del valor
+  header: string;
+  accessorKey: keyof T;
+  sortable?: boolean;
+  renderCell?: (item: T) => React.ReactNode;
+  formatter?: "capitalize" | "capitalize-words" | "currency";
 };
 
 function formatCellValue<T>(col: ColumnDef<T>, item: T): React.ReactNode {
@@ -80,7 +79,6 @@ export default function DataTable<T>({
   const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: "asc" | "desc" } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 1. Lógica de Filtrado (Busca en las columnas que marcaste como searchable)
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       return Object.entries(filtros).every(([key, value]) => {
@@ -91,7 +89,6 @@ export default function DataTable<T>({
     });
   }, [data, filtros]);
 
-  // 2. Lógica de Ordenamiento
   const sortedData = useMemo(() => {
     if (!sortConfig) return filteredData;
     return [...filteredData].sort((a, b) => {
@@ -108,18 +105,16 @@ export default function DataTable<T>({
     });
   }, [filteredData, sortConfig]);
 
-  // 3. Lógica de Paginación
   const totalPages = Math.ceil(sortedData.length / itemsPerPage) || 1;
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return sortedData.slice(start, start + itemsPerPage);
   }, [sortedData, currentPage, itemsPerPage]);
 
-  // Manejadores
   const handleSort = (key: keyof T) => {
     setSortConfig((prev) => {
       if (prev?.key === key) {
-        return prev.direction === "asc" ? { key, direction: "desc" } : null; // asc -> desc -> sin orden
+        return prev.direction === "asc" ? { key, direction: "desc" } : null;
       }
       return { key, direction: "asc" };
     });
@@ -127,15 +122,15 @@ export default function DataTable<T>({
 
   const handleFilterChange = (key: keyof T, value: string) => {
     setFiltros((prev) => ({ ...prev, [key]: value }));
-    setCurrentPage(1); // Regresa a la página 1 al buscar
+    setCurrentPage(1);
   };
 
-  const columnasBuscables = searchableColumns.slice(0, 3); // Máximo 3 inputs
+  const columnasBuscables = searchableColumns.slice(0, 3);
 
   return (
-    <fieldset className="w-full border border-gray-300 rounded-lg p-4 sm:p-6 bg-white mt-6 shadow-sm">
+    <fieldset className="w-full min-w-0 border border-border rounded-lg p-4 sm:p-6 bg-background mt-6 shadow-sm">
       {titulo && (
-        <legend className="text-sm font-bold text-slate-800 px-2 uppercase tracking-wide">
+        <legend className="text-sm font-bold text-foreground px-2 uppercase tracking-wide">
           {titulo}
         </legend>
       )}
@@ -146,7 +141,7 @@ export default function DataTable<T>({
           {columnasBuscables.map((col) => {
             const label = (
               <label
-                className={`text-xs text-gray-500 font-medium ml-1 ${col.type !== "select" ? "invisible" : ""}`}
+                className={`text-xs text-muted-foreground font-medium ml-1 ${col.type !== "select" ? "invisible" : ""}`}
               >
                 {col.title}
               </label>
@@ -224,7 +219,7 @@ export default function DataTable<T>({
             }
 
             return (
-              <div key={String(col.accessorKey)} className="flex flex-col gap-0.5 w-full sm:w-64">
+              <div key={String(col.accessorKey)} className="flex flex-col gap-0.5 flex-1 min-w-0">
                 {label}
                 {control}
               </div>
@@ -234,15 +229,15 @@ export default function DataTable<T>({
       )}
 
       {/* --- VISTA ESCRITORIO --- */}
-      <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
+      <div className="hidden lg:block overflow-x-auto rounded-lg border border-border">
         <Table>
-          <TableHeader className="bg-[#00a63d]">
+          <TableHeader className="bg-[#00a63d] dark:bg-green-800">
             <TableRow className="hover:bg-transparent">
               {columns.map((col) => (
                 <TableHead
                   key={String(col.accessorKey)}
                   className={`text-white uppercase font-semibold py-3 h-auto ${
-                    col.sortable ? "cursor-pointer hover:bg-[#008A33] transition-colors" : ""
+                    col.sortable ? "cursor-pointer hover:bg-[#008A33] transition-colors dark:hover:bg-green-700" : ""
                   }`}
                   onClick={() => col.sortable && handleSort(col.accessorKey)}
                 >
@@ -262,15 +257,15 @@ export default function DataTable<T>({
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center text-gray-500">
+                <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">
                   No se encontraron resultados.
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((row, rowIndex) => (
-                <TableRow key={rowIndex} className="border-b border-gray-300 hover:bg-green-100 bg-white transition-colors">
+                <TableRow key={rowIndex} className="border-b border-border hover:bg-green-100 bg-background transition-colors dark:hover:bg-green-900/40">
                   {columns.map((col) => (
-                    <TableCell key={String(col.accessorKey)} className="py-4 text-gray-700">
+                    <TableCell key={String(col.accessorKey)} className="py-4 text-muted-foreground">
                       {formatCellValue(col, row)}
                     </TableCell>
                   ))}
@@ -282,21 +277,21 @@ export default function DataTable<T>({
       </div>
 
       {/* --- VISTA MÓVIL (Tarjetas Apiladas) --- */}
-      <div className="grid grid-cols-1 gap-4 md:hidden">
+      <div className="grid grid-cols-1 gap-4 lg:hidden">
         {paginatedData.length === 0 ? (
-          <div className="text-center text-gray-500 py-8 border rounded-lg bg-gray-50">
+          <div className="text-center text-muted-foreground py-8 border rounded-lg bg-muted">
             No se encontraron resultados.
           </div>
         ) : (
           paginatedData.map((row, rowIndex) => (
-            <div key={rowIndex} className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
+            <div key={rowIndex} className="border border-border rounded-xl bg-background shadow-sm overflow-hidden">
               {columns.map((col, colIndex) => (
                 <div 
                   key={String(col.accessorKey)} 
-                  className={`flex gap-4 items-center justify-between p-4 ${colIndex !== columns.length - 1 ? 'border-b border-gray-100' : ''}`}
+                  className={`flex gap-4 items-center justify-between p-4 ${colIndex !== columns.length - 1 ? 'border-b border-border' : ''}`}
                 >
-                  <span className="text-sm font-semibold text-gray-500">{col.header}</span>
-                  <div className="text-sm text-gray-900 text-right">
+                  <span className="text-sm font-semibold text-muted-foreground">{col.header}</span>
+                  <div className="text-sm text-foreground text-right">
                     {formatCellValue(col, row)}
                   </div>
                 </div>
@@ -311,7 +306,7 @@ export default function DataTable<T>({
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="size-10 p-0 transition-colors hover:bg-green-50 hover:text-green-700 hover:border-green-600 cursor-pointer"
+            className="size-10 p-0 transition-colors hover:bg-green-50 hover:text-green-700 hover:border-green-600 cursor-pointer dark:hover:bg-green-900/40 dark:hover:text-green-400 dark:hover:border-green-500"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
@@ -319,14 +314,14 @@ export default function DataTable<T>({
           </Button>
           <Button
             variant="outline"
-            className="size-10 p-0 transition-colors hover:bg-green-50 hover:text-green-700 hover:border-green-600 cursor-pointer"
+            className="size-10 p-0 transition-colors hover:bg-green-50 hover:text-green-700 hover:border-green-600 cursor-pointer dark:hover:bg-green-900/40 dark:hover:text-green-400 dark:hover:border-green-500"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
             <ChevronRight className="size-4" />
           </Button>
         </div>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-muted-foreground">
           Página {currentPage} de {totalPages}
         </span>
       </div>

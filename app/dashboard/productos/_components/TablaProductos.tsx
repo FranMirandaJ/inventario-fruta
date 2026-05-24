@@ -46,23 +46,22 @@ const columns: ColumnDef<ProductoRow>[] = [
   {
     header: "Acciones",
     accessorKey: "id",
-    renderCell: (p) => (
+    renderCell: () => (
       <div className="flex items-center gap-1">
         <Button
           variant="outline"
-          className="hover:bg-slate-200"
           size="icon"
           onClick={() => {}}
         >
-          <Pencil className="size-4 text-slate-700" />
+          <Pencil className="size-4" />
         </Button>
         <Button
           variant="outline"
-          className="hover:bg-red-200"
           size="icon"
+          className="hover:bg-destructive/10"
           onClick={() => {}}
         >
-          <Trash2 className="size-4 text-red-500" />
+          <Trash2 className="size-4 text-destructive" />
         </Button>
       </div>
     ),
@@ -86,19 +85,18 @@ export default function TablaProductos({ data, categorias }: Props) {
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              className="hover:bg-slate-200"
               size="icon"
               onClick={() => setEditingProduct(p)}
             >
-              <Pencil className="size-4 text-slate-700" />
+              <Pencil className="size-4" />
             </Button>
             <Button
               variant="outline"
-              className="hover:bg-red-200"
               size="icon"
+              className="hover:bg-destructive/10"
               onClick={() => {}}
             >
-              <Trash2 className="size-4 text-red-500" />
+              <Trash2 className="size-4 text-destructive" />
             </Button>
           </div>
         ),
