@@ -190,6 +190,7 @@ export default function DataTable<T>({
                   itemToStringLabel={(opt: { value: string; label: string }) => opt.label}
                   itemToStringValue={(opt: { value: string; label: string }) => opt.value}
                   value={currentValue ?? null}
+                  autoHighlight={true}
                   onValueChange={(opt: { value: string; label: string } | null) =>
                     handleFilterChange(col.accessorKey, opt?.value ?? "")
                   }
@@ -292,7 +293,7 @@ export default function DataTable<T>({
               {columns.map((col, colIndex) => (
                 <div 
                   key={String(col.accessorKey)} 
-                  className={`flex items-center justify-between p-4 ${colIndex !== columns.length - 1 ? 'border-b border-gray-100' : ''}`}
+                  className={`flex gap-4 items-center justify-between p-4 ${colIndex !== columns.length - 1 ? 'border-b border-gray-100' : ''}`}
                 >
                   <span className="text-sm font-semibold text-gray-500">{col.header}</span>
                   <div className="text-sm text-gray-900 text-right">

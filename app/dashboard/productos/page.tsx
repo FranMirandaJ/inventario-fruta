@@ -18,7 +18,7 @@ export default async function ProductosPage() {
         <ModalNuevoProducto categorias={opcionesCategorias}/>
       }
     >
-      <TablaProductos data={productos} />
+      <TablaProductos data={productos} categorias={opcionesCategorias} />
     </ContenedorPagina>
   );
 }

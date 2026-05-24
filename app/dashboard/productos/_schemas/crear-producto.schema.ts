@@ -1,7 +1,7 @@
 import type { FormState } from "@/lib/form-state";
 import * as z from "zod";
 
-export const CrearProductoFormSchema = z.object({
+export const ProductoFormSchema = z.object({
   nombre: z
     .string()
     .trim()

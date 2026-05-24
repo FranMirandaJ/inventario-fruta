@@ -5,6 +5,7 @@ import { LoginFormSchema, type LoginFormState } from "./login.schema";
 import { prisma } from "@/lib/prisma";
 import { createLogger } from "@/lib/logger";
 
+import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { createSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
@@ -58,9 +59,16 @@ export const login = async (
 
   } catch (error) {
     log.error(`${error instanceof Error ? error.message : String(error)}`);
+
+    let message = "Ocurrió un error en el servidor. Intenta de nuevo.";
+
+    if (error instanceof PrismaClientInitializationError) {
+      message = "Error de conexión. Verifica tu conexión e intenta de nuevo.";
+    }
+
     return {
       success: false,
-      message: "Ocurrió un error en el servidor. Intenta de nuevo.",
+      message,
       timestamp: Date.now(),
     };
   }
