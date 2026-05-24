@@ -23,7 +23,7 @@ const columns: ColumnDef<ProductoRow>[] = [
     header: "Categoría",
     accessorKey: "categoria_nombre",
     sortable: true,
-    formatter: "capitalize-words",
+    formatter: "capitalize",
   },
   {
     header: "Precio",
@@ -51,6 +51,7 @@ const columns: ColumnDef<ProductoRow>[] = [
         <Button
           variant="outline"
           size="icon"
+          className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400"
           onClick={() => {}}
         >
           <Pencil className="size-4" />
@@ -58,7 +59,7 @@ const columns: ColumnDef<ProductoRow>[] = [
         <Button
           variant="outline"
           size="icon"
-          className="hover:bg-destructive/10"
+          className="hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
           onClick={() => {}}
         >
           <Trash2 className="size-4 text-destructive" />
@@ -86,6 +87,7 @@ export default function TablaProductos({ data, categorias }: Props) {
             <Button
               variant="outline"
               size="icon"
+              className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400"
               onClick={() => setEditingProduct(p)}
             >
               <Pencil className="size-4" />
@@ -93,7 +95,7 @@ export default function TablaProductos({ data, categorias }: Props) {
             <Button
               variant="outline"
               size="icon"
-              className="hover:bg-destructive/10"
+              className="hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
               onClick={() => {}}
             >
               <Trash2 className="size-4 text-destructive" />

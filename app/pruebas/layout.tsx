@@ -14,7 +14,7 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <div className="fixed inset-0 -z-10 bg-gray-50">
+      <div className="fixed inset-0 -z-10 bg-gray-50 dark:bg-gray-950">
         <Image
           src="/fondo.jpg"
           alt="Background"

@@ -179,8 +179,8 @@ export default function DashboardNavbar({
             align="end"
             className="w-48 bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-xl"
           >
-            <DropdownMenuItem className="cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted">
-              <User className="mr-2 size-4" />
+            <DropdownMenuItem className="group cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted">
+              <User className="mr-2 size-4 text-muted-foreground group-hover:text-foreground" />
               <span>Mi perfil</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

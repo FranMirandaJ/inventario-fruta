@@ -1,7 +1,7 @@
 "use client"; 
 
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import DataTable, { ColumnDef } from "./../../../components/Datatable"; 
 
 export interface Periodo {
@@ -31,10 +31,17 @@ const misColumnas: ColumnDef<Periodo>[] = [
     header: "Acciones",
     accessorKey: "id",
     renderCell: (item) => (
-      <Button variant="outline" size="sm" className="bg-background text-blue-600 border-blue-200 hover:bg-blue-50">
-        <Eye className="mr-2 size-4" />
-        Ver
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button variant="outline" size="icon" className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400">
+          <Eye className="size-4" />
+        </Button>
+        <Button variant="outline" size="icon" className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400">
+          <Pencil className="size-4" />
+        </Button>
+        <Button variant="outline" size="icon" className="hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20">
+          <Trash2 className="size-4 text-destructive" />
+        </Button>
+      </div>
     ),
   },
 ];
