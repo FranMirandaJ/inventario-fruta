@@ -1,9 +1,13 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
 import type { ProductoRow } from "@/lib/dal/productos";
 import { capitalizeFirstLetter } from "@/lib/text";
+import { cambiarEstadoProducto } from "../_actions/actualizar-estado-producto";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   product: ProductoRow | null;
@@ -21,6 +25,18 @@ export default function AlertModalEstadoProducto({
 
   const activating = !product.activo;
 
+  const [state, action, pending] = useActionState(cambiarEstadoProducto, undefined);
+
+  useEffect(() => {
+    if (!state) return;
+    if (state.success) {
+      toast.success(state.message);
+      onOpenChange(false);
+    } else {
+      toast.error(state.message);
+    }
+  }, [state]);
+
   return (
     <Modal
       title={activating ? "Activar producto" : "Desactivar producto"}
@@ -33,14 +49,24 @@ export default function AlertModalEstadoProducto({
       open={open}
       onOpenChange={onOpenChange}
       footer={
-        <>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button variant={activating ? "default" : "destructive"} onClick={() => onOpenChange(false)}>
-            {activating ? "Activar" : "Desactivar"}
-          </Button>
-        </>
+        <form action={action}>
+          <input type="hidden" name="id" value={product.id} />
+          <div className="flex gap-2">
+            <Button disabled={pending} type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant={activating ? "default" : "destructive"}>
+              {pending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    {activating ? "Activando..." : "Desactivando..."}
+                  </>
+                ) : (
+                  activating ? "Activar" : "Desactivar"
+                )}
+            </Button>
+          </div>
+        </form>
       }
     />
   );

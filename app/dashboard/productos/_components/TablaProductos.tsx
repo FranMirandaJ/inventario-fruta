@@ -63,7 +63,7 @@ export default function TablaProductos({ data, categorias }: Props) {
     {
       header: "Acciones",
       renderCell: (p: ProductoRow) => (
-        <div className="flex items-center gap-1 flex-wrap">
+        <div className="flex items-center flex-wrap gap-2">
           <Button
             variant="outline"
             size="icon"

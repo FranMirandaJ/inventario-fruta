@@ -31,7 +31,7 @@ const misColumnas: ColumnDef<Periodo>[] = [
     header: "Acciones",
     accessorKey: "id",
     renderCell: () => (
-      <div className="flex items-center gap-1 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap">
         <Button variant="outline" size="icon" color="blue" title="Ver detalles">
           <Eye className="size-4" />
         </Button>

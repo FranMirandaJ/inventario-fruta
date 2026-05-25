@@ -18,7 +18,7 @@ export const actualizarProducto = async (_state: ProductoFormState, formData: Fo
   if (!id || isNaN(id)) {
     return {
       success: false,
-      message: "ID de producto no válido.",
+      message: "Producto no válido.",
       timestamp: Date.now(),
     };
   }
