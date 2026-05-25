@@ -1,11 +1,12 @@
 "use client";
 import { useMemo, useState } from "react";
-import { CheckCircle2, XCircle, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle2, XCircle, Pencil, Trash2, CheckCircleIcon, Ban, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { ColumnDef } from "@/components/Datatable";
 import type { ProductoRow } from "@/lib/dal/productos";
 import type { CategoriaOption } from "@/lib/dal/categorias";
 import ModalEditarProducto from "./ModalEditarProducto";
+import AlertModalEstadoProducto from "./AlertModalEstadoProducto";
 
 interface Props {
   data: ProductoRow[];
@@ -70,7 +71,14 @@ const columns: ColumnDef<ProductoRow>[] = [
 ];
 
 export default function TablaProductos({ data, categorias }: Props) {
-  const [editingProduct, setEditingProduct] = useState<ProductoRow | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductoRow | null>(
+    null,
+  );
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [togglingProduct, setTogglingProduct] = useState<ProductoRow | null>(
+    null,
+  );
+  const [toggleModalOpen, setToggleModalOpen] = useState(false);
 
   const categoriasOptions = useMemo(() => {
     const unique = [...new Set(data.map((p) => p.categoria_nombre))];
@@ -88,17 +96,17 @@ export default function TablaProductos({ data, categorias }: Props) {
               variant="outline"
               size="icon"
               className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400"
-              onClick={() => setEditingProduct(p)}
+              title="Editar"
+              onClick={() => { setEditingProduct(p); setEditModalOpen(true); }}
             >
               <Pencil className="size-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
-              onClick={() => {}}
-            >
-              <Trash2 className="size-4 text-destructive" />
+            <Button variant="outline" size="icon" color={p.activo ? "red" : "green"} title={p.activo ? "Desactivar" : "Activar"} onClick={() => { setTogglingProduct(p); setToggleModalOpen(true); }}>
+              {p.activo ? (
+                <Ban className="size-4" />
+              ) : (
+                <CheckCircleIcon className="size-4" />
+              )}
             </Button>
           </div>
         ),
@@ -134,16 +142,22 @@ export default function TablaProductos({ data, categorias }: Props) {
         ]}
       />
 
-      {editingProduct && (
-        <ModalEditarProducto
-          product={editingProduct}
-          categorias={categorias}
-          open={true}
-          onOpenChange={(open) => {
-            if (!open) setEditingProduct(null);
-          }}
-        />
-      )}
+      <ModalEditarProducto
+        product={editingProduct}
+        categorias={categorias}
+        open={editModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setEditModalOpen(false);
+        }}
+      />
+
+      <AlertModalEstadoProducto
+        product={togglingProduct}
+        open={toggleModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setToggleModalOpen(false);
+        }}
+      />
 
     </>
   );

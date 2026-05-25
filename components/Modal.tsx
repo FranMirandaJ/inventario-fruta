@@ -19,7 +19,7 @@ export type ModalProps = {
   iconTriggerButton?: ReactNode;
   triggerButtonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   title: string;
-  description?: string;
+  description?: ReactNode;
   children?: ReactNode;
   footer?: ReactNode;
   headerImgSrc?: string; 

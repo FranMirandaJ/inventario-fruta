@@ -10,7 +10,7 @@ import FormProducto from "./FormProducto";
 import type { ProductoRow } from "@/lib/dal/productos";
 
 type Props = {
-  product: ProductoRow;
+  product: ProductoRow | null;
   categorias: CategoriaOption[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -23,14 +23,6 @@ export default function ModalEditarProducto({
   onOpenChange,
 }: Props) {
   const [state, action, pending] = useActionState(actualizarProducto, undefined);
-
-  const initialData = {
-    nombre: product.nombre,
-    categoria: String(product.categoria_id),
-    precio: String(product.precio),
-    stock_actual: String(product.stock_actual),
-    stock_minimo: String(product.stock_minimo),
-  };
 
   return (
     <Modal
@@ -53,17 +45,25 @@ export default function ModalEditarProducto({
       }
       headerImgSrc="/icecream.svg"
     >
-      <FormProducto
-        key={product.id}
-        mode="edit"
-        productoId={product.id}
-        initialData={initialData}
-        categorias={categorias}
-        state={state}
-        action={action}
-        pending={pending}
-        onSuccess={() => onOpenChange(false)}
-      />
+      {product && (
+        <FormProducto
+          key={product.id}
+          mode="edit"
+          productoId={product.id}
+          initialData={{
+            nombre: product.nombre,
+            categoria: String(product.categoria_id),
+            precio: String(product.precio),
+            stock_actual: String(product.stock_actual),
+            stock_minimo: String(product.stock_minimo),
+          }}
+          categorias={categorias}
+          state={state}
+          action={action}
+          pending={pending}
+          onSuccess={() => onOpenChange(false)}
+        />
+      )}
     </Modal>
   );
 }
