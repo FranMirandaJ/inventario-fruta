@@ -24,8 +24,9 @@ export default function TablaProductos({ data, categorias }: Props) {
   const [toggleModalOpen, setToggleModalOpen] = useState(false);
 
   const categoriasOptions = useMemo(() => {
-    const unique = [...new Set(data.map((p) => p.categoria_nombre))];
-    return unique.map((c) => ({ value: c, label: c }));
+    const todosLosNombres = data.map((p: ProductoRow) => p.categoria_nombre);
+    const nombresSinRepetir = [...new Set(todosLosNombres)];
+    return nombresSinRepetir.map((nombre) => ({ value: nombre, label: nombre }));
   }, [data]);
 
   const columns = useMemo<ColumnDef<ProductoRow>[]>(() => [
@@ -61,7 +62,6 @@ export default function TablaProductos({ data, categorias }: Props) {
     },
     {
       header: "Acciones",
-      accessorKey: "id",
       renderCell: (p: ProductoRow) => (
         <div className="flex items-center gap-1">
           <Button
@@ -73,7 +73,13 @@ export default function TablaProductos({ data, categorias }: Props) {
           >
             <Pencil className="size-4" />
           </Button>
-          <Button variant="outline" size="icon" color={p.activo ? "red" : "green"} title={p.activo ? "Desactivar" : "Activar"} onClick={() => { setTogglingProduct(p); setToggleModalOpen(true); }}>
+          <Button 
+            variant="outline"
+            size="icon"
+            color={p.activo ? "red" : "green"}
+            title={p.activo ? "Desactivar" : "Activar"}
+            onClick={() => { setTogglingProduct(p); setToggleModalOpen(true); }}
+          >
             {p.activo ? (
               <Ban className="size-4" />
             ) : (

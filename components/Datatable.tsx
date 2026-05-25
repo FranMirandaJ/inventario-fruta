@@ -32,7 +32,7 @@ import {
 
 export type ColumnDef<T> = {
   header: string;
-  accessorKey: keyof T;
+  accessorKey?: keyof T;
   sortable?: boolean;
   renderCell?: (item: T) => React.ReactNode;
   formatter?: "capitalize" | "capitalize-words" | "currency";
@@ -40,6 +40,7 @@ export type ColumnDef<T> = {
 
 function formatCellValue<T>(col: ColumnDef<T>, item: T): React.ReactNode {
   if (col.renderCell) return col.renderCell(item);
+  if (!col.accessorKey) return "";
 
   const raw = item[col.accessorKey];
 
@@ -235,18 +236,18 @@ export default function DataTable<T>({
             <TableRow className="hover:bg-transparent">
               {columns.map((col) => (
                 <TableHead
-                  key={String(col.accessorKey)}
+                  key={String(col.accessorKey ?? col.header)}
                   className={`text-white uppercase font-semibold py-3 h-auto ${
                     col.sortable ? "cursor-pointer hover:bg-[#008A33] transition-colors dark:hover:bg-green-700" : ""
                   }`}
-                  onClick={() => col.sortable && handleSort(col.accessorKey)}
+                  onClick={() => col.sortable && col.accessorKey && handleSort(col.accessorKey)}
                 >
                   <div className="flex items-center gap-1">
                     {col.header}
-                    {col.sortable && sortConfig?.key === col.accessorKey && (
+                    {col.sortable && col.accessorKey && sortConfig?.key === col.accessorKey && (
                       sortConfig.direction === "asc" ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />
                     )}
-                    {col.sortable && sortConfig?.key !== col.accessorKey && (
+                    {col.sortable && col.accessorKey && sortConfig?.key !== col.accessorKey && (
                       <div className="size-4"><ChevronsUpDown className="size-4" /></div>
                     )}
                   </div>
@@ -265,7 +266,7 @@ export default function DataTable<T>({
               paginatedData.map((row, rowIndex) => (
                 <TableRow key={rowIndex} className="border-b border-border hover:bg-green-100 bg-background transition-colors dark:hover:bg-green-900/40">
                   {columns.map((col) => (
-                    <TableCell key={String(col.accessorKey)} className="py-4 text-muted-foreground">
+                    <TableCell key={String(col.accessorKey ?? col.header)} className="py-4 text-muted-foreground">
                       {formatCellValue(col, row)}
                     </TableCell>
                   ))}
@@ -287,7 +288,7 @@ export default function DataTable<T>({
             <div key={rowIndex} className="border border-border rounded-xl bg-background shadow-sm overflow-hidden">
               {columns.map((col, colIndex) => (
                 <div 
-                  key={String(col.accessorKey)} 
+                  key={String(col.accessorKey ?? col.header)} 
                   className={`flex gap-4 items-center justify-between p-4 ${colIndex !== columns.length - 1 ? 'border-b border-border' : ''}`}
                 >
                   <span className="text-sm font-semibold text-muted-foreground">{col.header}</span>
