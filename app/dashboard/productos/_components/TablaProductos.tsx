@@ -63,7 +63,7 @@ export default function TablaProductos({ data, categorias }: Props) {
     {
       header: "Acciones",
       renderCell: (p: ProductoRow) => (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-wrap">
           <Button
             variant="outline"
             size="icon"
@@ -97,7 +97,7 @@ export default function TablaProductos({ data, categorias }: Props) {
         titulo="Listado"
         columns={columns}
         data={data}
-        itemsPerPage={10}
+        //itemsPerPage={10}
         searchableColumns={[
           { accessorKey: "nombre", title: "Nombre", type: "text" },
           {
