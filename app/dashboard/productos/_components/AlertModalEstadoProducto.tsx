@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
 import type { ProductoRow } from "@/lib/dal/productos";
+import { capitalizeFirstLetter } from "@/lib/text";
 
 type Props = {
   product: ProductoRow | null;
@@ -25,8 +26,8 @@ export default function AlertModalEstadoProducto({
       title={activating ? "Activar producto" : "Desactivar producto"}
       description={
         activating
-          ? <>¿Estás seguro de activar &ldquo;{product.nombre}&rdquo;?<br />Este producto volverá a estar disponible para la venta.</>
-          : <>¿Estás seguro de desactivar &ldquo;{product.nombre}&rdquo;?<br />Este producto dejará de estar disponible para la venta.</>
+          ? <>¿Estás seguro de activar el producto <strong>"{capitalizeFirstLetter(product.nombre)}"</strong>?<br />Este producto volverá a estar disponible para la venta.</>
+          : <>¿Estás seguro de desactivar el producto <strong>"{capitalizeFirstLetter(product.nombre)}"</strong>?<br />Este producto dejará de estar disponible para la venta.</>
       }
       showTriggerButton={false}
       open={open}
