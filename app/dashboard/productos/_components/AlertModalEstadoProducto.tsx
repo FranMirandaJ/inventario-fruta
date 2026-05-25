@@ -29,10 +29,6 @@ export default function AlertModalEstadoProducto({
     onOpenChange,
 }: Props) {
     
-  if (!product) return null;
-
-  const activating = !product.activo;
-
   const [state, action, pending] = useActionState(cambiarEstadoProducto, undefined);
 
   useEffect(() => {
@@ -44,6 +40,10 @@ export default function AlertModalEstadoProducto({
       toast.error(state.message);
     }
   }, [state]);
+
+  if (!product) return null;
+
+  const activating = !product.activo;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
