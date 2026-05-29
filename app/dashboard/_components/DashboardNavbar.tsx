@@ -54,7 +54,7 @@ export default function DashboardNavbar({
             <span className="font-bold text-foreground text-md leading-none">
               FrutaStock
             </span>
-            <span className="text-sm text-muted-foreground capitalize mt-1 leading-none">
+            <span className="text-sm text-muted-foreground capitalize mt-1 leading-none truncate">
               Hola, {sessionData.nombre.split(" ")[0]}
             </span>
           </div>
