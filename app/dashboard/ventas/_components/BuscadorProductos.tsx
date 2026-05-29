@@ -43,7 +43,7 @@ export default function BuscadorProductos({ productos }: Props) {
             {productos.map((p) => (
               <CommandItem
                 key={p.id}
-                className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-amber-700 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 dark:active:bg-amber-800/50 transition-transform"
+                className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-zinc-800 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 dark:active:bg-amber-800/50 transition-transform"
               >
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <strong>{capitalizeFirstLetter(p.nombre)}</strong>
@@ -51,17 +51,17 @@ export default function BuscadorProductos({ productos }: Props) {
                   <div className="flex flex-wrap items-center gap-x-2 text-center">
                     <span className="text-xs bg-muted px-1.5 py-0.5 rounded-md truncate">{capitalizeFirstLetter(p.categoria_nombre)}</span>
                     <span className="flex items-center gap-1">
-                      <span className="size-2 rounded-full bg-green-500" />
-                      Stock: {p.stock_actual}
+                      <span className={`size-2 rounded-full ${p.stock_actual <= p.stock_minimo ? 'bg-amber-500' : 'bg-green-500'}`} />
+                      {p.stock_actual} Disp.
                     </span>
                   </div>
 
-                  <div className="text-green-500 dark:text-lime-400 sm:hidden">
+                  <div className="text-green-500 sm:hidden">
                     <strong className="text-base font-bold">{formatCurrency(p.precio)}</strong>
                   </div>
                 </div>
 
-                <div className="text-green-500 dark:text-lime-400 hidden sm:flex items-center gap-1">
+                <div className="text-green-500 hidden sm:flex items-center gap-1">
                   <strong>{formatCurrency(p.precio)}</strong>
                   <Plus className="size-5" />
                 </div>
