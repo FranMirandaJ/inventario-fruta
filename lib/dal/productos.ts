@@ -15,6 +15,14 @@ export type ProductoRow = {
   updated_at: Date;
 };
 
+export type ProductoParaVenta = {
+  id: number;
+  nombre: string;
+  categoria_nombre: string;
+  stock_actual: number;
+  precio: number;
+};
+
 export const obtenerProductos = cache(async (): Promise<ProductoRow[]> => {
   const productos = await prisma.producto.findMany({
     //where: { activo: true },
@@ -40,4 +48,35 @@ export const obtenerProductos = cache(async (): Promise<ProductoRow[]> => {
     created_at: p.created_at,
     updated_at: p.updated_at,
   }));
+});
+
+export const obtenerProductosActivosDisponibles = cache(async(): Promise<ProductoParaVenta[]> => {
+  const productos = await prisma.producto.findMany({
+    where: {
+      AND: [
+        { activo: true },
+        { stock_actual: { gt : 0 } },
+      ]
+    },
+    select: {
+      id: true,
+      nombre: true,
+      stock_actual: true,
+      precio: true,
+      categoria: { select: { nombre: true, } },
+    },
+    orderBy: [
+      { categoria: { nombre: "asc" } },
+      { nombre: "asc" },
+    ],
+  });
+
+  return productos.map( (p) => ({
+    id: p.id,
+    nombre: p.nombre,
+    categoria_nombre: p.categoria.nombre,
+    stock_actual: p.stock_actual,
+    precio: Number(p.precio),
+  }));
+
 });

@@ -2,17 +2,14 @@
 
 import Modal from "@/components/Modal";
 import { ShoppingCart } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import BuscadorProductos from "./BuscadorProductos";
+import type { ProductoParaVenta } from "@/lib/dal/productos";
 
-export default function ModalRegistrarVenta() {
+type Props = {
+  productos: ProductoParaVenta[];
+};
+
+export default function ModalRegistrarVenta({productos} : Props) {
   return (
     <Modal
       title="Registrar venta"
@@ -21,7 +18,7 @@ export default function ModalRegistrarVenta() {
       triggerButtonVariant="default"
       iconTriggerButton={<ShoppingCart className="size-4" />}
     >
-      <BuscadorProductos/>
+      <BuscadorProductos productos={productos}/>
     </Modal>
   );
 }
