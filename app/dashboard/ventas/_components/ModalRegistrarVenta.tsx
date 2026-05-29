@@ -2,14 +2,14 @@
 
 import Modal from "@/components/Modal";
 import { ShoppingCart } from "lucide-react";
-import BuscadorProductos from "./BuscadorProductos";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
+import BuscadorProductos from "./BuscadorProductos";
 
 type Props = {
   productos: ProductoParaVenta[];
 };
 
-export default function ModalRegistrarVenta({productos} : Props) {
+export default function ModalRegistrarVenta({ productos }: Props) {
   return (
     <Modal
       title="Registrar venta"
@@ -18,7 +18,7 @@ export default function ModalRegistrarVenta({productos} : Props) {
       triggerButtonVariant="default"
       iconTriggerButton={<ShoppingCart className="size-4" />}
     >
-      <BuscadorProductos productos={productos}/>
+      <BuscadorProductos productos={productos} />
     </Modal>
   );
 }

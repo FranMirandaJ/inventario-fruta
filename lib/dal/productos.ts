@@ -20,12 +20,12 @@ export type ProductoParaVenta = {
   nombre: string;
   categoria_nombre: string;
   stock_actual: number;
+  stock_minimo: number;
   precio: number;
 };
 
 export const obtenerProductos = cache(async (): Promise<ProductoRow[]> => {
   const productos = await prisma.producto.findMany({
-    //where: { activo: true },
     include: {
       categoria: { select: { id: true, nombre: true } },
     },
@@ -62,6 +62,7 @@ export const obtenerProductosActivosDisponibles = cache(async(): Promise<Product
       id: true,
       nombre: true,
       stock_actual: true,
+      stock_minimo: true,
       precio: true,
       categoria: { select: { nombre: true, } },
     },
@@ -76,6 +77,7 @@ export const obtenerProductosActivosDisponibles = cache(async(): Promise<Product
     nombre: p.nombre,
     categoria_nombre: p.categoria.nombre,
     stock_actual: p.stock_actual,
+    stock_minimo: p.stock_minimo,
     precio: Number(p.precio),
   }));
 

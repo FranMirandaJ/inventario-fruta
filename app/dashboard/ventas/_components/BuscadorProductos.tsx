@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -8,8 +9,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import { capitalizeFirstLetter } from "@/lib/text";
@@ -38,22 +37,39 @@ export default function BuscadorProductos({ productos }: Props) {
 
       {showList && (
         <CommandList>
-          <CommandEmpty>No encontrado.</CommandEmpty>
+          <CommandEmpty>Sin resultados.</CommandEmpty>
 
           <CommandGroup>
-            {productos.map((producto) => (
-              <CommandItem key={producto.id} className="flex-col items-start gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-amber-700 dark:data-[selected=true]:text-gray-200">
-                <div className="flex flex-col gap-1">
-                  <strong>{capitalizeFirstLetter(producto.nombre)}</strong>
-                  <div className="flex gap-2 text-center">
-                    <span>{capitalizeFirstLetter(producto.categoria_nombre)}</span> <strong>&middot;</strong>
-                    <span>Stock: {producto.stock_actual}</span>
+            {productos.map((p) => (
+              <CommandItem
+                key={p.id}
+                className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-amber-700 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 dark:active:bg-amber-800/50 transition-transform"
+              >
+                <div className="flex flex-col gap-1 flex-1 min-w-0">
+                  <strong>{capitalizeFirstLetter(p.nombre)}</strong>
+
+                  <div className="flex flex-wrap items-center gap-x-2 text-center">
+                    <span className="text-xs bg-muted px-1.5 py-0.5 rounded-md truncate">{capitalizeFirstLetter(p.categoria_nombre)}</span>
+                    <span className="flex items-center gap-1">
+                      <span className="size-2 rounded-full bg-green-500" />
+                      Stock: {p.stock_actual}
+                    </span>
+                  </div>
+
+                  <div className="text-green-500 dark:text-lime-400 sm:hidden">
+                    <strong className="text-base font-bold">{formatCurrency(p.precio)}</strong>
                   </div>
                 </div>
 
-                <div className="text-green-500 dark:text-lime-400">
-                  <strong>{formatCurrency(producto.precio)}</strong>
+                <div className="text-green-500 dark:text-lime-400 hidden sm:flex items-center gap-1">
+                  <strong>{formatCurrency(p.precio)}</strong>
+                  <Plus className="size-5" />
                 </div>
+
+                <div className="sm:hidden">
+                  <Plus className="size-5" />
+                </div>
+
               </CommandItem>
             ))}
           </CommandGroup>
