@@ -43,3 +43,13 @@ export const removeAccents = (text: string): string => {
 export const normalizeForSearch = (text: string): string => {
   return removeAccents(text).toLowerCase().trim().replace(/\s+/g, " ");
 };
+
+export const obtenerInicialesAvatar = (nombre: string) => {
+  if (!nombre) return "US";
+  const palabras = nombre.trim().split(/\s+/);
+
+  if (palabras.length >= 2) {
+    return (palabras[0][0] + palabras[palabras.length - 1][0]).toUpperCase();
+  }
+  return nombre.substring(0, 2).toUpperCase();
+};

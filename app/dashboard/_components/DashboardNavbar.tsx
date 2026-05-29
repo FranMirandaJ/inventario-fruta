@@ -17,16 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { cerrarSesion } from "../_actions/dashboardNavbar.action";
-
-const obtenerInicialesAvatar = (nombre: string) => {
-  if (!nombre) return "US";
-  const palabras = nombre.trim().split(/\s+/);
-
-  if (palabras.length >= 2) {
-    return (palabras[0][0] + palabras[palabras.length - 1][0]).toUpperCase();
-  }
-  return nombre.substring(0, 2).toUpperCase();
-};
+import { obtenerInicialesAvatar } from "@/lib/text";
 
 export default function DashboardNavbar({
   sessionData,

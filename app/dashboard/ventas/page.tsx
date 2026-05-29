@@ -1,10 +1,15 @@
 import ContenedorPagina from "../_components/ContenedorPagina";
-import VentasView from "./_components/VentasView";
+import { Button } from "@/components/ui/button";
+import ModalRegistrarVenta from "./_components/ModalRegistrarVenta";
 
 export default function VentasPage() {
   return (
-    <ContenedorPagina titulo="Ventas">
-      <VentasView />
+    <ContenedorPagina 
+      titulo="Ventas"
+      acciones={ <ModalRegistrarVenta/> }
+      
+    >
+      HOLA
     </ContenedorPagina>
   );
 }
