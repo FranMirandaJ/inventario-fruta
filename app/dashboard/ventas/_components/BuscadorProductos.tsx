@@ -16,9 +16,10 @@ import { formatCurrency } from "@/lib/money";
 
 type Props = {
   productos: ProductoParaVenta[];
+  onProductoSelect: (producto: ProductoParaVenta) => void;
 };
 
-export default function BuscadorProductos({ productos }: Props) {
+export default function BuscadorProductos({ productos, onProductoSelect }: Props) {
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
@@ -26,7 +27,8 @@ export default function BuscadorProductos({ productos }: Props) {
   const showList = (isFocused && inputValue.length > 0) || inputValue.length > 0;
 
   const handleItemSelect = (producto: ProductoParaVenta) => {
-    console.log(producto);
+    onProductoSelect(producto);
+    setInputValue("");
   };
 
   return (
@@ -54,7 +56,7 @@ export default function BuscadorProductos({ productos }: Props) {
                 key={p.id}
                 value={p.nombre}
                 keywords={[p.categoria_nombre]}
-                onSelect={() => handleItemSelect(p)}
+                onSelect={() => handleItemSelect(p) }
               >
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <strong>{capitalizeFirstLetter(p.nombre)}</strong>
