@@ -25,6 +25,7 @@ type Props = {
 };
 
 export default function ModalRegistrarVenta({ productos }: Props) {
+
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
@@ -41,7 +42,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
             : i,
         );
       }
-      return [...prev, { producto, cantidad: 1 }];
+      return [{ producto, cantidad: 1 }, ...prev];
     });
   };
 
@@ -85,8 +86,8 @@ export default function ModalRegistrarVenta({ productos }: Props) {
         />
 
         <div className="flex flex-col text-sm space-y-2">
-          <div className="flex items-center justify-between">
-            <span>Carrito ({itemsCarrito.reduce((sum, item) => (sum += item.cantidad), 0)})</span>
+          <div className="flex flex-wrap items-center justify-between">
+            <span className="font-semibold">Carrito ({itemsCarrito.reduce((sum, item) => (sum += item.cantidad), 0)})</span>
             {itemsCarrito.length > 0 && (
               <Button 
                 variant="ghost"
@@ -98,19 +99,27 @@ export default function ModalRegistrarVenta({ productos }: Props) {
               </Button>
             )}
           </div>
+
+          {itemsCarrito.length === 0 && (
+            <div className="flex flex-col items-center justify-center gap-2 py-10 rounded-lg border-2 text-muted-foreground">
+              <ShoppingCart className="size-8 opacity-50"/>
+              <span className="font-medium text-center">Busca y agrega productos.</span>
+            </div>
+          )}
+
           {itemsCarrito.length > 0 && (
             <>
               <div className="space-y-1.5">
                 {itemsCarrito.map((item) => (
                 <div
                   key={item.producto.id}
-                  className="flex flex-col gap-2 p-2.5 rounded-lg border"
+                  className="flex flex-col gap-2 p-2.5 rounded-lg border bg-white dark:bg-zinc-800"
                 >
                   <div className="flex flex-wrap items-center justify-between">
                     <strong>
                       {capitalizeFirstLetter(item.producto.nombre)}
                     </strong>
-                    <span className="text-green-600 font-semibold text-sm tabular-nums whitespace-nowrap ml-2">
+                    <span className="text-green-600 font-semibold text-sm whitespace-nowrap ml-2">
                       {formatCurrency(item.producto.precio * item.cantidad)}
                     </span>
                   </div>
@@ -131,7 +140,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
                       >
                         <Minus />
                       </Button>
-                      <span className="">
+                      <span className="min-w-8 text-center font-bold">
                         {item.cantidad}
                       </span>
                       <Button

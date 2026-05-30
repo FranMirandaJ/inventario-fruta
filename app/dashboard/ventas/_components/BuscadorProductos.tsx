@@ -52,7 +52,7 @@ export default function BuscadorProductos({ productos, onProductoSelect }: Props
           <CommandGroup>
             {productos.map((p) => (
               <CommandItem
-                className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-zinc-800 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 dark:active:bg-amber-800/50 transition-transform"
+                className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-lime-800/50 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 transition-transform"
                 key={p.id}
                 value={p.nombre}
                 keywords={[p.categoria_nombre]}
