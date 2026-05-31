@@ -27,6 +27,7 @@ export type ModalProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
+  fixedLayout?: boolean;
   contentClassName?: string;
 };
 
@@ -55,6 +56,7 @@ export default function Modal({
   open,
   onOpenChange,
   size = "md",
+  fixedLayout = true,
   contentClassName = "", // Clases extra por defecto (vacío)
 }: ModalProps) {
   return (
@@ -70,7 +72,11 @@ export default function Modal({
       )}
 
       <DialogContent
-        className={`flex flex-col max-h-[calc(100vh-12rem)] sm:max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}
+        className={`${
+          fixedLayout
+            ? "flex flex-col"
+            : "overflow-y-auto"
+        } max-h-[calc(100vh-12rem)] sm:max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
 
@@ -91,13 +97,16 @@ export default function Modal({
         </DialogHeader>
 
         {children && (
-          <div className="py-4 overflow-y-auto px-1" style={{ overflow: "hidden auto" }}>
+          <div
+            className={`py-4 px-1 ${fixedLayout ? "overflow-y-auto" : ""}`}
+            style={fixedLayout ? { overflow: "hidden auto" } : undefined}
+          >
             {children}
           </div>
         )}
 
         {footer && (
-          <DialogFooter>
+          <DialogFooter className={fixedLayout ? "shrink-0" : ""}>
             {footer}
           </DialogFooter>
         )}

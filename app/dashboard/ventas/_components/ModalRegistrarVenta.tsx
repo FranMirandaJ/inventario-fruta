@@ -5,14 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import BuscadorProductos from "./BuscadorProductos";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import type { ItemCarrito } from "../_types";
 import { useState } from "react";
@@ -26,6 +18,7 @@ type Props = {
 
 export default function ModalRegistrarVenta({ productos }: Props) {
 
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
@@ -66,18 +59,37 @@ export default function ModalRegistrarVenta({ productos }: Props) {
     setItemsCarrito((prev) => prev.filter((i) => i.producto.id !== id));
   };
 
+  const handleConfirmarVenta = () => {
+    if (itemsCarrito.length === 0) return toast.warning("El carrito esta vacío.");
+  };
+
   console.log(itemsCarrito);
 
   return (
     <Modal
       title="Registrar venta"
       description={<>Agrega productos al carrito y confirma la venta.</>}
+      headerImgSrc="/shopping-cart.svg"
       textTriggerButton="Vender"
       triggerButtonVariant="default"
       iconTriggerButton={<ShoppingCart className="size-4" />}
+      fixedLayout={false}
+      open={openModal}
       onOpenChange={(open) => {
+        setOpenModal(open);
         if (!open) setItemsCarrito([]);
       }}
+      footer={
+        <>
+          <Button
+            variant="secondary"
+            onClick={() => setOpenModal(false)}
+          >
+            Cancelar
+          </Button>
+          <Button onClick={() => handleConfirmarVenta()}>Confirmar venta</Button>
+        </>
+      }
     >
       <div className="space-y-4">
         <BuscadorProductos
@@ -101,14 +113,14 @@ export default function ModalRegistrarVenta({ productos }: Props) {
           </div>
 
           {itemsCarrito.length === 0 && (
-            <div className="flex flex-col items-center justify-center gap-2 py-10 rounded-lg border-2 text-muted-foreground">
+            <div className="flex flex-col items-center justify-center gap-2 py-5 rounded-lg border-2 text-muted-foreground">
               <ShoppingCart className="size-8 opacity-50"/>
               <span className="font-medium text-center">Busca y agrega productos.</span>
             </div>
           )}
 
           {itemsCarrito.length > 0 && (
-            <>
+            <div className="space-y-4">
               <div className="space-y-1.5">
                 {itemsCarrito.map((item) => (
                 <div
@@ -119,7 +131,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
                     <strong>
                       {capitalizeFirstLetter(item.producto.nombre)}
                     </strong>
-                    <span className="text-green-600 font-semibold text-sm whitespace-nowrap ml-2">
+                    <span className="font-semibold text-sm whitespace-nowrap ml-2">
                       {formatCurrency(item.producto.precio * item.cantidad)}
                     </span>
                   </div>
@@ -166,14 +178,14 @@ export default function ModalRegistrarVenta({ productos }: Props) {
               ))}
               </div>
 
-              <Separator />
+              <Separator className="shadow-xl"/>
               
-              <div className="">
-                <span>Total de la venta:</span>
-                <span>{formatCurrency(itemsCarrito.reduce((sum, item) => (sum += item.cantidad * item.producto.precio), 0))}</span>
+              <div className="flex gap-3 flex-wrap items-center justify-between p-2.5 rounded-md bg-green-100 dark:bg-green-950/60">
+                <label className="font-bold dark:text-green-100">Total de la venta</label>
+                <strong className="text-green-600 dark:text-greem-400">{formatCurrency(itemsCarrito.reduce((sum, item) => (sum += item.cantidad * item.producto.precio), 0))}</strong>
               </div>
 
-            </>
+            </div>
           )}
         </div>
       </div>
