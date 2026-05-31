@@ -7,10 +7,11 @@ import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import BuscadorProductos from "./BuscadorProductos";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import type { ItemCarrito, ConfirmarVentaItem } from "../_types";
-import { useState, useActionState } from "react";
+import { useState, useActionState, startTransition, useEffect } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/money";
 import { capitalizeFirstLetter } from "@/lib/text";
+import { crearVenta } from "../_actions/crear-venta";
 
 type Props = {
   productos: ProductoParaVenta[];
@@ -18,9 +19,13 @@ type Props = {
 
 export default function ModalRegistrarVenta({ productos }: Props) {
 
+  const [modalKey, setModalKey] = useState(0);
+
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
-  //const [state, action, pending] = useActionState();
+
+  const [state, action, pending] = useActionState(crearVenta, undefined);
+  
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
     const yaSinStock = itemsCarrito.some(
@@ -71,10 +76,19 @@ export default function ModalRegistrarVenta({ productos }: Props) {
         cantidad: item.cantidad,
       }
     ));
-    console.log(payload);
+    startTransition(() => {
+      action(payload);
+    });
   };
 
-  //console.log(itemsCarrito);
+  useEffect(() => {
+    if (!state) return;
+    if (state.success) {
+      toast.success(state.message);
+    } else {
+      toast.error(state.message);
+    }
+  }, [state?.timestamp]);
 
   return (
     <Modal
@@ -88,7 +102,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       open={openModal}
       onOpenChange={(open) => {
         setOpenModal(open);
-        if (!open) setItemsCarrito([]);
+        if (!open) {setItemsCarrito([]); setModalKey((prev) => prev + 1);}
       }}
       footer={
         <>

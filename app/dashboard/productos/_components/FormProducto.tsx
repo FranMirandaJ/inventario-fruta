@@ -75,7 +75,7 @@ export default function FormProducto({
   const getFieldErrors = (field: string) =>
     clientErrors[field] ?? state?.errors?.[field as keyof typeof state.errors] ?? undefined;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
     const data = {
       nombre: formData.get("nombre")?.toString() || "",
