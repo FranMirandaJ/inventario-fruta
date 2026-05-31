@@ -7,7 +7,7 @@ import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import BuscadorProductos from "./BuscadorProductos";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import type { ItemCarrito, ConfirmarVentaItem } from "../_types";
-import { useState } from "react";
+import { useState, useActionState } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/money";
 import { capitalizeFirstLetter } from "@/lib/text";
@@ -20,6 +20,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
+  //const [state, action, pending] = useActionState();
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
     const yaSinStock = itemsCarrito.some(
