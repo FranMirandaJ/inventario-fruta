@@ -22,17 +22,20 @@ export default function ModalRegistrarVenta({ productos }: Props) {
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
+    const yaSinStock = itemsCarrito.some(
+      (item) => item.producto.id === producto.id && item.cantidad >= producto.stock_actual,
+    );
+
+    if (yaSinStock) {
+      toast.warning(`Ya no hay stock suficiente de "${producto.nombre}".`);
+      return;
+    }
+
     setItemsCarrito((prev) => {
       const existente = prev.find((i) => i.producto.id === producto.id);
       if (existente) {
-        if (existente.cantidad >= producto.stock_actual) {
-          toast.warning(`Ya no hay stock suficiente de "${producto.nombre}".`);
-          return prev;
-        }
         return prev.map((i) =>
-          i.producto.id === producto.id
-            ? { ...i, cantidad: i.cantidad + 1 }
-            : i,
+          i.producto.id === producto.id ? { ...i, cantidad: i.cantidad + 1 } : i,
         );
       }
       return [{ producto, cantidad: 1 }, ...prev];
