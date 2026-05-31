@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import BuscadorProductos from "./BuscadorProductos";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
-import type { ItemCarrito } from "../_types";
+import type { ItemCarrito, ConfirmarVentaItem } from "../_types";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/money";
@@ -26,7 +26,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       const existente = prev.find((i) => i.producto.id === producto.id);
       if (existente) {
         if (existente.cantidad >= producto.stock_actual) {
-          toast.warning(`Ya no hay stock suficiente de "${producto.nombre}"`);
+          toast.warning(`Ya no hay stock suficiente de "${producto.nombre}".`);
           return prev;
         }
         return prev.map((i) =>
@@ -61,9 +61,16 @@ export default function ModalRegistrarVenta({ productos }: Props) {
 
   const handleConfirmarVenta = () => {
     if (itemsCarrito.length === 0) return toast.warning("El carrito esta vacío.");
+    const payload: ConfirmarVentaItem[] = itemsCarrito.map(item => (
+      {
+        id_producto: item.producto.id,
+        cantidad: item.cantidad,
+      }
+    ));
+    console.log(payload);
   };
 
-  console.log(itemsCarrito);
+  //console.log(itemsCarrito);
 
   return (
     <Modal
