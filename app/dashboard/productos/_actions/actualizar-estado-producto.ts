@@ -16,7 +16,7 @@ export const cambiarEstadoProducto = async (
   _state: ProductoFormState,
   formData: FormData,
 ): Promise<ProductoFormState> => {
-  await verifySession();
+  const id_usuario = Number((await verifySession()).id_usuario);
 
   const id = Number(formData.get("id"));
 
@@ -44,7 +44,7 @@ export const cambiarEstadoProducto = async (
       data: { activo: !producto?.activo },
     });
 
-    //log.success("Se actualizó el estado del producto:", productoActualizado);
+    log.success({ id_producto: id, id_usuario, activo: productoActualizado.activo }, "Estado de producto actualizado");
 
      revalidatePath("/dashboard/productos");
 

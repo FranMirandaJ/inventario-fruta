@@ -11,7 +11,7 @@ const log = createLogger("Productos/Crear");
 
 export const crearProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
 
-  await verifySession();
+  const id_usuario = Number((await verifySession()).id_usuario);
 
   const rawFormData  = {
     nombre: formData.get("nombre")?.toString() || "",
@@ -51,7 +51,7 @@ export const crearProducto = async (_state: ProductoFormState, formData: FormDat
       }
     });
 
-    //log.success('Se creo un nuevo producto:', productoNuevo);
+    log.success({ id_producto: productoNuevo.id, nombre, id_usuario }, "Producto creado exitosamente");
 
     revalidatePath("/dashboard/productos");
 

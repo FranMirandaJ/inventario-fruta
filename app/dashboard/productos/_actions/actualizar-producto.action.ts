@@ -11,7 +11,7 @@ const log = createLogger("Productos/Actualizar");
 
 export const actualizarProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
 
-  await verifySession();
+  const id_usuario = Number((await verifySession()).id_usuario);
 
   const id = Number(formData.get("producto_id"));
 
@@ -57,7 +57,7 @@ export const actualizarProducto = async (_state: ProductoFormState, formData: Fo
       },
     });
 
-    //log.success("Se actualizó el producto:", productoActualizado);
+    log.success({ id_producto: id, nombre, id_usuario }, "Producto actualizado exitosamente");
 
     revalidatePath("/dashboard/productos");
 
