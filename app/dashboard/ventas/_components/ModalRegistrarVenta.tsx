@@ -21,13 +21,11 @@ type Props = {
 export default function ModalRegistrarVenta({ productos }: Props) {
 
   const [state, action, pending] = useActionState(crearVenta, undefined);
-  const [clientErrors, setClientErrors] = useState<Partial<Record<string, string[]>>>({});
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [itemsCarrito, setItemsCarrito] = useState<ItemCarrito[]>([]);
 
   const handleAgregarAlCarrito = (producto: ProductoParaVenta) => {
-    setClientErrors({});
     const yaSinStock = itemsCarrito.some(
       (item) => item.producto.id === producto.id && item.cantidad >= producto.stock_actual,
     );
@@ -49,7 +47,6 @@ export default function ModalRegistrarVenta({ productos }: Props) {
   };
 
   const handleActualizarCantidad = (id: number, delta: number) => {
-    setClientErrors({});
     setItemsCarrito((prev) =>
       prev.map((i) =>
         i.producto.id === id
@@ -66,12 +63,10 @@ export default function ModalRegistrarVenta({ productos }: Props) {
   };
 
   const handleRemoverDelCarrito = (id: number) => {
-    setClientErrors({});
     setItemsCarrito((prev) => prev.filter((i) => i.producto.id !== id));
   };
 
   const handleConfirmarVenta = () => {
-
     const payload: ConfirmarVentaItem[] = itemsCarrito.map(item => ({
       id_producto: item.producto.id,
       cantidad: item.cantidad,
@@ -79,19 +74,12 @@ export default function ModalRegistrarVenta({ productos }: Props) {
 
     const result = VentaCarritoSchema.safeParse(payload);
 
-    if (!result.success){
-      const fieldErrors: Record<string, string[]> = {};
-      for (const issue of result.error.issues) {
-        const path = issue.path.join(".");
-        (fieldErrors[path] ??= []).push(issue.message);
-      }
-      setClientErrors(fieldErrors);
-      const mensajes = [...new Set(Object.values(fieldErrors).flat())];
+    if (!result.success) {
+      const mensajes = [...new Set(result.error.issues.map(i => i.message))];
       toast.error(mensajes.join(". "));
       return;
     }
 
-    setClientErrors({});
     startTransition(() => {
       action(payload);
     });
@@ -104,7 +92,6 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       setOpenModal(false);
       setItemsCarrito([]);
     } else {
-      if (state.errors) setClientErrors(state.errors);
       toast.error(state.message ?? "Error al registrar la venta.");
     }
   }, [state?.timestamp]);
@@ -121,7 +108,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       open={openModal}
       onOpenChange={(open) => {
         setOpenModal(open);
-        if (!open) {setItemsCarrito([]); setClientErrors({});}
+        if (!open) {setItemsCarrito([]);}
       }}
       footer={
         <>
@@ -155,7 +142,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
                 variant="ghost"
                 size="sm"
                 className="text-sm"
-                onClick={() => { setItemsCarrito([]); setClientErrors({}); }}
+                onClick={() => { setItemsCarrito([]); }}
               >
                 <Trash2 /> Vaciar
               </Button>
@@ -172,7 +159,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
           {itemsCarrito.length > 0 && (
             <div className="space-y-4">
               <div className="space-y-1.5">
-                {itemsCarrito.map((item, index) => (
+                {itemsCarrito.map((item) => (
                 <div
                   key={item.producto.id}
                   className="flex flex-col gap-2 p-2.5 rounded-lg border bg-white dark:bg-zinc-800"
@@ -224,15 +211,6 @@ export default function ModalRegistrarVenta({ productos }: Props) {
                     </Button>
 
                   </div>
-
-                  {(() => {
-                    const err = clientErrors[`${index}.id_producto`];
-                    return err?.[0] && <p className="text-xs text-red-500">{err[0]}</p>;
-                  })()}
-                  {(() => {
-                    const err = clientErrors[`${index}.cantidad`];
-                    return err?.[0] && <p className="text-xs text-red-500">{err[0]}</p>;
-                  })()}
                 </div>
               ))}
               </div>
