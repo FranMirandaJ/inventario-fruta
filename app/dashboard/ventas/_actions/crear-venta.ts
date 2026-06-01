@@ -5,7 +5,7 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientInitializationError,
 } from "@prisma/client/runtime/client";
-import type { CarritoState } from "../_schemas/crear-venta.schema";
+import { VentaCarritoSchema, type CarritoState } from "../_schemas/crear-venta.schema";
 import type { ConfirmarVentaItem } from "../_types";
 import { verifySession } from "@/lib/dal/auth";
 import { createLogger } from "@/lib/logger";
@@ -19,19 +19,28 @@ export const crearVenta = async (_state: CarritoState, data: ConfirmarVentaItem[
 
   log.info(data);
 
-  if (data.length === 0) {
+  const carritoValidado = VentaCarritoSchema.safeParse(data);
+  
+  if (!carritoValidado.success) {
+    const fieldErrors: Record<string, string[]> = {};
+    for (const issue of carritoValidado.error.issues) {
+      const path = issue.path.join(".");
+      (fieldErrors[path] ??= []).push(issue.message);
+    }
     return {
       success: false,
-      message: "El carrito está vacío.",
+      errors: fieldErrors,
+      message: "Faltan campos por llenar o hay errores.",
       timestamp: Date.now(),
     };
   }
-  
+
   
 
   return {
     success: true,
-    message: "Hola desde el action."
+    message: "Hola desde el action.",
+    timestamp: Date.now(),
   };
 
 };

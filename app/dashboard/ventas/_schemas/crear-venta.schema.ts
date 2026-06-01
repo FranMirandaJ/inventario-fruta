@@ -16,4 +16,4 @@ export const VentaCarritoSchema = z
   .array(VentaCarritoItemSchema, {error: "Carrito no válido."})
   .min(1, "Debe agregar al menos un producto al carrito.");
 
-export type CarritoState = FormState<Record<string, never>, "carrito">;
+export type CarritoState = FormState<Record<string, never>, string>;
