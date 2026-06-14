@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { CheckCircle2, XCircle, Pencil, CheckCircleIcon, Ban } from "lucide-react";
+import { XCircle, Pencil, CheckCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { ColumnDef } from "@/components/Datatable";
 import type { ProductoRow } from "@/lib/dal/productos";
@@ -55,9 +55,9 @@ export default function TablaProductos({ data, categorias }: Props) {
       sortable: true,
       renderCell: (p) =>
         p.activo ? (
-          <CheckCircle2 className="size-5 text-green-600" />
+          <p className="text-green-600 font-semibold tracking-wide">Activo</p>
         ) : (
-          <XCircle className="size-5 text-red-600" />
+          <p className="text-red-600 font-semibold tracking-wide">Inactivo</p>
         ),
     },
     {
@@ -81,7 +81,7 @@ export default function TablaProductos({ data, categorias }: Props) {
             onClick={() => { setTogglingProduct(p); setToggleModalOpen(true); }}
           >
             {p.activo ? (
-              <Ban className="size-4" />
+              <XCircle className="size-4" />
             ) : (
               <CheckCircleIcon className="size-4" />
             )}

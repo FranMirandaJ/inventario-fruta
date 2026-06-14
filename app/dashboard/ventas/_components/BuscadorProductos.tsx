@@ -77,7 +77,7 @@ export default function BuscadorProductos({ productos, itemsCarrito, onProductoS
                   <div className="flex flex-wrap items-center gap-x-2 text-center">
                     <span className="text-xs bg-muted px-1.5 py-0.5 rounded-md truncate">{capitalizeFirstLetter(p.categoria_nombre)}</span>
                     <span className="flex items-center gap-1">
-                      <span className={`size-2 rounded-full ${p.stock_actual <= p.stock_minimo ? 'bg-amber-500' : 'bg-green-500'}`} />
+                      <span className={`size-2 rounded-full ${getStockDisponible(p.id, p.stock_actual) <= p.stock_minimo ? 'bg-amber-500' : 'bg-green-500'}`} />
                       {getStockDisponible(p.id, p.stock_actual)} Disp.
                     </span>
                   </div>
