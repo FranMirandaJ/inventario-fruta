@@ -26,20 +26,21 @@ export type ModalProps = {
   headerImgAlt?: string; 
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
   fixedLayout?: boolean;
   contentClassName?: string;
 };
 
 const sizeClasses = {
-  sm: "max-w-[min(384px,100%)]",           // 384px
-  md: "max-w-[min(448px,100%)]",           // 448px (Estándar)
-  lg: "max-w-[min(512px,100%)]",           // 512px
-  xl: "max-w-[min(576px,100%)]",           // 576px
-  "2xl": "max-w-[min(672px,100%)]",        // 672px
-  "3xl": "max-w-[min(768px,100%)]",        // 768px
-  "4xl": "max-w-[min(896px,100%)]",        // 896px
-  full: "max-w-[min(95vw,100%)]",          // Casi pantalla completa
+  xs: "max-w-[min(280px,100%)] sm:max-w-[280px]",           // 280px
+  sm: "max-w-[min(384px,100%)] sm:max-w-[384px]",           // 384px
+  md: "max-w-[min(448px,100%)] sm:max-w-[448px]",           // 448px (Estándar)
+  lg: "max-w-[min(512px,100%)] sm:max-w-[512px]",           // 512px
+  xl: "max-w-[min(576px,100%)] sm:max-w-[576px]",           // 576px
+  "2xl": "max-w-[min(672px,100%)] sm:max-w-[672px]",        // 672px
+  "3xl": "max-w-[min(768px,100%)] sm:max-w-[768px]",        // 768px
+  "4xl": "max-w-[min(896px,100%)] sm:max-w-[896px]",        // 896px
+  full: "max-w-[min(95vw,100%)] sm:max-w-[95vw]",          // Casi pantalla completa
 };
 
 export default function Modal({

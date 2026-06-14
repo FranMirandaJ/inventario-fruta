@@ -1,12 +1,13 @@
 "use client";
 import { useMemo, useState } from "react";
-import { XCircle, Pencil, CheckCircleIcon } from "lucide-react";
+import { XCircle, Pencil, CheckCircleIcon, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { ColumnDef } from "@/components/Datatable";
 import type { ProductoRow } from "@/lib/dal/productos";
 import type { CategoriaOption } from "@/lib/dal/categorias";
 import ModalEditarProducto from "./ModalEditarProducto";
 import AlertModalEstadoProducto from "./AlertModalEstadoProducto";
+import ModalAjustarStock from "./ModalAjustarStock";
 
 interface Props {
   data: ProductoRow[];
@@ -18,6 +19,7 @@ export default function TablaProductos({ data, categorias }: Props) {
     null,
   );
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [stockModalOpen, setStockModalOpen] = useState(false);
   const [togglingProduct, setTogglingProduct] = useState<ProductoRow | null>(
     null,
   );
@@ -64,6 +66,15 @@ export default function TablaProductos({ data, categorias }: Props) {
       header: "Acciones",
       renderCell: (p: ProductoRow) => (
         <div className="flex items-center flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            color="blue"
+            title="Ajustar stock"
+            onClick={() => { setEditingProduct(p); setStockModalOpen(true); }}
+          >
+            <PackagePlus className="size-4" />
+          </Button>
           <Button
             variant="outline"
             size="icon"
@@ -116,6 +127,14 @@ export default function TablaProductos({ data, categorias }: Props) {
             ],
           },
         ]}
+      />
+
+      <ModalAjustarStock
+        product={editingProduct}
+        open={stockModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setStockModalOpen(false);
+        }}
       />
 
       <ModalEditarProducto

@@ -2,7 +2,7 @@
  * Capitaliza solo la primera letra de una cadena de texto.
  * Ejemplo: "hola mUndo" -> "Hola mundo"
  */
-export const capitalizeFirstLetter = (text: string): string => {
+export const capitalizeFirstLetter = (text: string | undefined | null): string => {
   if (!text) return "";
   const cleanText = text.trim();
   return cleanText.charAt(0).toUpperCase() + cleanText.slice(1).toLowerCase();
@@ -12,7 +12,7 @@ export const capitalizeFirstLetter = (text: string): string => {
  * Capitaliza la primera letra de cada palabra (Title Case).
  * Ejemplo: "el señor de los anillos" -> "El Señor De Los Anillos"
  */
-export const capitalizeWords = (text: string): string => {
+export const capitalizeWords = (text: string | undefined | null): string => {
   if (!text) return "";
   return text
     .trim()
@@ -28,7 +28,7 @@ export const capitalizeWords = (text: string): string => {
  * o para hacer barras de búsqueda insensibles a los acentos.
  * Ejemplo: "CamióN" -> "CamioN"
  */
-export const removeAccents = (text: string): string => {
+export const removeAccents = (text: string | undefined | null): string => {
   if (!text) return "";
   return text
     .normalize("NFD") // Separa la letra base de su acento (ej. 'é' se vuelve 'e' + '´')
@@ -40,11 +40,12 @@ export const removeAccents = (text: string): string => {
  * Útil para comparar lo que escribe el usuario en un Combobox contra la base de datos.
  * Ejemplo: "   HéLado de Vainílla  " -> "helado de vainilla"
  */
-export const normalizeForSearch = (text: string): string => {
+export const normalizeForSearch = (text: string | undefined | null): string => {
+  if (!text) return "";
   return removeAccents(text).toLowerCase().trim().replace(/\s+/g, " ");
 };
 
-export const obtenerInicialesAvatar = (nombre: string) => {
+export const obtenerInicialesAvatar = (nombre: string | undefined | null) => {
   if (!nombre) return "US";
   const palabras = nombre.trim().split(/\s+/);
 
