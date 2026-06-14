@@ -1,8 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
+import { TipoMovimiento } from "@/generated/prisma";
+import { revalidatePath } from "next/cache";
 import { ProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
@@ -48,6 +49,16 @@ export const crearProducto = async (_state: ProductoFormState, formData: FormDat
         categoria_id: categoria,
         stock_actual,
         stock_minimo,
+        ...(stock_actual > 0 && {
+          movimientos: {
+            create: {
+              usuario_id: id_usuario,
+              tipo: TipoMovimiento.ENTRADA,
+              cantidad: stock_actual,
+              motivo: "Stock inicial",
+            },
+          },
+        }),
       }
     });
 

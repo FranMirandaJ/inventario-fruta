@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { TipoMovimiento } from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
 import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { ProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
@@ -46,15 +47,35 @@ export const actualizarProducto = async (_state: ProductoFormState, formData: Fo
   const { nombre, categoria, precio, stock_actual, stock_minimo } = validatedFields.data;
 
   try {
-    const productoActualizado = await prisma.producto.update({
-      where: { id },
-      data: {
-        nombre,
-        precio,
-        categoria_id: categoria,
-        stock_actual,
-        stock_minimo,
-      },
+
+    const productoAnterior = await prisma.producto.findUniqueOrThrow({where: { id }, select: { stock_actual: true } });
+
+    const diferenciaStock = stock_actual - productoAnterior.stock_actual;
+
+    await prisma.$transaction(async (tx) => {
+      await tx.producto.update({
+        where: { id },
+        data: {
+          nombre,
+          precio,
+          categoria_id: categoria,
+          stock_actual,
+          stock_minimo,
+        },
+      });
+
+      if (diferenciaStock !== 0) {
+        await tx.movimientoInventario.create({
+          data: {
+            producto_id: id,
+            usuario_id: id_usuario,
+            tipo: diferenciaStock > 0 ? TipoMovimiento.ENTRADA : TipoMovimiento.AJUSTE,
+            cantidad: Math.abs(diferenciaStock),
+            motivo: "Ajuste manual desde edición",
+          },
+        });
+      }
+
     });
 
     log.success({ id_producto: id, nombre, id_usuario }, "Producto actualizado exitosamente");
