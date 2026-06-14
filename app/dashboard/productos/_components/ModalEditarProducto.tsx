@@ -28,7 +28,6 @@ export default function ModalEditarProducto({
     <Modal
       title="Editar producto"
       description={<>Actualiza los datos del producto.<br/>Los campos con <span className="text-destructive">*</span> son obligatorios.</>}
-      fixedLayout={false}
       showTriggerButton={false}
       open={open}
       onOpenChange={onOpenChange}

@@ -10,8 +10,8 @@ import { verifySession } from "@/lib/dal/auth";
 const log = createLogger("Productos/Crear");
 
 export const crearProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
-
-  const id_usuario = Number((await verifySession()).id_usuario);
+  const usuario = await verifySession();
+  const id_usuario = Number(usuario.id_usuario);
 
   const rawFormData  = {
     nombre: formData.get("nombre")?.toString() || "",

@@ -31,7 +31,6 @@ export default function ModalNuevoProducto({
     <Modal
       title="Nuevo producto"
       description={<>Agrega un nuevo producto a tu inventario.<br/>Los campos con <span className="text-destructive">*</span> son obligatorios.</>}
-      fixedLayout={false}
       textTriggerButton="Nuevo"
       iconTriggerButton={<Plus className="size-4" />}
       triggerButtonVariant="default"

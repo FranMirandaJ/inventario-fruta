@@ -2,10 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { Prisma, TipoMovimiento } from "@/generated/prisma";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientInitializationError,
-} from "@prisma/client/runtime/client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import {
   VentaCarritoSchema,
   type CarritoState,
@@ -22,7 +19,8 @@ export const crearVenta = async (
 ): Promise<CarritoState> => {
   
   try {
-    const usuario_id = Number((await verifySession()).id_usuario);
+    const usuario = await verifySession();
+    const usuario_id = Number(usuario.id_usuario);
   
     const carritoValidado = VentaCarritoSchema.safeParse(data);
 

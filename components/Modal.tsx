@@ -56,7 +56,7 @@ export default function Modal({
   open,
   onOpenChange,
   size = "md",
-  fixedLayout = true,
+  fixedLayout = false,
   contentClassName = "", // Clases extra por defecto (vacío)
 }: ModalProps) {
   return (

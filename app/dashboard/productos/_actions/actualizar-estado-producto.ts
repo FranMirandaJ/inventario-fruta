@@ -16,7 +16,8 @@ export const cambiarEstadoProducto = async (
   _state: ProductoFormState,
   formData: FormData,
 ): Promise<ProductoFormState> => {
-  const id_usuario = Number((await verifySession()).id_usuario);
+  const usuario = await verifySession();
+  const id_usuario = Number(usuario.id_usuario);
 
   const id = Number(formData.get("id"));
 

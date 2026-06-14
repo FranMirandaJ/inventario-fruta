@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Trash2, Plus, Minus, Loader2, } from "lucide-react";
+import { ShoppingCart, Trash2, Plus, Minus, Loader2, PackagePlus } from "lucide-react";
 import BuscadorProductos from "./BuscadorProductos";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import type { ItemCarrito, ConfirmarVentaItem } from "../_types";
@@ -104,7 +104,6 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       textTriggerButton="Vender"
       triggerButtonVariant="default"
       iconTriggerButton={<ShoppingCart className="size-4" />}
-      fixedLayout={false}
       open={openModal}
       onOpenChange={(open) => {
         setOpenModal(open);
@@ -131,6 +130,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       <div className="space-y-4">
         <BuscadorProductos
           productos={productos}
+          itemsCarrito={itemsCarrito}
           onProductoSelect={handleAgregarAlCarrito}
         />
 
@@ -151,7 +151,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
 
           {itemsCarrito.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2 py-5 rounded-lg border-2 text-muted-foreground">
-              <ShoppingCart className="size-8 opacity-50"/>
+              <PackagePlus className="size-8 opacity-50"/>
               <span className="font-medium text-center">Busca y agrega productos.</span>
             </div>
           )}

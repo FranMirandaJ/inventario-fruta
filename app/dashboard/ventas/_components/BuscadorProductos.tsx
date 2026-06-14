@@ -11,18 +11,31 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
+import type { ItemCarrito } from "../_types";
 import { capitalizeFirstLetter } from "@/lib/text";
 import { formatCurrency } from "@/lib/money";
 
 type Props = {
   productos: ProductoParaVenta[];
+  itemsCarrito: ItemCarrito[];
   onProductoSelect: (producto: ProductoParaVenta) => void;
 };
 
-export default function BuscadorProductos({ productos, onProductoSelect }: Props) {
+export default function BuscadorProductos({ productos, itemsCarrito, onProductoSelect }: Props) {
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
+
+  const filteredProducts = productos.filter((p) => {
+    const enCarrito = itemsCarrito.find((item) => item.producto.id === p.id);
+    return !(enCarrito && enCarrito.cantidad >= p.stock_actual);
+  });
+
+  const getStockDisponible = (idProducto: number, stockActual: number) => {
+    const item = itemsCarrito.find(item => item.producto.id === idProducto);
+    const cantidadCarrito = item ? item.cantidad : 0;
+    return stockActual - cantidadCarrito;
+  }
 
   const showList = (isFocused && inputValue.length > 0) || inputValue.length > 0;
 
@@ -50,7 +63,7 @@ export default function BuscadorProductos({ productos, onProductoSelect }: Props
           <CommandEmpty>Sin resultados.</CommandEmpty>
 
           <CommandGroup>
-            {productos.map((p) => (
+            {filteredProducts.map((p) => (
               <CommandItem
                 className="flex-row items-center gap-2 py-3 sm:py-1.5 data-[selected=true]:bg-amber-100 data-[selected=true]:text-black dark:data-[selected=true]:bg-lime-800/50 dark:data-[selected=true]:text-gray-200 active:scale-[0.98] active:bg-amber-50 transition-transform"
                 key={p.id}
@@ -65,7 +78,7 @@ export default function BuscadorProductos({ productos, onProductoSelect }: Props
                     <span className="text-xs bg-muted px-1.5 py-0.5 rounded-md truncate">{capitalizeFirstLetter(p.categoria_nombre)}</span>
                     <span className="flex items-center gap-1">
                       <span className={`size-2 rounded-full ${p.stock_actual <= p.stock_minimo ? 'bg-amber-500' : 'bg-green-500'}`} />
-                      {p.stock_actual} Disp.
+                      {getStockDisponible(p.id, p.stock_actual)} Disp.
                     </span>
                   </div>
 
