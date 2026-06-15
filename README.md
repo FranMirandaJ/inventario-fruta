@@ -1,10 +1,10 @@
-# 🧊 Inventario Fruta - Sistema de Gestión de Inventarios
+# 🧊 FrutaStock - Sistema de Gestión de Inventarios
 
 Sistema de inventario y ventas diseñado específicamente para pequeños negocios de productos congelados de fruta. Gestiona categorías de productos, control de stock, movimientos de inventario y registro de ventas de manera eficiente.
 
 ## 📋 Descripción
 
-**Inventario Fruta** es una aplicación web moderna que permite administrar el inventario de productos congelados (bolis de agua, bolis de leche, pulpas de fruta y concentrados), realizar seguimiento de ventas, controlar entradas y salidas de productos, y generar reportes para una mejor toma de decisiones.
+**FrutaStock** es una aplicación web moderna que permite administrar el inventario de productos congelados (bolis de agua, bolis de leche, pulpas de fruta y concentrados), realizar seguimiento de ventas, controlar entradas y salidas de productos, y generar reportes para una mejor toma de decisiones.
 
 ### Características principales
 
@@ -23,51 +23,126 @@ Este proyecto está construido con tecnologías modernas para garantizar rendimi
 ### Frontend
 - **[Next.js 16](https://nextjs.org/)** - Framework React con App Router
 - **[React 19](https://react.dev/)** - Biblioteca de UI con las últimas características
-- **[TypeScript](https://www.typescriptlang.org/)** - Tipado estático para mayor seguridad
+- **[TypeScript 5](https://www.typescriptlang.org/)** - Tipado estático para mayor seguridad
 - **[Tailwind CSS v4](https://tailwindcss.com/)** - Framework de utilidades CSS
-- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes de UI accesibles y personalizables
+- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes de UI accesibles y personalizables (new-york style)
 - **[Lucide React](https://lucide.dev/)** - Iconos modernos
 - **[@teispace/next-themes](https://github.com/teispace/next-themes)** - Soporte para tema claro/oscuro
+- **[Sonner](https://sonner.emilkowal.dev/)** - Notificaciones toast
 
 ### Backend
-- **[Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)** - API serverless integrada
-- **[Prisma ORM](https://www.prisma.io/)** - ORM moderno para TypeScript
-- **[MySQL](https://www.mysql.com/)** - Base de datos relacional
-- **[Jose](https://github.com/panva/jose)** - Autenticación JWT
+- **[Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)** - Mutaciones del lado del servidor
+- **[Prisma 7](https://www.prisma.io/)** - ORM moderno para TypeScript con `@prisma/adapter-mariadb`
+- **[MySQL/MariaDB](https://www.mysql.com/)** - Base de datos relacional
+- **[Jose](https://github.com/panva/jose)** - Autenticación JWT (HS256, httpOnly cookies)
 - **[bcryptjs](https://github.com/dcodeIO/bcrypt.js)** - Hash de contraseñas
-- **[Zod](https://zod.dev/)** - Validación de esquemas y tipos
+- **[Zod v4](https://zod.dev/)** - Validación de esquemas y tipos
 
 ### Herramientas de desarrollo
-- **[pnpm](https://pnpm.io/)** - Gestor de paquetes eficiente
-- **[ESLint](https://eslint.org/)** - Linter de código
+- **[pnpm v11+](https://pnpm.io/)** - Gestor de paquetes eficiente
+- **[ESLint](https://eslint.org/)** - Linter de código (flat config)
 - **[tsx](https://github.com/esbuild-kit/tsx)** - Ejecución de TypeScript
 
 ## 📁 Estructura del proyecto
 
 ```
 inventario-fruta/
-├── app/                      # App Router de Next.js
-│   ├── api/                 # API Routes
-│   ├── dashboard/           # Panel principal de la aplicación
-│   │   ├── _actions/       # Server Actions
-│   │   └── _components/    # Componentes del dashboard
-│   ├── login/              # Página de inicio de sesión
-│   ├── layout.tsx          # Layout raíz
-│   └── globals.css         # Estilos globales
-├── components/              # Componentes reutilizables
-│   └── ui/                 # Componentes de shadcn/ui
-├── lib/                     # Utilidades y lógica de negocio
-│   ├── dal/                # Data Access Layer
-│   ├── dto/                # Data Transfer Objects
-│   ├── logger/             # Sistema de logging
-│   ├── prisma.ts           # Cliente de Prisma
-│   ├── session.ts          # Gestión de sesiones
-│   └── definitions.ts      # Definiciones de tipos
-├── prisma/                  # Configuración de Prisma
-│   ├── migrations/         # Migraciones de BD
-│   ├── schema.prisma       # Esquema de la base de datos
-│   └── seed.ts            # Datos iniciales
-└── public/                  # Archivos estáticos
+├── app/                              # App Router de Next.js
+│   ├── layout.tsx                     # Layout raíz (ThemeProvider, Toaster, TooltipProvider)
+│   ├── page.tsx                       # Redirige a /login
+│   ├── globals.css                    # Estilos globales (Tailwind v4)
+│   │
+│   ├── login/                         # Página de inicio de sesión
+│   │   ├── page.tsx
+│   │   ├── LoginForm.tsx              # Componente cliente (co-ubicado)
+│   │   ├── login.action.ts            # Server Action
+│   │   └── login.schema.ts           # Esquema de validación Zod
+│   │
+│   ├── dashboard/                     # Área autenticada (layout verifica sesión)
+│   │   ├── layout.tsx                 # Shell del dashboard (Navbar, Footer, fondo)
+│   │   ├── page.tsx                   # Inicio del dashboard
+│   │   ├── _actions/                  # Server Actions del dashboard
+│   │   │   └── dashboardNavbar.action.ts  # Acción de cerrar sesión
+│   │   ├── _components/              # Componentes del dashboard
+│   │   │   ├── ContenedorPagina.tsx        # Contenedor de página
+│   │   │   ├── DashboardFooter.tsx
+│   │   │   ├── DashboardNavbar.tsx
+│   │   │   └── InicioView.tsx
+│   │   │
+│   │   ├── productos/                 # Gestión de productos
+│   │   │   ├── page.tsx
+│   │   │   ├── _actions/             # Server Actions de productos
+│   │   │   │   ├── crear-producto.action.ts
+│   │   │   │   ├── actualizar-producto.action.ts
+│   │   │   │   ├── actualizar-estado-producto.action.ts
+│   │   │   │   └── ajustar-stock.action.ts
+│   │   │   ├── _components/          # Componentes de productos
+│   │   │   │   ├── TablaProductos.tsx
+│   │   │   │   ├── FormProducto.tsx
+│   │   │   │   ├── ModalNuevoProducto.tsx
+│   │   │   │   ├── ModalEditarProducto.tsx
+│   │   │   │   ├── ModalAjustarStock.tsx
+│   │   │   │   └── AlertModalEstadoProducto.tsx
+│   │   │   └── _schemas/            # Esquemas Zod de productos
+│   │   │       ├── crear-producto.schema.ts
+│   │   │       └── ajustar-stock.schema.ts
+│   │   │
+│   │   └── ventas/                    # Gestión de ventas
+│   │       ├── page.tsx
+│   │       ├── _actions/
+│   │       │   └── crear-venta.ts
+│   │       ├── _components/
+│   │       │   ├── VentasView.tsx
+│   │       │   ├── ModalRegistrarVenta.tsx
+│   │       │   └── BuscadorProductos.tsx
+│   │       ├── _schemas/
+│   │       │   └── crear-venta.schema.ts
+│   │       └── _types/
+│   │           └── index.ts
+│   │
+│   └── sandbox/                       # playground de desarrollo
+│       ├── layout.tsx
+│       ├── page.tsx
+│       └── _components/
+│           └── TablaPrueba.tsx
+│
+├── components/                        # Componentes reutilizables
+│   ├── AutoBreadcrumb.tsx             # Navegación breadcrumb automática
+│   ├── Datatable.tsx                  # Tabla de datos reutilizable
+│   ├── Modal.tsx                      # Modal reutilizable
+│   └── ui/                           # Componentes primitivos de shadcn/ui (27 componentes)
+│
+├── lib/                               # Utilidades y lógica de negocio
+│   ├── prisma.ts                      # Singleton del cliente Prisma (adapter MariaDB)
+│   ├── session.ts                     # Gestión de sesiones JWT (server-only)
+│   ├── definitions.ts                 # Definiciones de tipos compartidos (SessionPayload)
+│   ├── form-state.ts                  # Tipo genérico FormState para server actions
+│   ├── money.ts                       # Formateo de moneda (MXN)
+│   ├── text.ts                        # Utilidades de texto (capitalizar, normalizar, acentos)
+│   ├── utils.ts                       # Utilidades generales (cn, clsx, twMerge)
+│   ├── dal/                           # Data Access Layer (server-only, cacheado)
+│   │   ├── auth.ts                    # verifySession() - guarda de auth + redirect
+│   │   ├── categorias.ts             # Consultas de categorías
+│   │   └── productos.ts             # Consultas de productos
+│   ├── dto/                           # Data Transfer Objects (placeholder)
+│   └── logger/                        # Logger de consola con colores
+│       ├── index.ts                   # Factoría createLogger(prefijo)
+│       └── consoleColors.ts           # Códigos de color ANSI
+│
+├── prisma/                            # Configuración de Prisma
+│   ├── schema.prisma                  # Esquema de la base de datos
+│   ├── seed.ts                        # Datos iniciales (admin + categorías + productos + ventas)
+│   └── migrations/                    # Migraciones de BD
+│
+├── generated/prisma/                  # Output del cliente Prisma (NO node_modules/@prisma/client)
+├── public/                            # Archivos estáticos
+├── prisma.config.ts                   # Config de Prisma (dotenv, seed command)
+├── next.config.ts
+├── eslint.config.mjs                  # ESLint flat config
+├── tsconfig.json                      # TypeScript config (alias @/*)
+├── components.json                    # Config de shadcn/ui
+├── postcss.config.mjs
+└── package.json
 ```
 
 ## 🚀 Instalación y configuración
@@ -77,8 +152,8 @@ inventario-fruta/
 Asegúrate de tener instalado:
 
 - **Node.js** v24.0.0 o superior ([Descargar](https://nodejs.org/))
-- **pnpm** v10.33.0 o superior ([Instalar](https://pnpm.io/installation))
-- **MySQL** 8.0 o superior ([Descargar](https://dev.mysql.com/downloads/mysql/))
+- **pnpm** v11.2.2 o superior ([Instalar](https://pnpm.io/installation))
+- **MySQL/MariaDB** 8.0+ o 10.5+ ([Descargar MySQL](https://dev.mysql.com/downloads/mysql/) | [Descargar MariaDB](https://mariadb.org/download/))
 
 ### Pasos de instalación
 
@@ -185,16 +260,16 @@ Después de ejecutar el seed, puedes iniciar sesión con:
 
 > ⚠️ **Importante**: Cambia estas credenciales en producción por razones de seguridad.
 
-## 📊 Modelo de datos
+## 📊 Modelo de datos (Prisma)
 
 El sistema utiliza las siguientes entidades principales:
 
-- **Usuario** - Usuarios del sistema con roles (Admin/Vendedor)
-- **Categoría** - Categorías de productos (Bolis, Pulpas, etc.)
-- **Producto** - Productos congelados con precio y stock
-- **MovimientoInventario** - Registro de entradas, salidas y ajustes
-- **Venta** - Registro de ventas realizadas
-- **DetalleVenta** - Detalle de productos vendidos por venta
+- **Usuario** - Usuarios del sistema con roles (`ADMIN`/`VENDEDOR`) y flag `activo`
+- **Categoría** - Categorías de productos (Bolis, Pulpas, etc.). `nombre` es único
+- **Producto** - Productos congelados con precio (Decimal 10,2), stock actual, stock mínimo y flag `activo`
+- **MovimientoInventario** - Registro de entradas, salidas y ajustes (`ENTRADA`/`SALIDA`/`AJUSTE`). Enlaza a `Producto`, `Usuario` y opcionalmente `Venta`
+- **Venta** - Registro de ventas con total (Decimal 10,2) y estado (`ACTIVA`/`CANCELADA`)
+- **DetalleVenta** - Detalle de productos vendidos por venta (cantidad, precio unitario, subtotal)
 
 ## 🧪 Scripts disponibles
 
@@ -210,11 +285,11 @@ pnpm start            # Inicia el servidor de producción
 pnpm prisma migrate dev      # Crea y aplica migraciones
 pnpm prisma migrate deploy   # Aplica migraciones (producción)
 pnpm prisma db seed         # Ejecuta el seed
-pnpm prisma generate        # Genera el cliente de Prisma
+pnpm prisma generate        # Genera el cliente de Prisma (output: generated/prisma/)
 pnpm prisma studio          # Abre Prisma Studio (GUI)
 
 # Código
-pnpm lint             # Ejecuta el linter
+pnpm lint             # Ejecuta ESLint (flat config con core-web-vitals + typescript)
 ```
 
 ## 🏗️ Construir para producción
