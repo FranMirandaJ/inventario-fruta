@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { ProductoRow } from "@/lib/dal/productos";
 import { capitalizeFirstLetter } from "@/lib/text";
-import { cambiarEstadoProducto } from "../_actions/actualizar-estado-producto";
+import { cambiarEstadoProducto } from "../_actions/actualizar-estado-producto.action";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 

@@ -10,7 +10,7 @@ import { type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
 
-const log = createLogger("Productos/Cambiar-Estado");
+const log = createLogger("Productos/Actualizar-Estado");
 
 export const cambiarEstadoProducto = async (
   _state: ProductoFormState,

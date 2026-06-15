@@ -7,7 +7,6 @@ import { capitalizeFirstLetter } from "@/lib/text";
 import {
   Field,
   FieldGroup,
-  FieldLabel,
   FieldError,
 } from "@/components/ui/field";
 import { useActionState, useState, useEffect, useRef } from "react";
@@ -26,11 +25,13 @@ export default function ModalAjustarStock({
   open,
   onOpenChange,
 }: Props) {
+
   const [state, action, pending] = useActionState(ajustarStock, undefined);
-  const [clientErrors, setClientErrors] = useState<Record<string, string[]>>(
-    {},
-  );
+  const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({},);
   const processedTimestamp = useRef(state?.timestamp);
+  
+  const getFieldErrors = (field: string) =>
+    clientErrors[field] ?? state?.errors?.[field as keyof typeof state.errors] ?? undefined;
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
@@ -82,11 +83,11 @@ export default function ModalAjustarStock({
       size="sm"
       footer={
         <>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
             Cancelar
           </Button>
-          <Button type="submit" form="ajustar_stock">
-            {false ? (
+          <Button type="submit" form="ajustar_stock" disabled={pending}>
+            {pending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
                 Guardando...
@@ -98,9 +99,8 @@ export default function ModalAjustarStock({
         </>
       }
     >
-      <form id="ajustar_stock" action={action} onSubmit={handleSubmit}>
-        <Input name="id_producto" hidden={true} defaultValue={product?.id} />
-
+      <form id="ajustar_stock" action={action} onSubmit={handleSubmit} noValidate>
+        <Input name="id_producto" hidden={true} defaultValue={product?.id} disabled={pending}/>
         <FieldGroup>
           <Field>
             <Input
@@ -109,13 +109,13 @@ export default function ModalAjustarStock({
               step={1}
               min={0}
               className="text-center"
-              //aria-invalid={!!getFieldErrors("nombre")}
-              //disabled={pending}
+              aria-invalid={!!getFieldErrors("nuevo_stock")}
+              disabled={pending}
               defaultValue={product?.stock_actual}
             />
-            {/* {getFieldErrors("nombre") && (
-              <FieldError>{getFieldErrors("nombre")![0]}</FieldError>
-            )} */}
+            {getFieldErrors("nuevo_stock") && (
+              <FieldError>{getFieldErrors("nuevo_stock")![0]}</FieldError>
+            )}
           </Field>
         </FieldGroup>
       </form>

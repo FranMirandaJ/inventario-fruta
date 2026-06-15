@@ -19,7 +19,10 @@ export default function TablaProductos({ data, categorias }: Props) {
     null,
   );
   const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [stockModalOpen, setStockModalOpen] = useState(false);
+  const [keyStockModal, setKeyStockModal] = useState(0);
+
   const [togglingProduct, setTogglingProduct] = useState<ProductoRow | null>(
     null,
   );
@@ -71,7 +74,7 @@ export default function TablaProductos({ data, categorias }: Props) {
             size="icon"
             color="blue"
             title="Ajustar stock"
-            onClick={() => { setEditingProduct(p); setStockModalOpen(true); }}
+            onClick={() => { setEditingProduct(p); setStockModalOpen(true); setKeyStockModal(k => k + 1) }}
           >
             <PackagePlus className="size-4" />
           </Button>
@@ -130,6 +133,7 @@ export default function TablaProductos({ data, categorias }: Props) {
       />
 
       <ModalAjustarStock
+        key={keyStockModal}
         product={editingProduct}
         open={stockModalOpen}
         onOpenChange={(open) => {
