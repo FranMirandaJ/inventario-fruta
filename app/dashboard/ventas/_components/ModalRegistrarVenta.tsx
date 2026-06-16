@@ -94,6 +94,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
     } else {
       toast.error(state.message ?? "Error al registrar la venta.");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.timestamp]);
 
   return (

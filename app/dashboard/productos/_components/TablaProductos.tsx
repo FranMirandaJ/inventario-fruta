@@ -2,12 +2,14 @@
 import { useMemo, useState } from "react";
 import { XCircle, Pencil, CheckCircleIcon, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 import DataTable, { ColumnDef } from "@/components/Datatable";
 import type { ProductoRow } from "@/lib/dal/productos";
 import type { CategoriaOption } from "@/lib/dal/categorias";
-import ModalEditarProducto from "./ModalEditarProducto";
-import AlertModalEstadoProducto from "./AlertModalEstadoProducto";
-import ModalAjustarStock from "./ModalAjustarStock";
+
+const ModalEditarProducto = dynamic(() => import("./ModalEditarProducto"));
+const AlertModalEstadoProducto = dynamic(() => import("./AlertModalEstadoProducto"));
+const ModalAjustarStock = dynamic(() => import("./ModalAjustarStock"));
 
 interface Props {
   data: ProductoRow[];

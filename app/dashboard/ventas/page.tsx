@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import ContenedorPagina from "../_components/ContenedorPagina";
-import ModalRegistrarVenta from "./_components/ModalRegistrarVenta";
 import { obtenerProductosActivosDisponibles } from "@/lib/dal/productos";
+
+const ModalRegistrarVenta = dynamic(() => import("./_components/ModalRegistrarVenta"));
+
+export const metadata: Metadata = {
+  title: "Ventas - FrutaStock",
+};
 
 export default async function VentasPage() {
 

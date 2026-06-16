@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -30,16 +30,19 @@ export default function AlertModalEstadoProducto({
 }: Props) {
     
   const [state, action, pending] = useActionState(cambiarEstadoProducto, undefined);
+  const processedTimestamp = useRef(state?.timestamp);
 
   useEffect(() => {
     if (!state) return;
+    if (processedTimestamp.current === state.timestamp) return;
+    processedTimestamp.current = state.timestamp;
     if (state.success) {
       toast.success(state.message);
       onOpenChange(false);
     } else {
       toast.error(state.message);
     }
-  }, [state]);
+  }, [state, onOpenChange]);
 
   if (!product) return null;
 
@@ -54,8 +57,8 @@ export default function AlertModalEstadoProducto({
           </AlertDialogTitle>
           <AlertDialogDescription>
             {activating
-              ? <>¿Estás seguro de activar el producto <strong>"{capitalizeFirstLetter(product.nombre)}"</strong>?<br />Este producto volverá a estar disponible para la venta.</>
-              : <>¿Estás seguro de desactivar el producto <strong>"{capitalizeFirstLetter(product.nombre)}"</strong>?<br />Este producto dejará de estar disponible para la venta.</>
+              ? <>¿Estás seguro de activar el producto <strong>&ldquo;{capitalizeFirstLetter(product.nombre)}&rdquo;</strong>?<br />Este producto volverá a estar disponible para la venta.</>
+              : <>¿Estás seguro de desactivar el producto <strong>&ldquo;{capitalizeFirstLetter(product.nombre)}&rdquo;</strong>?<br />Este producto dejará de estar disponible para la venta.</>
             }
           </AlertDialogDescription>
         </AlertDialogHeader>

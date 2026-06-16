@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
 import { Input } from "@/components/ui/input";
@@ -66,7 +68,8 @@ export default function ModalAjustarStock({
     } else {
       toast.error(state.message);
     }
-  }, [state?.timestamp]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.timestamp, onOpenChange]);
 
   return (
     <Modal
@@ -74,7 +77,7 @@ export default function ModalAjustarStock({
       description={
         <>
           Ajusta el stock de{" "}
-          <strong>"{capitalizeFirstLetter(product?.nombre)}"</strong>.
+          <strong>&ldquo;{capitalizeFirstLetter(product?.nombre)}&rdquo;</strong>.
         </>
       }
       open={open}

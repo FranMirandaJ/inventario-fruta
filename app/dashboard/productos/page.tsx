@@ -1,15 +1,24 @@
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { verifySession } from "@/lib/dal/auth";
 import { obtenerProductos } from "@/lib/dal/productos";
 import { obtenerOpcionesCategoriasProductos } from "@/lib/dal/categorias";
 import ContenedorPagina from "../_components/ContenedorPagina";
-import ModalNuevoProducto from "./_components/ModalNuevoProducto";
 import TablaProductos from "./_components/TablaProductos";
+
+const ModalNuevoProducto = dynamic(() => import("./_components/ModalNuevoProducto"));
+
+export const metadata: Metadata = {
+  title: "Productos - FrutaStock",
+};
 
 export default async function ProductosPage() {
   await verifySession();
 
-  const productos = await obtenerProductos();
-  const opcionesCategorias = await obtenerOpcionesCategoriasProductos();
+  const [productos, opcionesCategorias] = await Promise.all([
+    obtenerProductos(),
+    obtenerOpcionesCategoriasProductos(),
+  ]);
 
   return (
     <ContenedorPagina 
