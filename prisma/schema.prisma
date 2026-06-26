@@ -90,21 +90,19 @@ model MovimientoInventario {
   tipo     TipoMovimiento
   cantidad Int
   motivo   String?
-  fecha    DateTime       @default(now())
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   @@index([producto_id])
   @@index([usuario_id])
-  @@index([fecha])
   @@index([venta_id])
+  @@index([created_at])
 }
 
 model Venta {
   id         Int            @id @default(autoincrement())
   total      Decimal        @db.Decimal(10, 2)
-  fecha      DateTime       @default(now())
   detalles   DetalleVenta[]
   estado     EstadoVenta    @default(ACTIVA)
   usuario_id Int
@@ -114,7 +112,7 @@ model Venta {
   updated_at            DateTime               @updatedAt
   movimientoInventarios MovimientoInventario[]
 
-  @@index([fecha])
+  @@index([created_at])
 }
 
 model DetalleVenta {
