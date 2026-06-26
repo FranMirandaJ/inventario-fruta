@@ -9,7 +9,3 @@ export type ConfirmarVentaItem = {
     id_producto: number;
     cantidad: number;
 };
-
-export type PropsCardVenta = {
-    
-};
