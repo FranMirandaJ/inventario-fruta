@@ -11,7 +11,7 @@ import { useState, useActionState, startTransition, useEffect } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/money";
 import { capitalizeFirstLetter } from "@/lib/text";
-import { crearVenta } from "../_actions/crear-venta";
+import { crearVenta } from "../_actions/crear-venta.action";
 import { VentaCarritoSchema } from "../_schemas/crear-venta.schema";
 
 type Props = {
