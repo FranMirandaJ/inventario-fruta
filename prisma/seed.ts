@@ -11,6 +11,7 @@ async function main() {
   logger.info("Iniciando seed...");
   try {
     await crearAdmin();
+    await crearVendedor();
     await crearCategorias();
     await crearProductos();
     await crearVentas();
@@ -47,6 +48,30 @@ const crearAdmin = async () => {
 
     logger.success(`Usuario administrador asegurado: ${admin.email}`);
 
+};
+
+const crearVendedor = async () => {
+  const passwordAdmin = process.env.ADMIN_PASSWORD;
+
+  if (!passwordAdmin) {
+    logger.warn("No se encontró ADMIN_PASSWORD. Se saltará la creación del vendedor.");
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(passwordAdmin, 10);
+
+  const vendedor = await prisma.usuario.upsert({
+    where: { email: "veronica@gmail.com" },
+    update: {},
+    create: {
+      nombre: "Verónica Jaramillo",
+      email: "veronica@gmail.com",
+      password: hashedPassword,
+      rol: RolUsuario.VENDEDOR,
+    },
+  });
+
+  logger.success(`Vendedor asegurado: ${vendedor.email}`);
 };
 
 const crearCategorias = async () => {

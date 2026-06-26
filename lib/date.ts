@@ -1,4 +1,23 @@
 /**
+ * Convierte una fecha local (YYYY-MM-DD) a un objeto Date UTC
+ * usando el offset del cliente en minutos.
+ *
+ * @param dateStr - Fecha en formato "YYYY-MM-DD"
+ * @param offsetMin - Offset del cliente en minutos (ej. 360 para UTC-6)
+ * @param endOfDay - Si true, devuelve el final del día (23:59:59.999)
+ * @returns Date en UTC
+ */
+export function dateFromLocal(dateStr: string, offsetMin: number, endOfDay?: boolean): Date {
+  const sign = offsetMin <= 0 ? "+" : "-";
+  const abs = Math.abs(offsetMin);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  const offset = `${sign}${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+  const time = endOfDay ? "T23:59:59.999" : "T00:00:00";
+  return new Date(`${dateStr}${time}${offset}`);
+}
+
+/**
  * Da formato humano a una fecha mostrando "Hoy", "Ayer" o la fecha completa
  * según qué tan reciente sea.
  *
