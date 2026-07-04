@@ -55,7 +55,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
                   <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
                     x{art.cantidad}
                   </Badge> =
-                  <span className="text-foreground font-semibold tabular-nums">{formatCurrency(art.subtotal)}</span>
+                  <span className="text-foreground font-medium tabular-nums">{formatCurrency(art.subtotal)}</span>
                 </div>
               </div>
             ))}
