@@ -14,21 +14,32 @@ export const metadata: Metadata = {
 };
 
 export default async function VentasPage(props: {
-  searchParams?: Promise<{ q?: string; desde?: string; hasta?: string; offset?: string }>
+  searchParams?: Promise<{ 
+    q?: string; 
+    desde?: string; 
+    hasta?: string; 
+    offset?: string;
+    page?: string;
+    pageSize?: string;
+  }>
 }) {
-  const params = await props.searchParams;
-  const query = params?.q || "";
-  const desde = params?.desde || "";
-  const hasta = params?.hasta || "";
-  const offset = params?.offset || "";
+  const searchParams = await props.searchParams;
+  const query = searchParams?.q || "";
+  const desde = searchParams?.desde || "";
+  const hasta = searchParams?.hasta || "";
+  const offset = searchParams?.offset || "";
+  const page = Math.max(1, Number(searchParams?.page) || 1);
+  const pageSize = Math.max(1, Number(searchParams?.pageSize) || 10);
 
-  const [productos, { ventas }] = await Promise.all([
+  const [productos, { ventas, totalPages }] = await Promise.all([
     obtenerProductosActivosDisponibles(),
     obtenerVentas({
       q: query || undefined,
       desde: desde || undefined,
       hasta: hasta || undefined,
       offset: offset || undefined,
+      page,
+      pageSize,
     }),
   ]);
 
@@ -39,7 +50,7 @@ export default async function VentasPage(props: {
     >
       <FiltrosVentas />
       <Suspense fallback={<div className="py-12 text-center text-muted-foreground">Cargando ventas...</div>}>
-        <TablaVentas ventas={ventas} />
+        <TablaVentas ventas={ventas} totalPages={totalPages} currentPage={page} pageSize={pageSize} />
       </Suspense>
     </ContenedorPagina>
   );

@@ -31,6 +31,7 @@ export default function FiltrosVentas() {
         params.delete(key);
       }
     }
+    params.delete("page");
     if (params.has("desde") || params.has("hasta")) {
       params.set("offset", String(new Date().getTimezoneOffset()));
     } else {

@@ -89,8 +89,14 @@ function CardVenta({ venta }: { venta: VentaRow }) {
 
 export default function TablaVentas({
   ventas,
+  totalPages,
+  currentPage,
+  pageSize,
 }: {
   ventas: VentaRow[];
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
 }) {
 
   return (
@@ -107,7 +113,7 @@ export default function TablaVentas({
 
       </section> */}
 
-      <PaginacionTablaVentas/>
+      <PaginacionTablaVentas totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} />
 
     </div>
   );
