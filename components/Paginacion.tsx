@@ -49,7 +49,7 @@ export default function Paginacion({
 
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-end gap-4 my-5">
+      <div className="flex items-center justify-end gap-4 mt-7">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Registros por página
         </label>
