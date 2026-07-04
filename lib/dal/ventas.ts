@@ -12,6 +12,7 @@ export type VentaRow = {
     detalles: {
         id: number;
         cantidad: number;
+        precio_unitario: number;
         subtotal: number;
         producto_nombre: string;
         categoria: string;
@@ -65,6 +66,7 @@ export const obtenerVentas = cache(async (params?: ObtenerVentasParams): Promise
                     select: {
                         id: true,
                         cantidad: true,
+                        precio_unitario: true,
                         producto: { select: { nombre: true, categoria: { select: { nombre: true } } } },
                         subtotal: true,
                     }
@@ -83,6 +85,7 @@ export const obtenerVentas = cache(async (params?: ObtenerVentasParams): Promise
             detalles: v.detalles.map(d => ({
                 id: d.id,
                 cantidad: d.cantidad,
+                precio_unitario: Number(d.precio_unitario),
                 subtotal: Number(d.subtotal),
                 producto_nombre: d.producto.nombre,
                 categoria: d.producto.categoria.nombre,
