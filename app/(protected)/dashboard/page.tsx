@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ContenedorPagina from "./_components/ContenedorPagina";
+import ContenedorPagina from "@/components/ContenedorPagina";
 import InicioView from "./_components/InicioView";
 
 export const metadata: Metadata = {

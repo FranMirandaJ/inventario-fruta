@@ -7,4 +7,3 @@ export const cerrarSesion = async () => {
     await deleteSession();
     redirect("/login");
 };
-

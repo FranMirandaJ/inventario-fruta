@@ -1,15 +1,14 @@
 import { ReactNode } from "react";
-import Image from "next/image"; // Asegúrate de tener esta importación
+import Image from "next/image";
 import { verifySession } from "@/lib/dal/auth";
-import DashboardNavbar from "./_components/DashboardNavbar";
-import DashboardFooter from "./_components/DashboardFooter";
+import Navbar from "./_components/Navbar";
+import Footer from "./_components/Footer";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  // Datos de sesión del usuario
   const session = await verifySession();
 
   return (
@@ -20,16 +19,16 @@ export default async function DashboardLayout({
           alt="Background"
           fill
           priority
-          className="object-cover opacity-40" // object-cover asegura que no se deforme
+          className="object-cover opacity-40"
         />
       </div>
 
       <div className="min-h-screen flex flex-col">
-        <DashboardNavbar sessionData={session} />
+        <Navbar sessionData={session} />
 
         <main className="grow">{children}</main>
 
-        <DashboardFooter />
+        <Footer />
       </div>
     </>
   );

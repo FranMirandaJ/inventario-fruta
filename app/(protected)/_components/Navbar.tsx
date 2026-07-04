@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { cerrarSesion } from "../_actions/dashboardNavbar.action";
+import { cerrarSesion } from "../_actions/navbar.action";
 import { obtenerInicialesAvatar } from "@/lib/text";
 
-export default function DashboardNavbar({
+export default function Navbar({
   sessionData,
 }: {
   sessionData: SessionPayload;
@@ -35,8 +35,8 @@ export default function DashboardNavbar({
 
   const enlaces = [
     { label: "Inicio", href: "/dashboard" },
-    { label: "Productos", href: "/dashboard/productos" },
-    { label: "Ventas", href: "/dashboard/ventas" },
+    { label: "Productos", href: "/productos" },
+    { label: "Ventas", href: "/ventas" },
   ];
 
   const estaActivo = (href: string) =>
@@ -97,7 +97,6 @@ export default function DashboardNavbar({
         </div>
       </div>
 
-      {/* Mobile menu */}
       <div className={`w-full sm:hidden ${isMenuOpen ? "block" : "hidden"}`}>
         <Separator className="my-2 bg-border" />
 
@@ -137,7 +136,6 @@ export default function DashboardNavbar({
         </Button>
       </div>
 
-      {/* Desktop: theme toggle + avatar */}
       <div className="hidden sm:flex sm:items-center sm:gap-2">
         <Button
           variant="ghost"

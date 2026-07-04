@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import ContenedorPagina from "../_components/ContenedorPagina";
+import ContenedorPagina from "@/components/ContenedorPagina";
 import TablaVentas from "./_components/TablaVentas";
 import FiltrosVentas from "./_components/FiltrosVentas";
 import { obtenerProductosActivosDisponibles } from "@/lib/dal/productos";

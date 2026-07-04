@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { verifySession } from "@/lib/dal/auth";
 import { obtenerProductos } from "@/lib/dal/productos";
 import { obtenerOpcionesCategoriasProductos } from "@/lib/dal/categorias";
-import ContenedorPagina from "../_components/ContenedorPagina";
+import ContenedorPagina from "@/components/ContenedorPagina";
 import TablaProductos from "./_components/TablaProductos";
 
 const ModalNuevoProducto = dynamic(() => import("./_components/ModalNuevoProducto"));
