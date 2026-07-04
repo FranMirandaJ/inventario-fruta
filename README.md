@@ -58,41 +58,47 @@ inventario-fruta/
 │   │   ├── login.action.ts            # Server Action
 │   │   └── login.schema.ts           # Esquema de validación Zod
 │   │
-│   ├── dashboard/                     # Área autenticada (layout verifica sesión)
-│   │   ├── layout.tsx                 # Shell del dashboard (Navbar, Footer, fondo)
-│   │   ├── page.tsx                   # Inicio del dashboard
-│   │   ├── _actions/                  # Server Actions del dashboard
-│   │   │   └── dashboardNavbar.action.ts  # Acción de cerrar sesión
-│   │   ├── _components/              # Componentes del dashboard
-│   │   │   ├── ContenedorPagina.tsx        # Contenedor de página
-│   │   │   ├── DashboardFooter.tsx
-│   │   │   ├── DashboardNavbar.tsx
-│   │   │   └── InicioView.tsx
+│   ├── (protected)/                   # Route group — páginas autenticadas
+│   │   ├── layout.tsx                 # Shell (Navbar, Footer, fondo, verifySession)
+│   │   ├── _actions/
+│   │   │   └── navbar.action.ts       # Acción de cerrar sesión
+│   │   ├── _components/
+│   │   │   ├── Navbar.tsx             # Barra de navegación
+│   │   │   └── Footer.tsx             # Footer de la app
 │   │   │
-│   │   ├── productos/                 # Gestión de productos
+│   │   ├── dashboard/                 # URL: /dashboard — Inicio
 │   │   │   ├── page.tsx
-│   │   │   ├── _actions/             # Server Actions de productos
+│   │   │   ├── loading.tsx
+│   │   │   └── _components/
+│   │   │       └── InicioView.tsx
+│   │   │
+│   │   ├── productos/                 # URL: /productos — Gestión de productos
+│   │   │   ├── page.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── _actions/
 │   │   │   │   ├── crear-producto.action.ts
 │   │   │   │   ├── actualizar-producto.action.ts
 │   │   │   │   ├── actualizar-estado-producto.action.ts
 │   │   │   │   └── ajustar-stock.action.ts
-│   │   │   ├── _components/          # Componentes de productos
+│   │   │   ├── _components/
 │   │   │   │   ├── TablaProductos.tsx
 │   │   │   │   ├── FormProducto.tsx
 │   │   │   │   ├── ModalNuevoProducto.tsx
 │   │   │   │   ├── ModalEditarProducto.tsx
 │   │   │   │   ├── ModalAjustarStock.tsx
 │   │   │   │   └── AlertModalEstadoProducto.tsx
-│   │   │   └── _schemas/            # Esquemas Zod de productos
+│   │   │   └── _schemas/
 │   │   │       ├── crear-producto.schema.ts
 │   │   │       └── ajustar-stock.schema.ts
 │   │   │
-│   │   └── ventas/                    # Gestión de ventas
+│   │   └── ventas/                    # URL: /ventas — Gestión de ventas
 │   │       ├── page.tsx
+│   │       ├── loading.tsx
 │   │       ├── _actions/
-│   │       │   └── crear-venta.ts
+│   │       │   └── crear-venta.action.ts
 │   │       ├── _components/
-│   │       │   ├── VentasView.tsx
+│   │       │   ├── TablaVentas.tsx
+│   │       │   ├── FiltrosVentas.tsx
 │   │       │   ├── ModalRegistrarVenta.tsx
 │   │       │   └── BuscadorProductos.tsx
 │   │       ├── _schemas/
@@ -100,14 +106,13 @@ inventario-fruta/
 │   │       └── _types/
 │   │           └── index.ts
 │   │
-│   └── sandbox/                       # playground de desarrollo
-│       ├── layout.tsx
+│   └── sandbox/                       # Playground de desarrollo (sin auth, sin layout propio)
 │       ├── page.tsx
 │       └── _components/
 │           └── TablaPrueba.tsx
 │
 ├── components/                        # Componentes reutilizables
-│   ├── AutoBreadcrumb.tsx             # Navegación breadcrumb automática
+│   ├── ContenedorPagina.tsx           # Contenedor de página
 │   ├── Datatable.tsx                  # Tabla de datos reutilizable
 │   ├── Modal.tsx                      # Modal reutilizable
 │   └── ui/                           # Componentes primitivos de shadcn/ui (27 componentes)

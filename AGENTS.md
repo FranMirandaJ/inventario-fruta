@@ -70,19 +70,23 @@ inventario-fruta/
 │   │   ├── login.action.ts            # Server action
 │   │   └── login.schema.ts            # Zod validation schema
 │   │
-│   ├── dashboard/                     # Authenticated area (layout verifies session)
-│   │   ├── layout.tsx                 # Dashboard shell (Navbar, Footer, background image)
-│   │   ├── page.tsx                   # Dashboard home/inicio
-│   │   ├── _actions/                  # Dashboard-level server actions
-│   │   │   └── dashboardNavbar.action.ts  # Logout action
-│   │   ├── _components/               # Dashboard-level components
-│   │   │   ├── ContenedorPagina.tsx        # Page container wrapper
-│   │   │   ├── DashboardFooter.tsx
-│   │   │   ├── DashboardNavbar.tsx
-│   │   │   └── InicioView.tsx
+│   ├── (protected)/                   # Route group — authenticated pages
+│   │   ├── layout.tsx                 # Auth shell (Navbar, Footer, background, verifySession)
+│   │   ├── _actions/
+│   │   │   └── navbar.action.ts       # Logout action
+│   │   ├── _components/
+│   │   │   ├── Navbar.tsx             # Navigation bar
+│   │   │   └── Footer.tsx             # App footer
 │   │   │
-│   │   ├── productos/                 # Products management page
+│   │   ├── dashboard/                 # URL: /dashboard — Home page
 │   │   │   ├── page.tsx
+│   │   │   ├── loading.tsx
+│   │   │   └── _components/
+│   │   │       └── InicioView.tsx
+│   │   │
+│   │   ├── productos/                 # URL: /productos — Products management
+│   │   │   ├── page.tsx
+│   │   │   ├── loading.tsx
 │   │   │   ├── _actions/
 │   │   │   │   ├── crear-producto.action.ts
 │   │   │   │   ├── actualizar-producto.action.ts
@@ -99,12 +103,14 @@ inventario-fruta/
 │   │   │       ├── crear-producto.schema.ts
 │   │   │       └── ajustar-stock.schema.ts
 │   │   │
-│   │   └── ventas/                    # Sales management page
+│   │   └── ventas/                    # URL: /ventas — Sales management
 │   │       ├── page.tsx
+│   │       ├── loading.tsx
 │   │       ├── _actions/
-│   │       │   └── crear-venta.ts
+│   │       │   └── crear-venta.action.ts
 │   │       ├── _components/
-│   │       │   ├── VentasView.tsx
+│   │       │   ├── TablaVentas.tsx
+│   │       │   ├── FiltrosVentas.tsx
 │   │       │   ├── ModalRegistrarVenta.tsx
 │   │       │   └── BuscadorProductos.tsx
 │   │       ├── _schemas/
@@ -112,14 +118,13 @@ inventario-fruta/
 │   │       └── _types/
 │   │           └── index.ts
 │   │
-│   └── sandbox/                       # Dev/test playground
-│       ├── layout.tsx
-│       ├── page.tsx
-│       └── _components/
-│           └── TablaPrueba.tsx
+│   ├── sandbox/                       # Dev/test playground (no auth, no shell)
+│   │   ├── page.tsx
+│   │   └── _components/
+│   │       └── TablaPrueba.tsx
 │
 ├── components/                        # Shared components
-│   ├── AutoBreadcrumb.tsx             # Auto breadcrumb navigation
+│   ├── ContenedorPagina.tsx           # Page container wrapper
 │   ├── Datatable.tsx                  # Reusable data table
 │   ├── Modal.tsx                      # Reusable modal wrapper
 │   └── ui/                           # shadcn/ui primitives (27 components)
@@ -250,12 +255,12 @@ export const someAction = async (_state: SomeFormState, formData: FormData): Pro
 
 - **shadcn/ui** components live in `components/ui/` (installed via `shadcn` CLI)
 - Use `new-york` style variant (see `components.json`)
-- Custom shared components go in `components/` root (e.g., `Datatable.tsx`, `Modal.tsx`, `AutoBreadcrumb.tsx`)
+- Custom shared components go in `components/` root (e.g., `ContenedorPagina.tsx`, `Datatable.tsx`, `Modal.tsx`)
 - Route-specific components go in `_components/` alongside their page
 
 ### Route Organization
 
-Each dashboard route uses co-located directories:
+Each route uses co-located directories under a route group for shared layouts:
 
 | Directory | Purpose |
 |-----------|---------|
@@ -272,7 +277,7 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 2. Session stored in httpOnly cookie (`session`), 7-day expiry, HS256
 3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie, redirects to `/login` if invalid
 4. Dashboard layout calls `verifySession()` to protect all dashboard routes
-5. Logout via `cerrarSesion()` in `dashboardNavbar.action.ts` deletes cookie and redirects
+5. Logout via `cerrarSesion()` in `navbar.action.ts` deletes cookie and redirects
 
 ### Styling
 
@@ -330,5 +335,5 @@ All seed operations are idempotent (upserts, skipDuplicates, existence checks).
 
 - The Prisma client output directory is `generated/prisma/`, not the default `node_modules/@prisma/client`. Always import from `@/generated/prisma`.
 - There are **no API routes** (`route.ts` files) in this project. All server-side mutations go through Server Actions.
-- The `sandbox/` route is for development/testing only and should not be deployed to production.
+- The `sandbox/` route is for development/testing only, inherits the root layout (no auth shell), and should not be deployed to production.
 - The `app/api/` directory exists but contains only a placeholder `text.txt` file.
