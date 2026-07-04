@@ -23,7 +23,7 @@ export default function ContenedorPagina({
 
             <div className="flex flex-col items-center text-center">
               {titulo && (
-                <h1 className="text-xl font-bold text-foreground tracking-wide uppercase">
+                <h1 className="text-xl font-bold text-foreground tracking-wide uppercase mt-2">
                   {titulo}
                 </h1>
               )}
