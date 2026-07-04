@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Ban, Trash2, CheckCircleIcon } from "lucide-react";
-import DataTable, { ColumnDef } from "../../../components/Datatable";
+import DataTable, { ColumnDef } from "@/components/Datatable";
 
 export interface Periodo {
   id: string;

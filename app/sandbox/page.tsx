@@ -1,13 +1,16 @@
+"use client";
+
+import { useTheme } from "@teispace/next-themes";
 import { Button } from "@/components/ui/button";
-import ContenedorPagina from "../dashboard/_components/ContenedorPagina";
+import ContenedorPagina from "@/components/ContenedorPagina";
 import AutoBreadcrumb from "../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Package, History } from "lucide-react";
+import { LayoutDashboard, Package, History, Sun, Moon, Trash } from "lucide-react";
 import Modal from "@/components/Modal";
-import { Trash } from "lucide-react";
 
 export default function DashboardPage() {
+  const { setTheme, resolvedTheme } = useTheme();
   // datos de prueba (Aquí normalmente vendrían de tu base de datos)
   const dataDePrueba: Periodo[] = [
     { id: "1", periodoEscolar: "ENE-JUN/2026", totalEventos: 0, totalHoras: 0 },
@@ -62,6 +65,9 @@ export default function DashboardPage() {
       descripcion="Esto es una página de prueba para probar componentes"
       acciones={
         <>
+          <Button variant="outline" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>
+            {resolvedTheme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
           <Button variant={"outline"}>Hola</Button>
           <Button variant={"outline"}>Hola</Button>
           <Button variant={"outline"}>Hola</Button>
