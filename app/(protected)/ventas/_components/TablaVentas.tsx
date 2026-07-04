@@ -6,11 +6,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import PaginacionTablaVentas from "./PaginacionTablaVentas";
 import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
 import { capitalizeFirstLetter, capitalizeWords } from "@/lib/text";
-import { Badge } from "@/components/ui/badge";
 
 function CardVenta({ venta }: { venta: VentaRow }) {
   return venta.detalles.length > 1 ? (
@@ -105,6 +106,8 @@ export default function TablaVentas({
       {/* <section>
 
       </section> */}
+
+      <PaginacionTablaVentas/>
 
     </div>
   );
