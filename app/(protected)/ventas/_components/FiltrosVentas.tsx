@@ -53,7 +53,12 @@ export default function FiltrosVentas() {
   };
 
   const limpiarFiltros = () => {
-    router.replace(pathname);
+    const params = new URLSearchParams();
+    if (searchParams.has("pageSize")) {
+      params.set("pageSize", searchParams.get("pageSize")!);
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
   };
 
   return (

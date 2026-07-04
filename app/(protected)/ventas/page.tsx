@@ -29,7 +29,7 @@ export default async function VentasPage(props: {
   const hasta = searchParams?.hasta || "";
   const offset = searchParams?.offset || "";
   const page = Math.max(1, Number(searchParams?.page) || 1);
-  const pageSize = Math.max(1, Number(searchParams?.pageSize) || 10);
+  const pageSize = Math.max(1, Number(searchParams?.pageSize) || 5);
 
   const [productos, { ventas, totalPages }] = await Promise.all([
     obtenerProductosActivosDisponibles(),
@@ -50,7 +50,7 @@ export default async function VentasPage(props: {
     >
       <FiltrosVentas />
       <Suspense fallback={<div className="py-12 text-center text-muted-foreground">Cargando ventas...</div>}>
-        <TablaVentas ventas={ventas} totalPages={totalPages} currentPage={page} pageSize={pageSize} />
+        <TablaVentas ventas={ventas} totalPages={totalPages} />
       </Suspense>
     </ContenedorPagina>
   );

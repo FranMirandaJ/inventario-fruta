@@ -17,18 +17,17 @@ import {
 } from "@/components/ui/select";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-export default function PaginacionTablaVentas({
+export default function Paginacion({
   totalPages,
-  currentPage,
-  pageSize,
 }: {
   totalPages: number;
-  currentPage: number;
-  pageSize: number;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const currentPage = Math.max(1, Number(searchParams.get("page")) || 1);
+  const pageSize = Number(searchParams.get("pageSize")) || 5;
 
   const createPageURL = (page: number, ps?: number) => {
     const params = new URLSearchParams(searchParams);
@@ -37,7 +36,7 @@ export default function PaginacionTablaVentas({
     return `${pathname}?${params.toString()}`;
   };
 
-  const goToPage = (page: number) => {
+  const handlePageChange = (page: number) => {
     router.replace(createPageURL(page));
   };
 
@@ -50,7 +49,7 @@ export default function PaginacionTablaVentas({
 
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-center gap-4 my-5">
+      <div className="flex items-center justify-end gap-4 my-5">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Registros por página
         </label>
@@ -72,7 +71,7 @@ export default function PaginacionTablaVentas({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 my-5">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-7">
       <div className="flex items-center gap-2">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Registros por página
@@ -103,7 +102,7 @@ export default function PaginacionTablaVentas({
                 href={createPageURL(currentPage - 1)}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (currentPage > 1) goToPage(currentPage - 1);
+                  if (currentPage > 1) handlePageChange(currentPage - 1);
                 }}
                 aria-disabled={currentPage <= 1}
                 tabIndex={currentPage <= 1 ? -1 : undefined}
@@ -115,7 +114,7 @@ export default function PaginacionTablaVentas({
                 href={createPageURL(currentPage + 1)}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (currentPage < totalPages) goToPage(currentPage + 1);
+                  if (currentPage < totalPages) handlePageChange(currentPage + 1);
                 }}
                 aria-disabled={currentPage >= totalPages}
                 tabIndex={currentPage >= totalPages ? -1 : undefined}

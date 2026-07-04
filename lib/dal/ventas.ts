@@ -35,7 +35,7 @@ export type ObtenerVentasResult = {
 };
 
 export const obtenerVentas = cache(async (params?: ObtenerVentasParams): Promise<ObtenerVentasResult> => {
-    const { q, page = 1, pageSize = 10, desde, hasta, offset } = params ?? {};
+    const { q, page = 1, pageSize = 5, desde, hasta, offset } = params ?? {};
     const offsetMin = Number(offset) || 0;
 
     const where = {

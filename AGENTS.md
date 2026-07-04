@@ -127,6 +127,7 @@ inventario-fruta/
 │   ├── ContenedorPagina.tsx           # Page container wrapper
 │   ├── Datatable.tsx                  # Reusable data table
 │   ├── Modal.tsx                      # Reusable modal wrapper
+│   ├── Paginacion.tsx                 # Server-side pagination (URL-driven)
 │   └── ui/                           # shadcn/ui primitives (27 components)
 │
 ├── lib/                               # Utilities and business logic
@@ -292,6 +293,131 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 - Prisma `PrismaClientKnownRequestError` code `P2025` → record not found
 - All server action errors return a `FormState` with `success: false`
 - Error messages in server actions are in **Spanish**
+
+### Pagination Standard
+
+All list views with potentially large datasets must use server-side pagination via URL search params. For small catalogs that fit entirely in memory, use `DataTable` which handles pagination internally.
+
+#### 1. Pagination Component
+
+- Location: `components/Paginacion.tsx`
+- Self-contained client component that reads/writes URL search params internally
+- Only prop required: `totalPages: number`
+- Translates directly to URL params: `?page=N&pageSize=M`
+- Includes page size selector (5, 10, 25, 50 items per page)
+- Hides navigation buttons when `totalPages <= 1` (page size selector remains visible)
+- Must be rendered within a `<Suspense>` boundary (uses `useSearchParams()`)
+- **DO NOT** pass `onPageChange` or `onPageSizeChange` callbacks — the component manages navigation via `router.replace()` internally
+- **Note:** `DataTable` (`components/Datatable.tsx`) has its own client-side pagination built-in. Do not use `Paginacion` with `DataTable`. `Paginacion` is for large datasets that are fetched page-by-page from the server (e.g., sales).
+
+#### 2. DAL Pattern (lib/dal/*.ts)
+
+Every data access function for list views must follow this pattern:
+
+```typescript
+import "server-only";
+import { prisma } from "@/lib/prisma";
+import { cache } from "react";
+
+export const obtenerAlgo = cache(async (params?: {
+  page?: number;
+  pageSize?: number;
+  // ...other filters
+}): Promise<{ data: Something[]; totalPages: number; total: number }> => {
+  const { page = 1, pageSize = 5 } = params ?? {};
+
+  const [items, total] = await Promise.all([
+    prisma.modelo.findMany({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      // where, orderBy, select...
+    }),
+    prisma.modelo.count({ where }),
+  ]);
+
+  return {
+    data: items,
+    totalPages: Math.ceil(total / pageSize),
+    total,
+  };
+});
+```
+
+Existing reference: `lib/dal/ventas.ts` (`obtenerVentas`).
+
+#### 3. Server Component Pattern (page.tsx)
+
+```typescript
+export default async function MiPagina(props: {
+  searchParams?: Promise<{
+    q?: string;
+    page?: string;
+    pageSize?: string;
+  }>
+}) {
+  const searchParams = await props.searchParams;
+  const page = Math.max(1, Number(searchParams?.page) || 1);
+  const pageSize = Math.max(1, Number(searchParams?.pageSize) || 5);
+
+  const { data, totalPages } = await obtenerAlgo({ page, pageSize });
+
+  return (
+    <Suspense fallback="Cargando...">
+      <MiTabla data={data} totalPages={totalPages} />
+    </Suspense>
+  );
+}
+```
+
+#### 4. Client Component Pattern (componentes que renderizan listas)
+
+Receive `totalPages` from the server component and render `<Paginacion>`:
+
+```typescript
+import Paginacion from "@/components/Paginacion";
+
+export default function MiTabla({ data, totalPages }: { data: Something[]; totalPages: number }) {
+  return (
+    <div>
+      {data.map(item => <div key={item.id}>{item.name}</div>)}
+      <Paginacion totalPages={totalPages} />
+    </div>
+  );
+}
+```
+
+**Note:** `DataTable` (`components/Datatable.tsx`) has its own client-side pagination built-in. Do not use `Paginacion` with `DataTable`. `Paginacion` is for large datasets that are fetched page-by-page from the server (e.g., sales).
+
+#### 5. Filter / Search Reset
+
+When filters change (search text, date range, category, etc.), the filter handler **must** delete the `page` param so the view resets to page 1:
+
+```typescript
+const updateParams = (updates: Record<string, string | undefined>) => {
+  const params = new URLSearchParams(searchParams);
+  for (const [key, value] of Object.entries(updates)) {
+    if (value) params.set(key, value);
+    else params.delete(key);
+  }
+  params.delete("page"); // ← reset to page 1
+  router.replace(`${pathname}?${params.toString()}`);
+};
+```
+
+When clearing all filters, preserve `pageSize` if the user had changed it:
+
+```typescript
+const limpiarFiltros = () => {
+  const params = new URLSearchParams();
+  if (searchParams.has("pageSize")) {
+    params.set("pageSize", searchParams.get("pageSize")!);
+  }
+  const qs = params.toString();
+  router.replace(qs ? `${pathname}?${qs}` : pathname);
+};
+```
+
+Existing reference: `app/(protected)/ventas/_components/FiltrosVentas.tsx`
 
 ### Language
 

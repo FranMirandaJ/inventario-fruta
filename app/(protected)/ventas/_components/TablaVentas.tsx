@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import PaginacionTablaVentas from "./PaginacionTablaVentas";
+import Paginacion from "@/components/Paginacion";
 import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
@@ -90,13 +90,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
 export default function TablaVentas({
   ventas,
   totalPages,
-  currentPage,
-  pageSize,
 }: {
   ventas: VentaRow[];
   totalPages: number;
-  currentPage: number;
-  pageSize: number;
 }) {
 
   return (
@@ -113,7 +109,7 @@ export default function TablaVentas({
 
       </section> */}
 
-      <PaginacionTablaVentas totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} />
+      <Paginacion totalPages={totalPages} />
 
     </div>
   );
