@@ -3,7 +3,6 @@
 import { useTheme } from "@teispace/next-themes";
 import { Button } from "@/components/ui/button";
 import ContenedorPagina from "@/components/ContenedorPagina";
-import AutoBreadcrumb from "../../components/AutoBreadcrumb";
 import TablaPeriodos, { Periodo } from "./_components/TablaPrueba";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Package, History, Sun, Moon, Trash } from "lucide-react";
@@ -73,7 +72,6 @@ export default function DashboardPage() {
           <Button variant={"outline"}>Hola</Button>
         </>
       }
-      //breadcrumbs={<AutoBreadcrumb/>}
     >
       <p>esto es una prueba</p>
       <p>esto es una prueba</p>
