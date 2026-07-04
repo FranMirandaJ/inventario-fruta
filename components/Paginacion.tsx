@@ -49,7 +49,7 @@ export default function Paginacion({
 
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-end gap-4 mt-7">
+      <div className="flex items-center justify-center sm:justify-end gap-4 mt-7">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Registros por página
         </label>
@@ -72,7 +72,7 @@ export default function Paginacion({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-7">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-start gap-2">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Registros por página
         </label>
