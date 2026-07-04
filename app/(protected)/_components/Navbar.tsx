@@ -55,7 +55,7 @@ export default function Navbar({
               FrutaStock
             </span>
             <span className="text-sm text-muted-foreground capitalize mt-1 leading-none truncate">
-              Hola, {sessionData.nombre.split(" ")[0]}
+              Hola, {sessionData.nombre.split(" ")[0]}.
             </span>
           </div>
         </div>
