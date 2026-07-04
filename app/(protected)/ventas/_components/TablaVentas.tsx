@@ -31,11 +31,11 @@ function CardVenta({ venta }: { venta: VentaRow }) {
               </h4>
 
               <p className="text-sm text-muted-foreground leading-none">
-                {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos por <i>{capitalizeWords(venta.vendedor)}</i>.
+                {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos en total por {capitalizeWords(venta.vendedor)}.
               </p>
 
               <p className="text-sm text-muted-foreground leading-none">
-                {formatRelativeDate(venta.fecha)}
+                <i>{formatRelativeDate(venta.fecha)}</i>
               </p>
             </div>
 
@@ -65,20 +65,22 @@ function CardVenta({ venta }: { venta: VentaRow }) {
     </Accordion>
   ) : (
     <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
-      <div className="flex items-center justify-between px-4 py-2.5">
+      <div className="flex items-start justify-between px-4 py-2.5">
         <div className="space-y-1.5 text-left max-w-[70%]">
           <h4 className="text-base font-semibold leading-none">{capitalizeFirstLetter(venta.detalles[0].producto_nombre)}</h4>
 
           <div className="text-sm text-muted-foreground leading-none">
-            {capitalizeWords(venta.detalles[0].categoria)} · {formatCurrency(venta.detalles[0].precio_unitario)} c/u <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">x{venta.detalles[0].cantidad}</Badge> por <i>{capitalizeWords(venta.vendedor)}</i>.
+            {capitalizeWords(venta.detalles[0].categoria)} · <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u</span> <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">x{venta.detalles[0].cantidad}</Badge> por {capitalizeWords(venta.vendedor)}.
           </div>
 
           <p className="text-sm text-muted-foreground leading-none">
-            {formatRelativeDate(venta.fecha)}
+            <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
         </div>
 
-        <span className="text-base font-bold text-green-600 dark:text-green-400 shrink-0 mr-8">{formatCurrency(venta.total)}</span>
+        <div className="flex items-center shrink-0 pr-6 mr-1 mt-0.5"> 
+          <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
+        </div>
       </div>
     </div>
   );
