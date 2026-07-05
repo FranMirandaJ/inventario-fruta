@@ -10,7 +10,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -29,7 +28,8 @@ import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
 import { capitalizeFirstLetter, capitalizeWords } from "@/lib/text";
-import { MoreHorizontalIcon } from "lucide-react";
+import { MoreHorizontalIcon, SearchXIcon, PackageOpen } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 function CardVenta({ venta }: { venta: VentaRow }) {
   return venta.detalles.length > 1 ? (
@@ -145,6 +145,34 @@ export default function TablaVentas({
   ventas: VentaRow[];
   totalPages: number;
 }) {
+  const searchParams = useSearchParams();
+  const tieneFiltros = !!(searchParams.get("q") || searchParams.get("desde") || searchParams.get("hasta"));
+
+  if (ventas.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="flex flex-col items-center justify-center py-4 px-4">
+          {tieneFiltros ? (
+            <>
+              <SearchXIcon className="size-16 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground">Sin resultados</h3>
+              <p className="text-sm text-muted-foreground mt-1 text-center max-w-xs">
+                No se encontraron ventas con los filtros actuales.
+              </p>
+            </>
+          ) : (
+            <>
+              <PackageOpen className="size-16 mb-4 text-muted-foreground"/>
+              <h3 className="text-lg font-semibold text-foreground">Aún no hay ventas</h3>
+              <p className="text-sm text-muted-foreground mt-1 text-center max-w-xs">
+                Las ventas registradas aparecerán aquí.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
