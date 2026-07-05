@@ -116,6 +116,7 @@ function FilaVenta({ venta }: {venta: VentaRow}) {
       <TableCell className="font-medium">#{venta.id}</TableCell>
       <TableCell>{formatRelativeDate(venta.fecha)}</TableCell>
       <TableCell>{capitalizeWords(venta.vendedor)}</TableCell>
+      <TableCell>{venta.detalles.length > 1 ? venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0) : venta.detalles[0].cantidad}</TableCell>
       <TableCell>{formatCurrency(venta.total)}</TableCell>
       <TableCell className="text-right">
         <DropdownMenu>
@@ -192,6 +193,7 @@ export default function TablaVentas({
               <TableHead>Folio</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead>Vendedor</TableHead>
+              <TableHead>Nº de Artículos</TableHead>
               <TableHead>Total</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
