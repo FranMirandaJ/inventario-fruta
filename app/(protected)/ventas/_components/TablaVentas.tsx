@@ -6,12 +6,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Paginacion from "@/components/Paginacion";
 import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
 import { capitalizeFirstLetter, capitalizeWords } from "@/lib/text";
+import { MoreHorizontalIcon } from "lucide-react";
 
 function CardVenta({ venta }: { venta: VentaRow }) {
   return venta.detalles.length > 1 ? (
@@ -71,7 +89,12 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <h4 className="text-base font-semibold leading-none">{capitalizeFirstLetter(venta.detalles[0].producto_nombre)}</h4>
 
           <div className="text-sm text-muted-foreground leading-none">
-            {capitalizeWords(venta.detalles[0].categoria)} · <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u</span> <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">x{venta.detalles[0].cantidad}</Badge> por {capitalizeWords(venta.vendedor)}.
+            {capitalizeWords(venta.detalles[0].categoria)} · 
+            <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u </span> 
+            <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
+              x{venta.detalles[0].cantidad}
+            </Badge> 
+            &nbsp;por {capitalizeWords(venta.vendedor)}.
           </div>
 
           <p className="text-sm text-muted-foreground leading-none">
@@ -84,6 +107,34 @@ function CardVenta({ venta }: { venta: VentaRow }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function FilaVenta({ venta }: {venta: VentaRow}) {
+  return (
+    <TableRow>
+      <TableCell className="font-medium">#{venta.id}</TableCell>
+      <TableCell>{formatRelativeDate(venta.fecha)}</TableCell>
+      <TableCell>{capitalizeWords(venta.vendedor)}</TableCell>
+      <TableCell>{formatCurrency(venta.total)}</TableCell>
+      <TableCell className="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="size-8">
+              <MoreHorizontalIcon />
+              <span className="sr-only">Abrir menú</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Ver detalle</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive">
+              Eliminar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -105,9 +156,27 @@ export default function TablaVentas({
       </section>
 
       {/* ======= SECTION DE TABLA (DESKTOP) ======= */}
-      {/* <section>
+      <section className="hidden sm:block">
+        <Table>
 
-      </section> */}
+          <TableHeader>
+            <TableRow>
+              <TableHead>Folio</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead>Vendedor</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {ventas.map(v => (
+              <FilaVenta key={v.id} venta={v}/>
+            ))}
+          </TableBody>
+
+        </Table>
+      </section>
 
       <Paginacion totalPages={totalPages} />
 
