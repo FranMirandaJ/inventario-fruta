@@ -216,7 +216,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
               ))}
               </div>
 
-              <Separator className="shadow-xl"/>
+              <Separator />
               
               <div className="flex gap-3 flex-wrap items-center justify-between p-2.5 rounded-md bg-green-100 dark:bg-green-950/60">
                 <label className="font-bold dark:text-green-100">Total de la venta</label>

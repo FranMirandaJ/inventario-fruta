@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/command";
 import type { ProductoParaVenta } from "@/lib/dal/productos";
 import type { ItemCarrito } from "../_types";
-import { capitalizeFirstLetter } from "@/lib/text";
+import { capitalizeFirstLetter, normalizeForSearch } from "@/lib/text";
 import { formatCurrency } from "@/lib/money";
 
 type Props = {
@@ -45,9 +45,15 @@ export default function BuscadorProductos({ productos, itemsCarrito, onProductoS
   };
 
   return (
-    <Command 
-      className="w-full sm:max-w-md rounded-lg border"
-    >
+      <Command
+        className="w-full sm:max-w-md rounded-lg border"
+        filter={(value, search) => {
+          const nv = normalizeForSearch(value);
+          const ns = normalizeForSearch(search);
+          if (nv.includes(ns)) return 1;
+          return 0;
+        }}
+      >
       <CommandInput
         className="h-12 sm:h-9"
         placeholder="Buscar producto..."
