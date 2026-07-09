@@ -237,7 +237,7 @@ export default function DataTable<T>({
               {columns.map((col) => (
                 <TableHead
                   key={String(col.accessorKey ?? col.header)}
-                  className={`text-white uppercase font-semibold py-3 h-auto ${
+                  className={`text-white font-semibold py-3 h-auto ${
                     col.sortable ? "cursor-pointer hover:bg-[#008A33] transition-colors dark:hover:bg-green-700" : ""
                   }`}
                   onClick={() => col.sortable && col.accessorKey && handleSort(col.accessorKey)}

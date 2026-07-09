@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { SearchIcon, ArrowRight, RotateCcw } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
@@ -65,12 +66,13 @@ export default function FiltrosVentas() {
     <section className="flex-1 min-w-0 bg-muted/30 border border-border/60 rounded-xl p-4 sm:p-5">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-end flex-wrap">
         <div className="flex flex-col gap-1 sm:min-w-4/10 flex-1">
-          <label className="text-xs font-semibold uppercase tracking-wider ml-1">
+          <Label className="text-xs font-semibold uppercase tracking-wider ml-1" htmlFor="busqueda">
             Buscar
-          </label>
+          </Label>
           <div className="relative mt-1">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 pointer-events-none" />
             <Input
+              id="busqueda"
               placeholder="Por vendedor..."
               className="bg-background pl-10"
               value={searchText}
@@ -84,10 +86,11 @@ export default function FiltrosVentas() {
 
         <div className="flex flex-col gap-4 sm:flex-row items-stretch sm:items-end w-full sm:w-auto">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider ml-1">
+            <Label className="text-xs font-semibold uppercase tracking-wider ml-1" htmlFor="desde">
               Desde
-            </label>
+            </Label>
             <Input
+              id="desde"
               type="date"
               className="bg-background w-full sm:w-37.5"
               value={currentDesde}
@@ -100,10 +103,11 @@ export default function FiltrosVentas() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-inherit uppercase tracking-wider ml-1">
+            <Label className="text-xs font-semibold text-inherit uppercase tracking-wider ml-1" htmlFor="hasta">
               Hasta
-            </label>
+            </Label>
             <Input
+              id="hasta"
               type="date"
               className="bg-background w-full sm:w-37.5 focus-visible:ring-[#00a63d]"
               value={currentHasta}
