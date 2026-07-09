@@ -34,6 +34,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 
 const ModalVerDetalle = dynamic(() => import("./ModalVerDetalle"));
+const AlertModalCancelar = dynamic(() => import("./AlertModalCancelar"));
 
 function CardVenta({ venta }: { venta: VentaRow }) {
   return venta.detalles.length > 1 ? (
@@ -121,6 +122,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
 function FilaVenta({ venta } : { venta: VentaRow }) {
 
   const [abrirModalDetalles, setAbrirModalDetalles] = useState<boolean>(false);
+  const [abrirConfirmarCancelar, setAbrirConfirmarCancelar] = useState<boolean>(false);
 
   return (
     <>
@@ -141,7 +143,7 @@ function FilaVenta({ venta } : { venta: VentaRow }) {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setAbrirModalDetalles(true)}>Ver detalle</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem onClick={() => setAbrirConfirmarCancelar(true)} variant="destructive">
                 Cancelar
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -152,6 +154,12 @@ function FilaVenta({ venta } : { venta: VentaRow }) {
       <ModalVerDetalle
         open={abrirModalDetalles}
         onOpenChange={setAbrirModalDetalles}
+        venta={venta}
+      />
+
+      <AlertModalCancelar
+        open={abrirConfirmarCancelar}
+        onOpenChange={setAbrirConfirmarCancelar}
         venta={venta}
       />
 

@@ -16,7 +16,7 @@ import {
 import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
-import { capitalizeFirstLetter } from "@/lib/text";
+import { capitalizeWords, capitalizeFirstLetter } from "@/lib/text";
 
 type Props = {
   open: boolean;
@@ -31,7 +31,7 @@ export default function ModalVerDetalle({
 } : Props) {
   return (
     <Modal
-      title={`Detalle de venta N.º ${venta.id}`}
+      title={`Detalle de la venta N.º ${venta.id}`}
       showTriggerButton={false}
       open={open}
       onOpenChange={onOpenChange}
@@ -41,14 +41,14 @@ export default function ModalVerDetalle({
           Cerrar
         </Button>
       }
-      description={<span className="sr-only">Registrada por {capitalizeFirstLetter(venta.vendedor)}</span>}
+      description={<span className="sr-only">Registrada por {capitalizeWords(venta.vendedor)}</span>}
     >
       <div className="space-y-4">
 
         {/* Vendedor + Fecha */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{capitalizeFirstLetter(venta.vendedor)}</span>
-          <span>{formatRelativeDate(venta.fecha)}</span>
+        <div className="flex gap-5 items-center justify-between text-sm text-muted-foreground">
+          <span className="text-left">{capitalizeWords(venta.vendedor)}</span>
+          <span className="text-right">{formatRelativeDate(venta.fecha)}</span>
         </div>
 
         <Separator />
