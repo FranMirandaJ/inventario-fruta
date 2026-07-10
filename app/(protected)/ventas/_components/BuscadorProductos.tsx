@@ -47,10 +47,11 @@ export default function BuscadorProductos({ productos, itemsCarrito, onProductoS
   return (
       <Command
         className="w-full sm:max-w-md rounded-lg border"
-        filter={(value, search) => {
+        filter={(value, search, keywords) => {
           const nv = normalizeForSearch(value);
           const ns = normalizeForSearch(search);
           if (nv.includes(ns)) return 1;
+          if (keywords?.some(k => normalizeForSearch(k).includes(ns))) return 1;
           return 0;
         }}
       >

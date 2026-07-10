@@ -96,11 +96,11 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <h4 className="text-base font-semibold leading-none">Venta N.º {venta.id}</h4>
 
           <div className="text-sm text-muted-foreground leading-none">
-            {capitalizeWords(venta.detalles[0].producto_nombre)}&nbsp;·&nbsp;
-            <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u </span> 
             <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
               x{venta.detalles[0].cantidad}
-            </Badge> 
+            </Badge>&nbsp;
+            {capitalizeWords(venta.detalles[0].producto_nombre)}&nbsp;·&nbsp;
+            <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u </span> 
             &nbsp;por {capitalizeWords(venta.vendedor)}.
           </div>
 
@@ -219,7 +219,7 @@ export default function TablaVentas({
 
           <TableHeader>
             <TableRow>
-              <TableHead>Folio</TableHead>
+              <TableHead>ID</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead>Vendedor</TableHead>
               <TableHead>Nº de Artículos</TableHead>
