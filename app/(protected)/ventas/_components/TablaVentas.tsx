@@ -65,14 +65,15 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <p className="text-sm text-muted-foreground leading-none">
             <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
-          <button
+          <Button
             type="button"
+            variant="destructive"
+            size="icon-sm"
             onClick={(e) => { e.stopPropagation(); setAbrirConfirmarCancelar(true); }}
-            className="inline-flex items-center justify-center size-8 rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
-            <BanIcon className="size-4" />
+            <BanIcon />
             <span className="sr-only">Cancelar venta</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -131,14 +132,15 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <p className="text-sm text-muted-foreground leading-none">
             <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
-          <button
+          <Button
             type="button"
+            variant="destructive"
+            size="icon-sm"
             onClick={() => setAbrirConfirmarCancelar(true)}
-            className="inline-flex items-center justify-center size-8 rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
-            <BanIcon className="size-4" />
+            <BanIcon />
             <span className="sr-only">Cancelar venta</span>
-          </button>
+          </Button>
         </div>
       </div>
 
