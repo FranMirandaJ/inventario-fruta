@@ -22,7 +22,7 @@ import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
 import { capitalizeFirstLetter, capitalizeWords } from "@/lib/text";
-import { MoreHorizontalIcon, SearchXIcon, PackageOpen, ChevronDownIcon } from "lucide-react";
+import { MoreHorizontalIcon, SearchXIcon, PackageOpen, ChevronDownIcon, BanIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -33,43 +33,48 @@ const AlertModalCancelar = dynamic(() => import("./AlertModalCancelar"));
 
 function CardVenta({ venta }: { venta: VentaRow }) {
   const [abierto, setAbierto] = useState(false);
+  const [abrirConfirmarCancelar, setAbrirConfirmarCancelar] = useState(false);
 
   return venta.detalles.length > 1 ? (
     <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
-      <button
-        type="button"
+      <div
+        className="px-4 py-2.5 cursor-pointer select-none"
         onClick={() => setAbierto(!abierto)}
-        className="flex w-full items-start justify-between gap-4 rounded-md px-4 py-2.5 text-left text-sm font-medium transition-all outline-none hover:no-underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        <div className="flex w-full items-start justify-between">
-          <div className="space-y-1.5 text-left max-w-[70%]">
-            <h4 className="text-base font-semibold leading-none">
-              Venta N.º {venta.id}
-            </h4>
-
-            <p className="text-sm text-muted-foreground leading-none">
-              {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos en total por {capitalizeWords(venta.vendedor)}.
-            </p>
-
-            <br/>
-
-            <p className="text-sm text-muted-foreground leading-none">
-              <i>{formatRelativeDate(venta.fecha)}</i>
-            </p>
-          </div>
+        <div className="flex items-center justify-between">
+          <h4 className="text-base font-semibold leading-none">Venta N.º {venta.id}</h4>
 
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
+            <ChevronDownIcon
+              className={cn(
+                "size-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                abierto && "rotate-180"
+              )}
+            />
           </div>
         </div>
 
-        <ChevronDownIcon
-          className={cn(
-            "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200",
-            abierto && "rotate-180"
-          )}
-        />
-      </button>
+        <p className="text-sm text-muted-foreground leading-none mt-1.5">
+          {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos en total por {capitalizeWords(venta.vendedor)}.
+        </p>
+
+        <br/>
+
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground leading-none">
+            <i>{formatRelativeDate(venta.fecha)}</i>
+          </p>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setAbrirConfirmarCancelar(true); }}
+            className="inline-flex items-center justify-center size-8 rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <BanIcon className="size-4" />
+            <span className="sr-only">Cancelar venta</span>
+          </button>
+        </div>
+      </div>
 
       <div
         className="overflow-hidden text-sm"
@@ -98,33 +103,50 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </div>
         </div>
       </div>
+
+      <AlertModalCancelar
+        open={abrirConfirmarCancelar}
+        onOpenChange={setAbrirConfirmarCancelar}
+        venta={venta}
+      />
     </div>
   ) : (
     <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
-      <div className="flex items-start justify-between px-4 py-2.5">
-        <div className="space-y-1.5 text-left max-w-[70%]">
+      <div className="px-4 py-2.5">
+        <div className="flex items-center justify-between">
           <h4 className="text-base font-semibold leading-none">Venta N.º {venta.id}</h4>
+          <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
+        </div>
 
-          <div className="text-sm text-muted-foreground leading-tight">
-            <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
-              x{venta.detalles[0].cantidad}
-            </Badge>&nbsp;
-            {capitalizeWords(venta.detalles[0].producto_nombre)}&nbsp;·&nbsp;
-            <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u </span> 
-            &nbsp;por {capitalizeWords(venta.vendedor)}.
-          </div>
+        <div className="text-sm text-muted-foreground leading-tight mt-1.5">
+          <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
+            x{venta.detalles[0].cantidad}
+          </Badge>&nbsp;
+          {capitalizeWords(venta.detalles[0].producto_nombre)}&nbsp;·&nbsp;
+          <span className="font-semibold">{formatCurrency(venta.detalles[0].precio_unitario)} c/u </span> 
+          &nbsp;por {capitalizeWords(venta.vendedor)}.
+        </div>
 
-          <br/>
-
+        <div className="flex items-center justify-between mt-1.5">
           <p className="text-sm text-muted-foreground leading-none">
             <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
-        </div>
-
-        <div className="flex items-center shrink-0 pr-6 mr-1 mt-0.5"> 
-          <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
+          <button
+            type="button"
+            onClick={() => setAbrirConfirmarCancelar(true)}
+            className="inline-flex items-center justify-center size-8 rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <BanIcon className="size-4" />
+            <span className="sr-only">Cancelar venta</span>
+          </button>
         </div>
       </div>
+
+      <AlertModalCancelar
+        open={abrirConfirmarCancelar}
+        onOpenChange={setAbrirConfirmarCancelar}
+        venta={venta}
+      />
     </div>
   );
 }
