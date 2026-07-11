@@ -67,8 +67,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </p>
           <Button
             type="button"
-            variant="destructive"
+            variant="ghost"
             size="icon-sm"
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
             onClick={(e) => { e.stopPropagation(); setAbrirConfirmarCancelar(true); }}
           >
             <BanIcon />
@@ -134,8 +135,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </p>
           <Button
             type="button"
-            variant="destructive"
+            variant="ghost"
             size="icon-sm"
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
             onClick={() => setAbrirConfirmarCancelar(true)}
           >
             <BanIcon />
