@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
   Table,
   TableBody,
   TableCell,
@@ -28,7 +22,8 @@ import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { formatRelativeDate } from "@/lib/date";
 import { capitalizeFirstLetter, capitalizeWords } from "@/lib/text";
-import { MoreHorizontalIcon, SearchXIcon, PackageOpen } from "lucide-react";
+import { MoreHorizontalIcon, SearchXIcon, PackageOpen, ChevronDownIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -37,58 +32,73 @@ const ModalVerDetalle = dynamic(() => import("./ModalVerDetalle"));
 const AlertModalCancelar = dynamic(() => import("./AlertModalCancelar"));
 
 function CardVenta({ venta }: { venta: VentaRow }) {
+  const [abierto, setAbierto] = useState(false);
+
   return venta.detalles.length > 1 ? (
-    <Accordion
-      type="single"
-      collapsible
-      className=" rounded-lg border bg-card"
-    >
-      <AccordionItem
-        value={String(venta.id)}
-        className="rounded-lg border-none transition-colors duration-200 hover:bg-muted/30"
+    <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
+      <button
+        type="button"
+        onClick={() => setAbierto(!abierto)}
+        className="flex w-full items-start justify-between gap-4 rounded-md px-4 py-2.5 text-left text-sm font-medium transition-all outline-none hover:no-underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        <AccordionTrigger className="items-start px-4 py-2.5 hover:no-underline">
-          <div className="flex w-full items-start justify-between">
-            <div className="space-y-1.5 text-left max-w-[70%]">
-              <h4 className="text-base font-semibold leading-none">
-                Venta N.º {venta.id}
-              </h4>
+        <div className="flex w-full items-start justify-between">
+          <div className="space-y-1.5 text-left max-w-[70%]">
+            <h4 className="text-base font-semibold leading-none">
+              Venta N.º {venta.id}
+            </h4>
 
-              <p className="text-sm text-muted-foreground leading-none">
-                {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos en total por {capitalizeWords(venta.vendedor)}.
-              </p>
+            <p className="text-sm text-muted-foreground leading-none">
+              {venta.detalles.reduce((sum, det) => (sum += det.cantidad) , 0)} artículos en total por {capitalizeWords(venta.vendedor)}.
+            </p>
 
-              <br/>
+            <br/>
 
-              <p className="text-sm text-muted-foreground leading-none">
-                <i>{formatRelativeDate(venta.fecha)}</i>
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
-            </div>
+            <p className="text-sm text-muted-foreground leading-none">
+              <i>{formatRelativeDate(venta.fecha)}</i>
+            </p>
           </div>
-        </AccordionTrigger>
 
-        <AccordionContent className="border-t px-4 py-3">
-          <div className="space-y-2">
-            {venta.detalles.map(art => (
-              <div key={art.id} className="flex justify-between text-sm">
-                <span>{capitalizeFirstLetter(art.producto_nombre)}</span>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-muted-foreground text-xs">{formatCurrency(art.precio_unitario)} c/u </span>
-                  <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
-                    x{art.cantidad}
-                  </Badge> =
-                  <span className="text-foreground font-medium tabular-nums">{formatCurrency(art.subtotal)}</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-base font-bold text-green-600 dark:text-green-400">{formatCurrency(venta.total)}</span>
+          </div>
+        </div>
+
+        <ChevronDownIcon
+          className={cn(
+            "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200",
+            abierto && "rotate-180"
+          )}
+        />
+      </button>
+
+      <div
+        className="overflow-hidden text-sm"
+        style={{
+          display: "grid",
+          gridTemplateRows: abierto ? "1fr" : "0fr",
+          transition: "grid-template-rows 200ms ease-out",
+        }}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div className="border-t px-4 py-3">
+            <div className="space-y-2">
+              {venta.detalles.map(art => (
+                <div key={art.id} className="flex justify-between text-sm">
+                  <span>{capitalizeFirstLetter(art.producto_nombre)}</span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-muted-foreground text-xs">{formatCurrency(art.precio_unitario)} c/u </span>
+                    <Badge variant="outline" className="border-sky-300 text-sky-600 dark:border-sky-600 dark:text-sky-400 text-xs tabular-nums">
+                      x{art.cantidad}
+                    </Badge> =
+                    <span className="text-foreground font-medium tabular-nums">{formatCurrency(art.subtotal)}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+        </div>
+      </div>
+    </div>
   ) : (
     <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
       <div className="flex items-start justify-between px-4 py-2.5">
