@@ -132,8 +132,8 @@ export const crearVenta = async (
       return ventaCreada;
     });
 
-    revalidatePath("/dashboard/ventas");
-    log.success({ id_venta: venta.id, total, usuario_id }, "Venta creada exitosamente");
+    revalidatePath("/ventas");
+    log.success({ id_venta: venta.id, total, usuario_id }, "Venta creada exitosamente.");
 
     return {
       success: true,

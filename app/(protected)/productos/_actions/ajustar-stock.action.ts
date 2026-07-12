@@ -63,9 +63,9 @@ export const ajustarStock = async (
       }
     });
 
-    log.success({ id_producto, nuevo_stock, id_usuario }, "Stock de producto ajustado exitosamente");
+    log.success({ id_producto, nuevo_stock, id_usuario }, "Stock de producto ajustado exitosamente.");
 
-    revalidatePath("/dashboard/productos");
+    revalidatePath("/productos");
 
     return {
       success: true,

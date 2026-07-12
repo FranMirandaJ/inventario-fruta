@@ -78,9 +78,9 @@ export const actualizarProducto = async (_state: ProductoFormState, formData: Fo
 
     });
 
-    log.success({ id_producto: id, nombre, id_usuario }, "Producto actualizado exitosamente");
+    log.success({ id_producto: id, nombre, id_usuario }, "Producto actualizado exitosamente.");
 
-    revalidatePath("/dashboard/productos");
+    revalidatePath("/productos");
 
     return {
       success: true,
