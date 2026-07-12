@@ -2,30 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import { decrypt } from '@/lib/session';
 import { cookies } from 'next/headers';
  
-// Especificar rutas protegidas y rutas publicas
-const protectedRoutes = ['/dashboard'];
-const publicRoutes = ['/', '/login'];
+// Especificar rutas publicas — todo lo demas es protegido automaticamente
+const publicRoutes = ['/login', '/sandbox'];
  
 export default async function proxy(req: NextRequest) {
 
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
-  const isPublicRoute = publicRoutes.includes(path);
+  const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
  
   const cookie = (await cookies()).get('session')?.value;
   const session = await decrypt(cookie);
  
-  // Redireccionar a /login si el usuario no esta autenticado
-  if (isProtectedRoute && !session?.id_usuario) {
+  // Redirigir a /login si no esta autenticado en ruta protegida
+  if (!isPublicRoute && !session?.id_usuario) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
  
-  // Redireccionar a /dashboard si el usuario esta autenticado
-  if (
-    isPublicRoute &&
-    session?.id_usuario &&
-    !req.nextUrl.pathname.startsWith('/dashboard')
-  ) {
+  // Redirigir a /dashboard si esta autenticado y visita ruta publica
+  if (isPublicRoute && session?.id_usuario && !path.startsWith('/sandbox')) {
     return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
   }
  
