@@ -6,6 +6,7 @@ import TablaVentas from "./_components/TablaVentas";
 import FiltrosVentas from "./_components/FiltrosVentas";
 import { obtenerProductosActivosDisponibles } from "@/lib/dal/productos";
 import { obtenerVentas } from "@/lib/dal/ventas";
+import { verifySession } from "@/lib/dal/auth";
 
 const ModalRegistrarVenta = dynamic(() => import("./_components/ModalRegistrarVenta"));
 
@@ -23,6 +24,8 @@ export default async function VentasPage(props: {
     pageSize?: string;
   }>
 }) {
+  await verifySession();
+
   const searchParams = await props.searchParams;
   const query = searchParams?.q || "";
   const desde = searchParams?.desde || "";
