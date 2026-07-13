@@ -1,5 +1,7 @@
 "use client";
 
+import { useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -13,24 +15,36 @@ import {
 import type { VentaRow } from "@/lib/dal/ventas";
 import { formatCurrency } from "@/lib/money";
 import { capitalizeWords } from "@/lib/text";
+import { cancelarVenta } from "../_actions/cancelar-venta.action";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   venta: VentaRow | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm?: () => Promise<void> | void;
 };
 
 export default function AlertModalCancelar({
   venta,
   open,
   onOpenChange,
-  onConfirm,
 } : Props) {
 
-  const handleConfirm = async () => {
-    await onConfirm?.();
-    onOpenChange(false);
+  const [pending, startTransition] = useTransition();
+
+  const handleConfirm = () => {
+    if (!venta) return;
+
+    startTransition(async () => {
+      const result = await cancelarVenta(venta.id);
+
+      if (result?.success) {
+        toast.success(result.message);
+        onOpenChange(false);
+      } else {
+        toast.error(result?.message || "Ocurrió un error al cancelar la venta.");
+      }
+    });
   };
 
   if (!venta) return null;
@@ -63,9 +77,16 @@ export default function AlertModalCancelar({
         </AlertDialogDescription>
 
         <AlertDialogFooter>
-          <AlertDialogCancel type="button">No, mantener</AlertDialogCancel>
-          <Button variant="destructive" onClick={handleConfirm}>
-            Cancelar venta
+          <AlertDialogCancel type="button" disabled={pending}>No, mantener</AlertDialogCancel>
+          <Button variant="destructive" disabled={pending} onClick={handleConfirm}>
+            {pending ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Cancelando...
+              </>
+            ) : (
+              "Cancelar venta"
+            )}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
