@@ -419,6 +419,28 @@ const limpiarFiltros = () => {
 
 Existing reference: `app/(protected)/ventas/_components/FiltrosVentas.tsx`
 
+#### 6. Page Validation (ensureValidPage)
+
+When items are deleted or cancelled, the user may land on a page that no longer exists (e.g., page 2 with only 1 item left). To prevent showing an empty state, every `page.tsx` with server-side pagination **must** call `ensureValidPage()` after fetching data:
+
+```typescript
+import { ensureValidPage } from "@/lib/pagination";
+
+// ... after fetching data
+ensureValidPage(page, totalPages, "/ventas", {
+  q: query,
+  desde,
+  hasta,
+  offset,
+}, pageSize);
+```
+
+The utility lives in `lib/pagination.ts` and uses `redirect()` from `next/navigation` (server-side, no flash). It redirects to the last valid page while preserving all current filters and `pageSize`.
+
+**When to call it:** After every DAL call that returns `totalPages`, before the `return` statement.
+
+Existing reference: `app/(protected)/ventas/page.tsx`
+
 ### Language
 
 - Code comments: Spanish

@@ -7,6 +7,7 @@ import FiltrosVentas from "./_components/FiltrosVentas";
 import { obtenerProductosActivosDisponibles } from "@/lib/dal/productos";
 import { obtenerVentas } from "@/lib/dal/ventas";
 import { verifySession } from "@/lib/dal/auth";
+import { ensureValidPage } from "@/lib/pagination";
 
 const ModalRegistrarVenta = dynamic(() => import("./_components/ModalRegistrarVenta"));
 
@@ -45,6 +46,13 @@ export default async function VentasPage(props: {
       pageSize,
     }),
   ]);
+
+  ensureValidPage(page, totalPages, "/ventas", {
+    q: query,
+    desde,
+    hasta,
+    offset,
+  }, pageSize);
 
   return (
     <ContenedorPagina
