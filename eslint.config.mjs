@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generado por Prisma, no se edita a mano:
+    "generated/**",
+    // Skills y scripts de los agentes, no son código de la app:
+    ".agents/**",
   ]),
 ]);
 

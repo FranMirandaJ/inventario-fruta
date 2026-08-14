@@ -33,9 +33,9 @@ export const createLogger = (prefix: string) => {
   };
 
   return {
-    info:    (...args: any[]) => console.info(getTag(colors.fg.blue, "INFO"), ...args),
-    success: (...args: any[]) => console.log(getTag(colors.fg.green, "OK"), ...args),
-    warn:    (...args: any[]) => console.warn(getTag(colors.fg.yellow, "WARN"), ...args),
-    error:   (...args: any[]) => console.error(getTag(colors.fg.red, "ERROR"), ...args),
+    info:    (...args: unknown[]) => console.info(getTag(colors.fg.blue, "INFO"), ...args),
+    success: (...args: unknown[]) => console.log(getTag(colors.fg.green, "OK"), ...args),
+    warn:    (...args: unknown[]) => console.warn(getTag(colors.fg.yellow, "WARN"), ...args),
+    error:   (...args: unknown[]) => console.error(getTag(colors.fg.red, "ERROR"), ...args),
   };
 };
