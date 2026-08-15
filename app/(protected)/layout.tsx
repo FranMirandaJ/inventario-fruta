@@ -13,16 +13,6 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <div className="fixed inset-0 -z-10 bg-gray-50">
-        <Image
-          src="/fondo.jpg"
-          alt="Background"
-          fill
-          priority
-          className="object-cover opacity-40"
-        />
-      </div>
-
       <div className="min-h-screen flex flex-col">
         <Navbar sessionData={session} />
 

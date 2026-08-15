@@ -24,6 +24,35 @@ export type ProductoParaVenta = {
   precio: number;
 };
 
+type AlertaStockRow = {
+  id: number;
+  nombre: string;
+  categoria_nombre: string;
+  stock_actual: number;
+  stock_minimo: number;
+};
+
+export type AlertaStockResult = {
+  alertas: AlertaStockRow[];
+  total_alertas: number;
+};
+
+type TotalAlertasRow = {
+  total: bigint;
+};
+
+type ProductoMasVendidoRow = {
+  id: number;
+  nombre: string;
+  total_vendido: bigint;
+};
+
+export type ProductoMasVendido = {
+  id: number;
+  nombre: string;
+  total_vendido: number;
+}
+
 export const obtenerProductos = cache(async (): Promise<ProductoRow[]> => {
   const productos = await prisma.producto.findMany({
     include: {
@@ -81,4 +110,54 @@ export const obtenerProductosActivosDisponibles = cache(async(): Promise<Product
     precio: Number(p.precio),
   }));
 
+});
+
+export const obtenerAlertasStock = cache(async (limite = 5): Promise<AlertaStockResult> => {
+  const [alertas, [{ total }]] = await Promise.all([
+    prisma.$queryRaw<AlertaStockRow[]>`
+      SELECT
+        p.id,
+        p.nombre,
+        c.nombre AS categoria_nombre,
+        p.stock_actual,
+        p.stock_minimo
+      FROM Producto AS p
+      INNER JOIN Categoria AS c
+      ON c.id = p.categoria_id
+      WHERE p.activo = 1 AND p.stock_actual <= p.stock_minimo
+      ORDER BY p.stock_actual ASC, p.nombre ASC
+      LIMIT ${limite}
+    `,
+    prisma.$queryRaw<TotalAlertasRow[]>`
+      SELECT COUNT(*) AS total
+      FROM Producto AS p
+      WHERE p.activo = 1 AND p.stock_actual <= p.stock_minimo
+    `,
+  ]);
+
+  return {
+    alertas,
+    total_alertas: Number(total),
+  };
+});
+
+export const obtenerNProductosMasVendidos = cache(async(n = 5): Promise<ProductoMasVendido[]> => {
+  const productos = await prisma.$queryRaw<ProductoMasVendidoRow[]>`
+    SELECT
+      dv.producto_id AS id,
+      p.nombre,
+      SUM(dv.cantidad) AS total_vendido
+    FROM Producto AS p
+    INNER JOIN DetalleVenta AS dv ON p.id = dv.producto_id
+    INNER JOIN Venta AS v ON v.id = dv.venta_id
+    WHERE v.estado = 'ACTIVA' AND p.activo = 1
+    GROUP BY dv.producto_id, p.nombre
+    ORDER BY total_vendido DESC, p.nombre ASC
+    LIMIT ${n}
+  `;
+
+  return productos.map(({total_vendido, ...p}) => ({
+    ...p,
+    total_vendido: Number(total_vendido)
+  }));
 });
