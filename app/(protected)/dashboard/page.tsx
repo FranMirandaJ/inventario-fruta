@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { obtenerCategoriasStatsInicio } from "@/lib/dal/categorias";
 import { obtenerAlertasStock, obtenerNProductosMasVendidos } from "@/lib/dal/productos";
-import { verifySession } from "@/lib/dal/auth";
 import ContenedorPagina from "@/components/ContenedorPagina";
 import {
   Card,
@@ -21,7 +20,6 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  await verifySession();
 
   const [categoriasStats, alertasStock, productosMasVendidos] = await Promise.all([
     obtenerCategoriasStatsInicio(),

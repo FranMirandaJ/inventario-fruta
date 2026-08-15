@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { verifySession } from "@/lib/dal/auth";
 import { obtenerProductos } from "@/lib/dal/productos";
 import { obtenerOpcionesCategoriasProductos } from "@/lib/dal/categorias";
 import ContenedorPagina from "@/components/ContenedorPagina";
@@ -13,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductosPage() {
-  await verifySession();
 
   const [productos, opcionesCategorias] = await Promise.all([
     obtenerProductos(),
