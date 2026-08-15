@@ -129,7 +129,7 @@ export default function DataTable<T>({
   const columnasBuscables = searchableColumns.slice(0, 3);
 
   return (
-    <fieldset className="w-full min-w-0 border border-border rounded-lg p-4 sm:p-6 bg-background mt-6 shadow-sm">
+    <fieldset className="w-full min-w-0 border border-border rounded-lg p-4 sm:p-6 bg-background shadow-sm">
       {titulo && (
         <legend className="text-sm font-bold text-foreground px-2 uppercase tracking-wide">
           {titulo}

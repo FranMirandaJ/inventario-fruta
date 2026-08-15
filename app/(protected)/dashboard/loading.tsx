@@ -1,4 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@/components/ui/card";
 
 export default function DashboardLoading() {
   return (
@@ -7,9 +12,44 @@ export default function DashboardLoading() {
         <div className="flex flex-col items-center text-center mb-8">
           <Skeleton className="h-7 w-32" />
         </div>
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-64 w-full" />
+
+        <div className="w-full flex flex-col gap-6">
+          {/* ==== STATS DE CATEGORIAS ==== */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Card key={index}>
+                <CardContent className="flex flex-col gap-3">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-8 w-1/2" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-2/3" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* ==== ALERTAS Y TOP PRODUCTOS ==== */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-5 w-40" />
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-16 w-full rounded-lg" />
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-5 w-48" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-56 w-full rounded-lg" />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
