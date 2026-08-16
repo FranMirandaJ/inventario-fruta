@@ -37,6 +37,7 @@ export default function Navbar({
     { label: "Inicio", href: "/dashboard" },
     { label: "Productos", href: "/productos" },
     { label: "Ventas", href: "/ventas" },
+    { label: "Usuarios", href: "/usuarios" },
   ];
 
   const estaActivo = (href: string) =>
