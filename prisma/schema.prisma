@@ -25,6 +25,7 @@ model Usuario {
   password String
   rol      RolUsuario @default(VENDEDOR)
   activo   Boolean    @default(true)
+  debe_cambiar_password Boolean   @default(false)
 
   ventas      Venta[]
   movimientos MovimientoInventario[]
