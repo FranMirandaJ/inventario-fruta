@@ -27,7 +27,7 @@ import { RolUsuario } from "@/generated/prisma";
 import { generateRandomPassword } from "@/lib/password";
 import { Copy, Check } from "lucide-react";
 import { useCopyToClipboard } from "@/lib/hooks/useCopyToClipboard";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useActionState } from "react";
 import { toast } from "sonner";
 import {
   CrearUsuarioFormSchema,
@@ -48,21 +48,18 @@ type UsuarioRawInputs = {
 
 type PropsFormUsuario = {
   mode: "create" | "edit";
-  //usuarioId?: number;
-  //initialData?: ProductoRawInputs;
-  state: CrearUsuarioFormState;
-  action: (payload: FormData) => void;
-  pending: boolean;
+  serverAction: (prevState: CrearUsuarioFormState, formData: FormData) => Promise<CrearUsuarioFormState>;
+  onPendingChange?: (pending: boolean) => void;
   onSuccess: () => void;
 };
 
 export default function FormUsuario({
   mode,
-  state,
-  action,
-  pending,
+  serverAction,
+  onPendingChange,
   onSuccess,
 }: PropsFormUsuario) {
+  const [state, action, pending] = useActionState(serverAction, undefined);
   const roles = Object.values(RolUsuario).map((value) => ({
     label: rolLabels[value],
     value,
@@ -73,7 +70,6 @@ export default function FormUsuario({
 
   const [generatedPassword] = useState(() => generateRandomPassword());
   const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({});
-  const [hasSubmitted, setHasSubmitted] = useState(false);
   const processedTimestamp = useRef(state?.timestamp);
   const formId = mode === "create" ? "crear-usuario" : "editar-usuario";
 
@@ -113,11 +109,14 @@ export default function FormUsuario({
     }
 
     setClientErrors({});
-    setHasSubmitted(true);
   };
 
   useEffect(() => {
-      if (!state || !hasSubmitted) return;
+    onPendingChange?.(pending);
+  }, [pending, onPendingChange]);
+
+  useEffect(() => {
+      if (!state?.timestamp) return;
       if (processedTimestamp.current === state.timestamp) return;
       processedTimestamp.current = state.timestamp;
   
@@ -127,7 +126,7 @@ export default function FormUsuario({
       } else {
         toast.error(state.message);
       }
-    }, [state?.timestamp, onSuccess, hasSubmitted]);
+    }, [state?.timestamp, onSuccess]);
 
   return (
     <form id={formId} action={action} onSubmit={handleSubmit}>

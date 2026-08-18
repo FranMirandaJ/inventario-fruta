@@ -4,14 +4,13 @@ import Modal from "@/components/Modal";
 import FormUsuario from "./FormUsuario";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
-import { useState, useActionState } from "react";
+import { useState } from "react";
 import { crearUsuario } from "../_actions/crear-usuario";
 
 export default function ModalNuevoUsuario() {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
-
-  const [state, action, pending] = useActionState(crearUsuario, undefined);
+  const [pending, setPending] = useState(false);
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -54,9 +53,8 @@ export default function ModalNuevoUsuario() {
       <FormUsuario
         key={formKey}
         mode="create"
-        state={state}
-        action={action}
-        pending={pending}
+        serverAction={crearUsuario}
+        onPendingChange={setPending}
         onSuccess={() => setOpen(false)}
       />
     </Modal>
