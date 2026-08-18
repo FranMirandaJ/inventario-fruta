@@ -33,12 +33,14 @@ export async function createSession(
   userId: string,
   username: string,
   role: string,
+  debe_cambiar_password: number = 0,
 ) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // expiración en 7 días
   const dataSession: SessionPayload = {
     id_usuario: userId,
     nombre: username,
     rol: role,
+    debe_cambiar_password: debe_cambiar_password,
   };
   const session = await encrypt(dataSession);
   const cookieStore = await cookies();
@@ -52,7 +54,7 @@ export async function createSession(
   });
 }
 
-export async function updateSession() {
+export async function updateSession(updates?: Partial<SessionPayload>) {
   const session = (await cookies()).get("session")?.value;
   const payload = await decrypt(session);
 
@@ -66,6 +68,8 @@ export async function updateSession() {
     id_usuario: payload.id_usuario,
     nombre: payload.nombre,
     rol: payload.rol,
+    debe_cambiar_password: payload.debe_cambiar_password,
+    ...updates,
   };
 
   const newSession = await encrypt(dataSession);

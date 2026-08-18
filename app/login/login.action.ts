@@ -55,7 +55,12 @@ export const login = async (
       };
     }
 
-    await createSession(usuario.id.toString(), usuario.nombre, usuario.rol);
+    await createSession(
+      usuario.id.toString(),
+      usuario.nombre,
+      usuario.rol,
+      usuario.debe_cambiar_password ? 1 : 0
+    );
 
   } catch (error) {
     log.error(`${error instanceof Error ? error.message : String(error)}`);

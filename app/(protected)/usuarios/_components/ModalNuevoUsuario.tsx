@@ -4,10 +4,22 @@ import Modal from "@/components/Modal";
 import FormUsuario from "./FormUsuario";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { crearUsuario } from "../_actions/crear-usuario";
 
 export default function ModalNuevoUsuario() {
-  const [pending, setPending] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  const [state, action, pending] = useActionState(crearUsuario, undefined);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+
+    if (!isOpen) {
+      setFormKey((prev) => prev + 1);
+    }
+  };
 
   return (
     <Modal
@@ -24,8 +36,10 @@ export default function ModalNuevoUsuario() {
       iconTriggerButton={<Plus className="size-4" />}
       triggerButtonVariant="default"
       headerImgSrc="/new-user.svg"
+      open={open}
+      onOpenChange={handleOpenChange}
       footer={
-        <Button type="submit" form="crear-producto" disabled={pending}>
+        <Button type="submit" form="crear-usuario" disabled={pending}>
           {pending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
@@ -37,7 +51,14 @@ export default function ModalNuevoUsuario() {
         </Button>
       }
     >
-      <FormUsuario />
+      <FormUsuario
+        key={formKey}
+        mode="create"
+        state={state}
+        action={action}
+        pending={pending}
+        onSuccess={() => setOpen(false)}
+      />
     </Modal>
   );
 }

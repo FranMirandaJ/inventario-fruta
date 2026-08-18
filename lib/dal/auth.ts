@@ -18,7 +18,8 @@ export const verifySession = cache(async () => {
     isAuth: true,
     id_usuario: session.id_usuario,
     nombre: session.nombre,
-    rol: session.rol
+    rol: session.rol,
+    debe_cambiar_password: session.debe_cambiar_password,
   };
 });
 
