@@ -13,7 +13,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,10 +28,9 @@ import { Copy, Check } from "lucide-react";
 import { useCopyToClipboard } from "@/lib/hooks/useCopyToClipboard";
 import { useState, useRef, useEffect, useActionState } from "react";
 import { toast } from "sonner";
-import {
-  CrearUsuarioFormSchema,
-  type CrearUsuarioFormState,
-} from "../_schemas/crear-usuario.schema";
+import { CrearUsuarioFormSchema } from "../_schemas/crear-usuario.schema";
+import { EditarUsuarioFormSchema } from "../_schemas/editar-usuario.schema";
+import { FormState } from "@/lib/form-state";
 
 const rolLabels: Record<RolUsuario, string> = {
   ADMIN: "Administrador",
@@ -42,15 +40,17 @@ const rolLabels: Record<RolUsuario, string> = {
 type UsuarioRawInputs = {
   nombre: string;
   rol: string;
-  correo: string;
-  password: string;
+  email: string;
+  password?: string;
 };
 
 type PropsFormUsuario = {
   mode: "create" | "edit";
-  serverAction: (prevState: CrearUsuarioFormState, formData: FormData) => Promise<CrearUsuarioFormState>;
+  serverAction: (prevState: FormState, formData: FormData) => Promise<FormState>;
   onPendingChange?: (pending: boolean) => void;
   onSuccess: () => void;
+  idUsuarioAEditar?: number;
+  usuarioAEditar?: UsuarioRawInputs
 };
 
 export default function FormUsuario({
@@ -58,6 +58,8 @@ export default function FormUsuario({
   serverAction,
   onPendingChange,
   onSuccess,
+  idUsuarioAEditar,
+  usuarioAEditar,
 }: PropsFormUsuario) {
   const [state, action, pending] = useActionState(serverAction, undefined);
   const roles = Object.values(RolUsuario).map((value) => ({
@@ -78,7 +80,7 @@ export default function FormUsuario({
     state?.errors?.[field as keyof typeof state.errors] ??
     undefined;
 
-  const defaultVal = (field: keyof UsuarioRawInputs) => state?.inputs?.[field]; //?? initialData?.[field] ?? "";
+  const defaultVal = (field: keyof UsuarioRawInputs) => state?.inputs?.[field] ?? usuarioAEditar?.[field] ?? "";
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
@@ -86,22 +88,21 @@ export default function FormUsuario({
     const data = {
       nombre: formData.get("nombre")?.toString() || "",
       rol: formData.get("rol")?.toString() || "",
-      correo: formData.get("correo")?.toString() || "",
+      email: formData.get("email")?.toString() || "",
       password: formData.get("password")?.toString() || "",
     };
 
-    const result = CrearUsuarioFormSchema.safeParse(data);
+    const schema = mode === "create" ? CrearUsuarioFormSchema : EditarUsuarioFormSchema;
+    const result = schema.safeParse(data);
 
     if (!result.success) {
       e.preventDefault();
-      setClientErrors(
-        result.error.flatten((issue) => issue.message).fieldErrors,
-      );
+      setClientErrors(result.error.flatten((issue) => issue.message).fieldErrors);
       toast.error("Faltan campos por llenar o hay errores.");
       return;
     }
 
-    if (!passwordCopied) {
+    if (mode === "create" && !passwordCopied) {
       e.preventDefault();
       setClientErrors({ password: ["Debes copiar la contraseña antes de continuar."] });
       toast.error("Faltan campos por llenar o hay errores.");
@@ -130,6 +131,7 @@ export default function FormUsuario({
 
   return (
     <form id={formId} action={action} onSubmit={handleSubmit}>
+      {mode === "edit" && <input type="hidden" name="id_usuario_a_editar" value={idUsuarioAEditar} />}
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="nombre">
@@ -153,11 +155,10 @@ export default function FormUsuario({
           <FieldLabel htmlFor="rol">
             Rol<span className="text-destructive">*</span>
           </FieldLabel>
-          <Select name="rol">
+          <Select name="rol" defaultValue={defaultVal("rol") || undefined}>
             <SelectTrigger
               id="rol"
               aria-invalid={!!getFieldErrors("rol")}
-              defaultValue={defaultVal("rol")}
             >
               <SelectValue placeholder="Seleccione un rol" />
             </SelectTrigger>
@@ -177,63 +178,66 @@ export default function FormUsuario({
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="correo">
+          <FieldLabel htmlFor="email">
             Correo electrónico<span className="text-destructive">*</span>
           </FieldLabel>
           <Input
-            id="correo"
+            id="email"
             type="email"
-            name="correo"
+            name="email"
             placeholder="Correo del usuario"
-            aria-invalid={!!getFieldErrors("correo")}
+            aria-invalid={!!getFieldErrors("email")}
             disabled={pending}
-            defaultValue={defaultVal("correo")}
+            defaultValue={defaultVal("email")}
           />
-          {getFieldErrors("correo") && (
-            <FieldError>{getFieldErrors("correo")![0]}</FieldError>
+          {getFieldErrors("email") && (
+            <FieldError>{getFieldErrors("email")![0]}</FieldError>
           )}
         </Field>
 
-        <Field>
-          <FieldLabel htmlFor="password">
-            Contraseña<span className="text-destructive">*</span>
-          </FieldLabel>
-          <FieldDescription>
-            Contraseña generada automáticamente. Cópiala antes de crear el
-            usuario, ya que no podrá verse después.
-          </FieldDescription>
+        {mode === "create" && (
+          <Field>
+            <FieldLabel htmlFor="password">
+              Contraseña<span className="text-destructive">*</span>
+            </FieldLabel>
+            <FieldDescription>
+              Contraseña generada automáticamente. Cópiala antes de crear el
+              usuario, ya que no podrá verse después.
+            </FieldDescription>
 
-          <InputGroup>
-            <InputGroupInput
-              id="password"
-              name="password"
-              value={generatedPassword}
-              readOnly
-            />
-            <InputGroupAddon align="inline-end">
-              <InputGroupButton
-                aria-label="Copiar contraseña"
-                title="Copiar contraseña"
-                size="icon-xs"
-                aria-invalid={!!getFieldErrors("password")}
-                onClick={() => {
-                  copyToClipboard(generatedPassword);
-                  setPasswordCopied(true);
-                  setClientErrors(prev => {
-                    const next = { ...prev };
-                    delete next.password;
-                    return next;
-                  });
-                }}
-              >
-                {copiedText ? <Check /> : <Copy />}
-              </InputGroupButton>
-            </InputGroupAddon>
-          </InputGroup>
-          {getFieldErrors("password") && (
-            <FieldError>{getFieldErrors("password")![0]}</FieldError>
-          )}
-        </Field>
+            <InputGroup>
+              <InputGroupInput
+                id="password"
+                name="password"
+                value={generatedPassword}
+                readOnly
+              />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  aria-label="Copiar contraseña"
+                  title="Copiar contraseña"
+                  size="icon-xs"
+                  aria-invalid={!!getFieldErrors("password")}
+                  onClick={() => {
+                    copyToClipboard(generatedPassword);
+                    setPasswordCopied(true);
+                    setClientErrors(prev => {
+                      const next = { ...prev };
+                      delete next.password;
+                      return next;
+                    });
+                  }}
+                >
+                  {copiedText ? <Check /> : <Copy />}
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+            {getFieldErrors("password") && (
+              <FieldError>{getFieldErrors("password")![0]}</FieldError>
+            )}
+          </Field>
+        )}
+
       </FieldGroup>
     </form>
   );

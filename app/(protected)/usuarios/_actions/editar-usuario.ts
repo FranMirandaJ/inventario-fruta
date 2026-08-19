@@ -1,31 +1,40 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
-import { CrearUsuarioFormSchema } from "../_schemas/crear-usuario.schema";
+import { EditarUsuarioFormSchema } from "../_schemas/editar-usuario.schema";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/lib/form-state";
 import { isPrismaError } from "@/lib/prisma-errors";
 
-const log = createLogger("Usuario/crear");
+const log = createLogger("Usuario/editar");
 
-export const crearUsuario = async (
+export const editarUsuario = async (
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> => {
   const usuario = await verifySession();
+  const id_usuario_editor = Number(usuario.id_usuario);
+
+  const id_usuario_a_editar = Number(formData.get("id_usuario_a_editar"));
+
+  if (!id_usuario_a_editar || isNaN(id_usuario_a_editar)) {
+    return {
+      success: false,
+      message: "Usuario no válido.",
+      timestamp: Date.now(),
+    };
+  }
 
   const rawFormData = {
     nombre: formData.get("nombre")?.toString() || "",
     rol: formData.get("rol")?.toString() || "",
     email: formData.get("email")?.toString() || "",
-    password: formData.get("password")?.toString() || "",
   };
 
-  const validatedFields = CrearUsuarioFormSchema.safeParse(rawFormData);
+  const validatedFields = EditarUsuarioFormSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
     return {
@@ -38,41 +47,38 @@ export const crearUsuario = async (
     };
   }
 
-  const { nombre, rol, email, password } = validatedFields.data;
+  const { nombre, rol, email } = validatedFields.data;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const nuevoUsuario = await prisma.usuario.create({
+    const usuarioEditado = await prisma.usuario.update({
+      where: { id: id_usuario_a_editar },
       data: {
         nombre,
-        rol,
         email,
-        password: hashedPassword,
-        debe_cambiar_password: true, // Por defecto el nuevo usuario al iniciar sesión hará un cambio de password.
+        rol,
       },
     });
 
     log.success(
       {
-        id_nuevo_usuario: nuevoUsuario.id,
-        nombre_nuevo_usuario: nuevoUsuario.nombre,
-        id_usuario_creador: usuario.id_usuario,
+        id_usuario_editado: usuarioEditado.id,
+        nombre_usuario_editado: usuarioEditado.nombre,
+        id_usuario_editor: id_usuario_editor,
       },
-      "Usuario nuevo creado exitosamente.",
+      "Usuario editado exitosamente.",
     );
 
     revalidatePath("/usuarios");
 
     return {
       success: true,
-      message: "Usuario creado exitosamente.",
+      message: "Usuario editado exitosamente.",
       timestamp: Date.now(),
     };
   } catch (error) {
-    log.error("Falló la creación de un nuevo usuario en la BD: ", error);
+    log.error("Falló la edición de un usuario en la BD: ", error);
 
-    let message = "Ocurrió un error en el servidor al crear al usuario.";
+    let message = "Ocurrió un error en el servidor al editar al usuario.";
 
     if (error instanceof PrismaClientInitializationError) {
       message = "Error de conexión. Verifica tu conexión e intenta de nuevo.";
@@ -86,6 +92,9 @@ export const crearUsuario = async (
             timestamp: Date.now(),
             inputs: rawFormData,
           };
+        case "P2025":
+          message = "El usuario que intentas editar ya no existe.";
+          break;
       }
     }
 

@@ -2,12 +2,20 @@
 
 import type { UsuarioActivo } from "@/lib/dal/usuarios";
 import DataTable, { ColumnDef } from "@/components/Datatable";
+import ModalEditarUsuario from "./ModalEditarUsuario";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
 
 interface Props {
   data: UsuarioActivo[];
 }
 
 export default function TablaUsuarios({ data }: Props) {
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<UsuarioActivo | null>(null);
+
   const columns: ColumnDef<UsuarioActivo>[] = [
     {
       header: "Nombre",
@@ -26,7 +34,28 @@ export default function TablaUsuarios({ data }: Props) {
       sortable: true,
       formatter: "capitalize",
     },
+    {
+      header: "Acciones",
+      renderCell: (u: UsuarioActivo) => (
+        <div className="flex items-center flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400"
+            title="Editar"
+            onClick={() => {
+              setEditingUser(u);
+              setEditModalOpen(true);
+            }}
+          >
+            <Pencil className="size-4" />
+          </Button>
+        </div>
+      ),
+    },
   ];
+
+  
 
   return (
     <>
@@ -39,6 +68,15 @@ export default function TablaUsuarios({ data }: Props) {
           { accessorKey: "email", title: "Correo", type: "text" },
         ]}
       />
+
+      <ModalEditarUsuario
+        open={editModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setEditModalOpen(false);
+        }}
+        usuario={editingUser}
+      />
+
     </>
   );
 }
