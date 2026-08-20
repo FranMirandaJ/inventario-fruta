@@ -2,19 +2,24 @@
 
 import type { UsuarioActivo } from "@/lib/dal/usuarios";
 import DataTable, { ColumnDef } from "@/components/Datatable";
-import ModalEditarUsuario from "./ModalEditarUsuario";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, UserXIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 
+const ModalEditarUsuario = dynamic(() => import("./ModalEditarUsuario"));
+const AlertModalDeshabilitarUsuario = dynamic(() => import("./AlertModalDeshabilitarUsuario"));
 interface Props {
   data: UsuarioActivo[];
 }
 
 export default function TablaUsuarios({ data }: Props) {
 
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [editingUser, setEditingUser] = useState<UsuarioActivo | null>(null);
+
+  const [disableAlertOpen, setDisableAlertOpen] = useState<boolean>(false);
+  const [disablingUser, setDisablingUser] = useState<UsuarioActivo | null>(null);
 
   const columns: ColumnDef<UsuarioActivo>[] = [
     {
@@ -41,7 +46,7 @@ export default function TablaUsuarios({ data }: Props) {
           <Button
             variant="outline"
             size="icon"
-            color="purple"
+            color="blue"
             title="Editar"
             onClick={() => {
               setEditingUser(u);
@@ -50,6 +55,7 @@ export default function TablaUsuarios({ data }: Props) {
           >
             <Pencil className="size-4" />
           </Button>
+          <AlertModalDeshabilitarUsuario usuario={u}/>
         </div>
       ),
     },

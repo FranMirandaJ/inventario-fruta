@@ -74,7 +74,7 @@ export default function TablaProductos({ data, categorias }: Props) {
           <Button
             variant="outline"
             size="icon"
-            color="blue"
+            color="purple"
             title="Ajustar stock"
             onClick={() => { setEditingProduct(p); setStockModalOpen(true); setKeyStockModal(k => k + 1) }}
           >
@@ -83,7 +83,7 @@ export default function TablaProductos({ data, categorias }: Props) {
           <Button
             variant="outline"
             size="icon"
-            color="purple"
+            color="blue"
             title="Editar"
             onClick={() => { setEditingProduct(p); setEditModalOpen(true); }}
           >

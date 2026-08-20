@@ -2,11 +2,12 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
+import { RolUsuario } from "@/generated/prisma";
 
 export type UsuarioActivo = {
   id: number;
   nombre: string;
-  rol: string;
+  rol: RolUsuario;
   email: string;
 };
 

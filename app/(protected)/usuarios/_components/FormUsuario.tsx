@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/input-group";
 import { RolUsuario } from "@/generated/prisma";
 import { generateRandomPassword } from "@/lib/password";
+import { rolLabels } from "@/lib/usuarios";
 import { Copy, Check } from "lucide-react";
 import { useCopyToClipboard } from "@/lib/hooks/useCopyToClipboard";
 import { useState, useRef, useEffect, useActionState } from "react";
@@ -31,18 +32,7 @@ import { toast } from "sonner";
 import { CrearUsuarioFormSchema } from "../_schemas/crear-usuario.schema";
 import { EditarUsuarioFormSchema } from "../_schemas/editar-usuario.schema";
 import { FormState } from "@/lib/form-state";
-
-const rolLabels: Record<RolUsuario, string> = {
-  ADMIN: "Administrador",
-  VENDEDOR: "Vendedor",
-};
-
-type UsuarioRawInputs = {
-  nombre: string;
-  rol: string;
-  email: string;
-  password?: string;
-};
+import type { UsuarioActivo } from "@/lib/dal/usuarios";
 
 type PropsFormUsuario = {
   mode: "create" | "edit";
@@ -50,7 +40,7 @@ type PropsFormUsuario = {
   onPendingChange?: (pending: boolean) => void;
   onSuccess: () => void;
   idUsuarioAEditar?: number;
-  usuarioAEditar?: UsuarioRawInputs
+  usuarioAEditar?: UsuarioActivo
 };
 
 export default function FormUsuario({
@@ -80,7 +70,7 @@ export default function FormUsuario({
     state?.errors?.[field as keyof typeof state.errors] ??
     undefined;
 
-  const defaultVal = (field: keyof UsuarioRawInputs) => state?.inputs?.[field] ?? usuarioAEditar?.[field] ?? "";
+  const defaultVal = (field: keyof UsuarioActivo) => state?.inputs?.[field] ?? usuarioAEditar?.[field] ?? "";
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
@@ -155,7 +145,7 @@ export default function FormUsuario({
           <FieldLabel htmlFor="rol">
             Rol<span className="text-destructive">*</span>
           </FieldLabel>
-          <Select name="rol" defaultValue={defaultVal("rol") || undefined}>
+          <Select name="rol" defaultValue={String(defaultVal("rol")) || undefined}>
             <SelectTrigger
               id="rol"
               aria-invalid={!!getFieldErrors("rol")}
