@@ -32,9 +32,10 @@ const buttonVariants = cva(
       },
       color: {
         default: "",
-        blue: "text-blue-600 border-blue-200 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950/40",
-        green: "text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-950/40",
-        red: "text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/40",
+        blue: "text-blue-600 border-blue-200 hover:bg-blue-100 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950/40",
+        green: "text-green-600 border-green-200 hover:bg-green-100 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-950/40",
+        red: "text-red-600 border-red-200 hover:bg-red-100 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/40",
+        purple: "text-purple-600 border-purple-200 hover:bg-purple-100 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-950/40",
       },
     },
     defaultVariants: {

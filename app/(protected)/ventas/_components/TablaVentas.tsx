@@ -135,9 +135,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </p>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="icon-sm"
-            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
+            color="red"
             onClick={() => setAbrirConfirmarCancelar(true)}
           >
             <BanIcon />

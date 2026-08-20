@@ -83,7 +83,7 @@ export default function TablaProductos({ data, categorias }: Props) {
           <Button
             variant="outline"
             size="icon"
-            className="hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/40 dark:hover:text-green-400"
+            color="purple"
             title="Editar"
             onClick={() => { setEditingProduct(p); setEditModalOpen(true); }}
           >
