@@ -8,16 +8,16 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white text-slate-900 border-slate-200",
+        default: "bg-white text-slate-900 border-slate-200 dark:bg-muted dark:text-foreground dark:border-border",
         
         destructive:
-          "bg-red-50 text-red-600 border-red-200 *:data-[slot=alert-description]:text-red-600/90 [&>svg]:text-red-600",
+          "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800 *:data-[slot=alert-description]:text-red-600/90 dark:*:data-[slot=alert-description]:text-red-400/90 [&>svg]:text-red-600 dark:[&>svg]:text-red-400",
           
         success:
-          "bg-green-50 text-green-700 border-green-200 *:data-[slot=alert-description]:text-green-700/90 [&>svg]:text-green-700",
+          "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-400 dark:border-green-800 *:data-[slot=alert-description]:text-green-700/90 dark:*:data-[slot=alert-description]:text-green-400/90 [&>svg]:text-green-700 dark:[&>svg]:text-green-400",
           
         warning:
-          "bg-yellow-50 text-yellow-700 border-yellow-200 *:data-[slot=alert-description]:text-yellow-700/90 [&>svg]:text-yellow-700",
+          "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-400 dark:border-yellow-800 *:data-[slot=alert-description]:text-yellow-700/90 dark:*:data-[slot=alert-description]:text-yellow-400/90 [&>svg]:text-yellow-700 dark:[&>svg]:text-yellow-400",
       },
     },
     defaultVariants: {
