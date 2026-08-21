@@ -2,13 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientInitializationError,
-} from "@prisma/client/runtime/client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
+import { isPrismaError } from "@/lib/prisma-errors";
 
 const log = createLogger("Productos/Actualizar-Estado");
 
@@ -64,11 +62,12 @@ export const cambiarEstadoProducto = async (
 
     if (error instanceof PrismaClientInitializationError) {
       message = "Error de conexión. Verifica tu conexión e intenta de nuevo.";
-    } else if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
-      message = "El producto que intentas editar ya no existe.";
+    } else if (isPrismaError(error)) {
+      switch (error.code) {
+        case "P2025":
+          message = "El producto que intentas actualizar ya no existe.";
+          break;
+      }
     }
 
     return {

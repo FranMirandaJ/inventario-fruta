@@ -3,14 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { EstadoVenta, TipoMovimiento } from "@/generated/prisma";
-import {
-  PrismaClientInitializationError,
-  PrismaClientKnownRequestError,
-} from "@prisma/client/runtime/client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { verifySession } from "@/lib/dal/auth";
 import { createLogger } from "@/lib/logger";
 import { FormState } from "@/lib/form-state";
 import z from "zod";
+import { isPrismaError } from "@/lib/prisma-errors";
 
 const log = createLogger("Ventas/Cancelar");
 
@@ -102,11 +100,12 @@ export const cancelarVenta = async (id_venta: number): Promise<FormState> => {
 
     if (error instanceof PrismaClientInitializationError) {
       message = "Error de conexión. Verifica tu conexión e intenta de nuevo.";
-    } else if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
-      message = "La venta que intentas cancelar ya no existe.";
+    } else if (isPrismaError(error)) {
+      switch (error.code) {
+        case "P2025":
+          message = "La venta que intentas cancelar ya no existe.";
+          break;
+      }
     }
     return {
       success: false,

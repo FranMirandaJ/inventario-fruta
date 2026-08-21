@@ -2,11 +2,12 @@
 
 import { createLogger } from "@/lib/logger";
 import { TipoMovimiento } from "@/generated/prisma";
-import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { AjustarStockFormSchema, type AjustarStockFormState } from "../_schemas/ajustar-stock.schema";
 import { verifySession } from "@/lib/dal/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { isPrismaError } from "@/lib/prisma-errors";
 
 const log = createLogger("Productos/Ajustar-Stock");
 
@@ -80,8 +81,12 @@ export const ajustarStock = async (
 
     if (error instanceof PrismaClientInitializationError) {
       message = "Error de conexión. Verifica tu conexión e intenta de nuevo.";
-    } else if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
-      message = "El producto que intentas ajustar ya no existe.";
+    } else if (isPrismaError(error)) {
+      switch (error.code) {
+        case "P2025":
+          message = "El producto que intentas ajustar ya no existe.";
+          break;
+      }
     }
     
     return {
