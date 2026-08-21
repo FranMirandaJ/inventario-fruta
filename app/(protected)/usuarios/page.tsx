@@ -1,8 +1,10 @@
 import ContenedorPagina from "@/components/ContenedorPagina";
 import { Metadata } from "next";
-import ModalNuevoUsuario from "./_components/ModalNuevoUsuario";
+import dynamic from "next/dynamic";
 import TablaUsuarios from "./_components/TablaUsuarios";
 import { obtenerUsuariosActivos } from "@/lib/dal/usuarios";
+
+const ModalNuevoUsuario = dynamic(() => import('./_components/ModalNuevoUsuario'));
 
 export const metadata: Metadata = {
     title: "Usuarios - FrutaStock",

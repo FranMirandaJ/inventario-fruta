@@ -18,13 +18,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cerrarSesion } from "../_actions/navbar.action";
 import { obtenerInicialesAvatar } from "@/lib/text";
+import { useSession } from "@/lib/contexts/session-context";
 
-export default function Navbar({
-  sessionData,
-}: {
-  sessionData: SessionPayload;
-}) {
-  const inicialesUsuario = obtenerInicialesAvatar(sessionData.nombre);
+export default function Navbar() {
+
+  const currentSession = useSession();
+
+  const inicialesUsuario = obtenerInicialesAvatar(currentSession.nombre);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { setTheme, resolvedTheme } = useTheme();
@@ -56,7 +56,7 @@ export default function Navbar({
               FrutaStock
             </span>
             <span className="text-sm text-muted-foreground capitalize mt-1 leading-none truncate">
-              Hola, {sessionData.nombre.split(" ")[0]}.
+              Hola, {currentSession.nombre.split(" ")[0]}.
             </span>
           </div>
         </div>

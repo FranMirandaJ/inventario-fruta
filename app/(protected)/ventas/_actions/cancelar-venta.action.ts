@@ -87,7 +87,7 @@ export const cancelarVenta = async (id_venta: number): Promise<FormState> => {
     }
 
     revalidatePath("/ventas");
-    log.success({ id_venta, id_usuario }, "Venta cancelada exitosamente.");
+    log.success("Venta cancelada exitosamente.",{ id_venta, id_usuario });
 
     return {
       success: true,

@@ -54,12 +54,12 @@ export const crearUsuario = async (
     });
 
     log.success(
+      "Usuario nuevo creado exitosamente.",
       {
         id_nuevo_usuario: nuevoUsuario.id,
         nombre_nuevo_usuario: nuevoUsuario.nombre,
         id_usuario_creador: usuario.id_usuario,
-      },
-      "Usuario nuevo creado exitosamente.",
+      }
     );
 
     revalidatePath("/usuarios");

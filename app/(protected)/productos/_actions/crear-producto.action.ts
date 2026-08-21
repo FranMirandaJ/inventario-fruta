@@ -62,7 +62,7 @@ export const crearProducto = async (_state: ProductoFormState, formData: FormDat
       }
     });
 
-    log.success({ id_producto: productoNuevo.id, nombre, id_usuario }, "Producto creado exitosamente.");
+    log.success("Producto creado exitosamente.",{ id_producto: productoNuevo.id, nombre, id_usuario });
 
     revalidatePath("/productos");
 

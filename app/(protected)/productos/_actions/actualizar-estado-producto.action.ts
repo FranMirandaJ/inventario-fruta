@@ -45,7 +45,7 @@ export const cambiarEstadoProducto = async (
       data: { activo: !producto?.activo },
     });
 
-    log.success({ id_producto: id, id_usuario, activo: productoActualizado.activo }, "Estado de producto actualizado.");
+    log.success("Estado de producto actualizado.", { id_producto: id, id_usuario, activo: productoActualizado.activo });
 
      revalidatePath("/productos");
 

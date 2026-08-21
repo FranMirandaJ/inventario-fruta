@@ -60,12 +60,12 @@ export const editarUsuario = async (
     });
 
     log.success(
+      "Usuario editado exitosamente.",
       {
         id_usuario_editado: usuarioEditado.id,
         nombre_usuario_editado: usuarioEditado.nombre,
         id_usuario_editor: id_usuario_editor,
-      },
-      "Usuario editado exitosamente.",
+      }
     );
 
     revalidatePath("/usuarios");

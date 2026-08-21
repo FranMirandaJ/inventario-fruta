@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Pencil, UserXIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { rolLabels } from "@/lib/usuarios";
+import { useSession } from "@/lib/contexts/session-context";
 
 const ModalEditarUsuario = dynamic(() => import("./ModalEditarUsuario"));
 const AlertModalDeshabilitarUsuario = dynamic(() => import("./AlertModalDeshabilitarUsuario"));
@@ -14,6 +16,8 @@ interface Props {
 }
 
 export default function TablaUsuarios({ data }: Props) {
+
+  const currentSession = useSession();
 
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [editingUser, setEditingUser] = useState<UsuarioActivo | null>(null);
@@ -37,7 +41,9 @@ export default function TablaUsuarios({ data }: Props) {
       header: "Rol",
       accessorKey: "rol",
       sortable: true,
-      formatter: "capitalize",
+      renderCell: (u: UsuarioActivo) => {
+        return (rolLabels[u.rol]);
+      }
     },
     {
       header: "Acciones",
@@ -55,7 +61,29 @@ export default function TablaUsuarios({ data }: Props) {
           >
             <Pencil className="size-4" />
           </Button>
-          <AlertModalDeshabilitarUsuario usuario={u}/>
+          {Number(currentSession.id_usuario) !== u.id ? (
+            <Button
+              variant="outline"
+              size="icon"
+              color="red"
+              title="Deshabilitar"
+              onClick={() => {
+                setDisablingUser(u);
+                setDisableAlertOpen(true);
+              }}
+            >
+              <UserXIcon className="size-4" />
+            </Button>
+          ): (
+            <Button
+              variant="outline"
+              size="icon"
+              color="default"
+              disabled={true}
+            >
+              <UserXIcon className="size-4" />
+            </Button>
+          )}
         </div>
       ),
     },
@@ -81,6 +109,12 @@ export default function TablaUsuarios({ data }: Props) {
           if (!open) setEditModalOpen(false);
         }}
         usuario={editingUser}
+      />
+
+      <AlertModalDeshabilitarUsuario
+        usuario={disablingUser}
+        open={disableAlertOpen}
+        onOpenChange={setDisableAlertOpen}
       />
 
     </>
