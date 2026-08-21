@@ -12,7 +12,8 @@ Sistema de inventario y ventas diseñado específicamente para pequeños negocio
 - 📦 **Control de inventario** - Seguimiento en tiempo real del stock actual y alertas de stock mínimo
 - 💰 **Registro de ventas** - Sistema completo de ventas con detalles por producto
 - 🔄 **Movimientos de inventario** - Registro de entradas, salidas y ajustes con motivos
-- 👥 **Gestión de usuarios** - Sistema de roles (Admin/Vendedor) con autenticación segura
+- 👥 **Gestión de usuarios** - Crear, editar y deshabilitar usuarios con roles (Admin/Vendedor)
+- 🔒 **Seguridad** - Auto-disable guard, contraseñas hasheadas con bcrypt, sesiones JWT
 - 📊 **Dashboard** - Vista general del negocio con métricas clave
 - 🎨 **Interfaz moderna** - UI responsiva con modo claro/oscuro
 
@@ -106,12 +107,29 @@ inventario-fruta/
 │   │       └── _types/
 │   │           └── index.ts
 │   │
+│   │   └── usuarios/                  # URL: /usuarios — Gestión de usuarios
+│   │       ├── page.tsx               # Server component (DataTable wrapper)
+│   │       ├── _actions/
+│   │       │   ├── crear-usuario.ts
+│   │       │   ├── editar-usuario.ts
+│   │       │   └── deshabilitar-usuario.ts
+│   │       ├── _components/
+│   │       │   ├── TablaUsuarios.tsx
+│   │       │   ├── FormUsuario.tsx     # Formulario compartido (crear + editar)
+│   │       │   ├── ModalNuevoUsuario.tsx
+│   │       │   ├── ModalEditarUsuario.tsx
+│   │       │   └── AlertModalDeshabilitarUsuario.tsx
+│   │       └── _schemas/
+│   │           ├── crear-usuario.schema.ts
+│   │           └── editar-usuario.schema.ts
+│   │
 │   └── sandbox/                       # Playground de desarrollo (sin auth, sin layout propio)
 │       ├── page.tsx
 │       └── _components/
 │           └── TablaPrueba.tsx
 │
 ├── components/                        # Componentes reutilizables
+│   ├── AppShell.tsx                   # Shell de auth (SessionProvider, Navbar, Footer)
 │   ├── ContenedorPagina.tsx           # Contenedor de página
 │   ├── Datatable.tsx                  # Tabla de datos reutilizable
 │   ├── Modal.tsx                      # Modal reutilizable
@@ -125,6 +143,12 @@ inventario-fruta/
 │   ├── money.ts                       # Formateo de moneda (MXN)
 │   ├── text.ts                        # Utilidades de texto (capitalizar, normalizar, acentos)
 │   ├── utils.ts                       # Utilidades generales (cn, clsx, twMerge)
+│   ├── usuarios.ts                    # Constantes compartidas de usuarios (rolLabels)
+│   ├── prisma-errors.ts              # Helper isPrismaError() (compatible con Prisma 7)
+│   ├── contexts/
+│   │   └── session-context.tsx       # SessionProvider + hook useSession()
+│   ├── hooks/
+│   │   └── useCopyToClipboard.ts     # Hook de portapapeles con auto-reset
 │   ├── dal/                           # Data Access Layer (server-only, cacheado)
 │   │   ├── auth.ts                    # verifySession() - guarda de auth + redirect
 │   │   ├── categorias.ts             # Consultas de categorías
@@ -269,7 +293,7 @@ Después de ejecutar el seed, puedes iniciar sesión con:
 
 El sistema utiliza las siguientes entidades principales:
 
-- **Usuario** - Usuarios del sistema con roles (`ADMIN`/`VENDEDOR`) y flag `activo`
+- **Usuario** - Usuarios del sistema con roles (`ADMIN`/`VENDEDOR`), flag `activo` y `debe_cambiar_password`
 - **Categoría** - Categorías de productos (Bolis, Pulpas, etc.). `nombre` es único
 - **Producto** - Productos congelados con precio (Decimal 10,2), stock actual, stock mínimo y flag `activo`
 - **MovimientoInventario** - Registro de entradas, salidas y ajustes (`ENTRADA`/`SALIDA`/`AJUSTE`). Enlaza a `Producto`, `Usuario` y opcionalmente `Venta`

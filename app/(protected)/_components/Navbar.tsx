@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "@teispace/next-themes";
 import { Button } from "@/components/ui/button";
 import { Menu, User, LogOut, X, Sun, Moon } from "lucide-react";
-import type { SessionPayload } from "@/lib/definitions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,

@@ -103,20 +103,36 @@ inventario-fruta/
 │   │   │       ├── crear-producto.schema.ts
 │   │   │       └── ajustar-stock.schema.ts
 │   │   │
-│   │   └── ventas/                    # URL: /ventas — Sales management
-│   │       ├── page.tsx
-│   │       ├── loading.tsx
+│   │   ├── ventas/                    # URL: /ventas — Sales management
+│   │   │   ├── page.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── _actions/
+│   │   │   │   └── crear-venta.action.ts
+│   │   │   ├── _components/
+│   │   │   │   ├── TablaVentas.tsx
+│   │   │   │   ├── FiltrosVentas.tsx
+│   │   │   │   ├── ModalRegistrarVenta.tsx
+│   │   │   │   └── BuscadorProductos.tsx
+│   │   │   ├── _schemas/
+│   │   │   │   └── crear-venta.schema.ts
+│   │   │   └── _types/
+│   │   │       └── index.ts
+│   │   │
+│   │   └── usuarios/                  # URL: /usuarios — User management
+│   │       ├── page.tsx               # Server component (DataTable wrapper)
 │   │       ├── _actions/
-│   │       │   └── crear-venta.action.ts
+│   │       │   ├── crear-usuario.ts
+│   │       │   ├── editar-usuario.ts
+│   │       │   └── deshabilitar-usuario.ts
 │   │       ├── _components/
-│   │       │   ├── TablaVentas.tsx
-│   │       │   ├── FiltrosVentas.tsx
-│   │       │   ├── ModalRegistrarVenta.tsx
-│   │       │   └── BuscadorProductos.tsx
-│   │       ├── _schemas/
-│   │       │   └── crear-venta.schema.ts
-│   │       └── _types/
-│   │           └── index.ts
+│   │       │   ├── TablaUsuarios.tsx
+│   │       │   ├── FormUsuario.tsx     # Shared form (create + edit)
+│   │       │   ├── ModalNuevoUsuario.tsx
+│   │       │   ├── ModalEditarUsuario.tsx
+│   │       │   └── AlertModalDeshabilitarUsuario.tsx
+│   │       └── _schemas/
+│   │           ├── crear-usuario.schema.ts
+│   │           └── editar-usuario.schema.ts
 │   │
 │   ├── sandbox/                       # Dev/test playground (no auth, no shell)
 │   │   ├── page.tsx
@@ -124,6 +140,7 @@ inventario-fruta/
 │   │       └── TablaPrueba.tsx
 │
 ├── components/                        # Shared components
+│   ├── AppShell.tsx                   # Auth shell wrapper (SessionProvider, Navbar, Footer)
 │   ├── ContenedorPagina.tsx           # Page container wrapper
 │   ├── Datatable.tsx                  # Reusable data table
 │   ├── Modal.tsx                      # Reusable modal wrapper
@@ -138,6 +155,12 @@ inventario-fruta/
 │   ├── money.ts                       # Currency formatting (MXN)
 │   ├── text.ts                        # Text utilities (capitalize, normalize, accents)
 │   ├── utils.ts                       # General utilities (cn, clsx, twMerge)
+│   ├── usuarios.ts                    # Shared user constants (rolLabels)
+│   ├── prisma-errors.ts              # isPrismaError() helper (Prisma 7 compatible)
+│   ├── contexts/
+│   │   └── session-context.tsx       # SessionProvider + useSession() hook
+│   ├── hooks/
+│   │   └── useCopyToClipboard.ts     # Clipboard hook with auto-reset
 │   ├── dal/                           # Data Access Layer (server-only, cached)
 │   │   ├── auth.ts                    # verifySession() - auth guard + redirect
 │   │   ├── categorias.ts             # Category queries
@@ -189,6 +212,7 @@ import { verifySession } from "@/lib/dal/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { createLogger } from "@/lib/logger";
+import { isPrismaError } from "@/lib/prisma-errors";
 import { SomeFormSchema, type SomeFormState } from "../_schemas/some-form.schema";
 
 const log = createLogger("Section/Action");
@@ -223,8 +247,15 @@ export const someAction = async (_state: SomeFormState, formData: FormData): Pro
     let message = "Default error message.";
     if (error instanceof PrismaClientInitializationError) {
       message = "Connection error. Check your connection and try again.";
-    } else if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
-      message = "Record not found.";
+    } else if (isPrismaError(error)) {
+      switch (error.code) {
+        case "P2002":
+          message = "Duplicate record.";
+          break;
+        case "P2025":
+          message = "Record not found.";
+          break;
+      }
     }
     return { success: false, message, timestamp: Date.now() };
   }
@@ -278,7 +309,27 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 2. Session stored in httpOnly cookie (`session`), 7-day expiry, HS256
 3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie, redirects to `/login` if invalid
 4. Dashboard layout calls `verifySession()` to protect all dashboard routes
-5. Logout via `cerrarSesion()` in `navbar.action.ts` deletes cookie and redirects
+5. `AppShell` (`components/AppShell.tsx`) wraps protected routes with `<SessionProvider session={session}>`, making session data available to all client components
+6. Client components access session via `useSession()` hook from `@/lib/contexts/session-context`
+7. Logout via `cerrarSesion()` in `navbar.action.ts` deletes cookie and redirects
+
+### Session Context
+
+For accessing session data in client components, use the `useSession()` hook:
+
+```typescript
+"use client";
+
+import { useSession } from "@/lib/contexts/session-context";
+
+export function MyComponent() {
+  const { id_usuario, nombre, rol, debe_cambiar_password } = useSession();
+  
+  return <div>Hola, {nombre}</div>;
+}
+```
+
+**Pattern:** `SessionProvider` wraps all protected routes in `AppShell.tsx`. Session data comes from `verifySession()` in the server component layout.
 
 ### Styling
 
@@ -290,7 +341,10 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 ### Error Handling
 
 - Prisma `PrismaClientInitializationError` → connection error message
-- Prisma `PrismaClientKnownRequestError` code `P2025` → record not found
+- Prisma errors: use `isPrismaError()` from `@/lib/prisma-errors` (Prisma 7 compatible)
+  - `P2002` → unique constraint violation
+  - `P2025` → record not found
+- **Do NOT** use `instanceof PrismaClientKnownRequestError` (breaks with driver adapters)
 - All server action errors return a `FormState` with `success: false`
 - Error messages in server actions are in **Spanish**
 
