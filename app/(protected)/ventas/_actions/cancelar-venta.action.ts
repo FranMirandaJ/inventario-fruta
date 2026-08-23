@@ -17,7 +17,10 @@ export const cancelarVenta = async (id_venta: number): Promise<FormState> => {
   const usuario = await verifySession();
   const id_usuario = Number(usuario.id_usuario);
 
-  if (!puede(usuario.rol, PERMISOS.ventasCancelar)) {
+  if (
+    !puede(usuario.rol, PERMISOS.ventasCancelar) &&
+    !puede(usuario.rol, PERMISOS.ventasCancelarCualquiera)
+  ) {
     log.warn("Intento de cancelar venta sin permisos.", {
       id_usuario: usuario.id_usuario,
       rol: usuario.rol,
@@ -51,11 +54,19 @@ export const cancelarVenta = async (id_venta: number): Promise<FormState> => {
         select: {
           id: true,
           estado: true,
+          usuario_id: true,
           detalles: {
             select: { producto_id: true, cantidad: true },
           },
         },
       });
+
+      if (
+        !puede(usuario.rol, PERMISOS.ventasCancelarCualquiera) &&
+        venta.usuario_id !== id_usuario
+      ) {
+        return { sinPermiso: true as const };
+      }
 
       if (venta.estado === EstadoVenta.CANCELADA) {
         return { yaCancelada: true as const };
@@ -88,6 +99,19 @@ export const cancelarVenta = async (id_venta: number): Promise<FormState> => {
 
       return { yaCancelada: false as const };
     });
+
+    if ("sinPermiso" in resultado) {
+      log.warn("Intento de cancelar una venta ajena sin permiso.", {
+        id_venta,
+        id_usuario,
+        rol: usuario.rol,
+      });
+      return {
+        success: false,
+        message: "Solo puedes cancelar tus propias ventas.",
+        timestamp: Date.now(),
+      };
+    }
 
     if (resultado.yaCancelada) {
       return {

@@ -29,6 +29,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import BotonPermiso from "@/components/BotonPermiso";
 import DropdownMenuItemPermiso from "@/components/DropdownMenuItemPermiso";
+import { useSession } from "@/lib/contexts/session-context";
 import { PERMISOS } from "@/lib/permisos";
 
 const ModalVerDetalle = dynamic(() => import("./ModalVerDetalle"));
@@ -37,6 +38,12 @@ const AlertModalCancelar = dynamic(() => import("./AlertModalCancelar"));
 function CardVenta({ venta }: { venta: VentaRow }) {
   const [abierto, setAbierto] = useState(false);
   const [abrirConfirmarCancelar, setAbrirConfirmarCancelar] = useState(false);
+  const { id_usuario } = useSession();
+
+  const permisoCancelar =
+    Number(id_usuario) === venta.usuario_id
+      ? PERMISOS.ventasCancelar
+      : PERMISOS.ventasCancelarCualquiera;
 
   return venta.detalles.length > 1 ? (
     <div className="rounded-lg border bg-card transition-colors duration-200 hover:bg-muted/30">
@@ -70,7 +77,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </p>
           <BotonPermiso
             type="button"
-            permiso={PERMISOS.ventasCancelar}
+            permiso={permisoCancelar}
             variant="outline"
             size="icon-sm"
             color="red"
@@ -139,7 +146,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           </p>
           <BotonPermiso
             type="button"
-            permiso={PERMISOS.ventasCancelar}
+            permiso={permisoCancelar}
             variant="outline"
             size="icon-sm"
             color="red"
@@ -164,6 +171,12 @@ function FilaVenta({ venta } : { venta: VentaRow }) {
 
   const [abrirModalDetalles, setAbrirModalDetalles] = useState<boolean>(false);
   const [abrirConfirmarCancelar, setAbrirConfirmarCancelar] = useState<boolean>(false);
+  const { id_usuario } = useSession();
+
+  const permisoCancelar =
+    Number(id_usuario) === venta.usuario_id
+      ? PERMISOS.ventasCancelar
+      : PERMISOS.ventasCancelarCualquiera;
 
   return (
     <>
@@ -185,7 +198,7 @@ function FilaVenta({ venta } : { venta: VentaRow }) {
               <DropdownMenuItem onClick={() => setAbrirModalDetalles(true)}>Ver detalle</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItemPermiso
-                permiso={PERMISOS.ventasCancelar}
+                permiso={permisoCancelar}
                 onClick={() => setAbrirConfirmarCancelar(true)}
                 variant="destructive"
               >

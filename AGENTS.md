@@ -348,8 +348,11 @@ Current matrix:
 |---|---|---|
 | Dashboard | ✅ | ✅ |
 | Products (ver/crear/editar/estado/stock) | ✅ | ✅ |
-| Sales (ver/crear/cancelar) | ✅ | ✅ |
+| Sales (ver/crear/cancelar propias) | ✅ | ✅ |
+| Sales (cancelar cualquiera) | ✅ | ❌ |
 | Users (ver/crear/editar/deshabilitar) | ✅ | ❌ |
+
+**Ownership permissions:** `ventas.cancelar` only covers the seller's own sales; cancelling someone else's sale requires `ventas.cancelarCualquiera`. In list views, pick the permission per row based on ownership (`Number(id_usuario) === venta.usuario_id ? PERMISOS.ventasCancelar : PERMISOS.ventasCancelarCualquiera`) and let `BotonPermiso`/`DropdownMenuItemPermiso` decide — do not hardcode role checks in UI or actions. The server action rejects non-owner cancellations with "Solo puedes cancelar tus propias ventas."
 
 **Three enforcement layers — all three are mandatory for any new page/action/button:**
 

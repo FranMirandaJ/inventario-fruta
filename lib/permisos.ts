@@ -7,7 +7,8 @@ export const PERMISOS = {
   productosAjustarStock: "productos.ajustarStock",
   ventasVer: "ventas.ver",
   ventasCrear: "ventas.crear",
-  ventasCancelar: "ventas.cancelar",
+  ventasCancelar: "ventas.cancelar",                     // solo PROPIAS ventas
+  ventasCancelarCualquiera: "ventas.cancelarCualquiera", // cualquier venta
   usuariosVer: "usuarios.ver",
   usuariosCrear: "usuarios.crear",
   usuariosEditar: "usuarios.editar",
@@ -22,7 +23,10 @@ const TODOS_LOS_PERMISOS = Object.values(PERMISOS);
 
 const PERMISOS_POR_ROL: Record<Rol, readonly Permiso[]> = {
   ADMIN: TODOS_LOS_PERMISOS,
-  VENDEDOR: TODOS_LOS_PERMISOS.filter((p) => !p.startsWith("usuarios.")),
+  VENDEDOR: TODOS_LOS_PERMISOS.filter(
+    (p) =>
+      !p.startsWith("usuarios.") && p !== PERMISOS.ventasCancelarCualquiera,
+  ),
 };
 
 export function puede(rol: string, permiso: Permiso): boolean {

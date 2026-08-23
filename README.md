@@ -300,8 +300,11 @@ El sistema cuenta con control de acceso basado en roles (**RBAC**) con permisos 
 |---|---|---|
 | Dashboard | ✅ | ✅ |
 | Productos (ver / crear / editar / cambiar estado / ajustar stock) | ✅ | ✅ |
-| Ventas (ver / registrar / cancelar) | ✅ | ✅ |
+| Ventas (ver / registrar / cancelar propias) | ✅ | ✅ |
+| Ventas (cancelar cualquier venta) | ✅ | ❌ |
 | Usuarios (ver / crear / editar / deshabilitar) | ✅ | ❌ |
+
+> Los vendedores solo pueden cancelar las ventas que ellos mismos registraron; cancelar ventas de otros es exclusivo del administrador.
 
 ### ¿Cómo se aplica?
 

@@ -9,6 +9,7 @@ export type VentaRow = {
     total: number,
     fecha: Date,
     vendedor: string,
+    usuario_id: number,
     detalles: {
         id: number;
         cantidad: number;
@@ -61,6 +62,7 @@ export const obtenerVentas = cache(async (params?: ObtenerVentasParams): Promise
                 id: true,
                 total: true,
                 created_at: true,
+                usuario_id: true,
                 usuario: { select: { nombre: true } },
                 detalles: {
                     select: {
@@ -82,6 +84,7 @@ export const obtenerVentas = cache(async (params?: ObtenerVentasParams): Promise
             total: Number(v.total),
             fecha: v.created_at,
             vendedor: v.usuario.nombre,
+            usuario_id: v.usuario_id,
             detalles: v.detalles.map(d => ({
                 id: d.id,
                 cantidad: d.cantidad,
