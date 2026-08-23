@@ -1,11 +1,12 @@
 "use client";
 import { useMemo, useState } from "react";
 import { XCircle, Pencil, CheckCircleIcon, PackagePlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import DataTable, { ColumnDef } from "@/components/Datatable";
+import BotonPermiso from "@/components/BotonPermiso";
 import type { ProductoRow } from "@/lib/dal/productos";
 import type { CategoriaOption } from "@/lib/dal/categorias";
+import { PERMISOS } from "@/lib/permisos";
 
 const ModalEditarProducto = dynamic(() => import("./ModalEditarProducto"));
 const AlertModalEstadoProducto = dynamic(() => import("./AlertModalEstadoProducto"));
@@ -71,7 +72,8 @@ export default function TablaProductos({ data, categorias }: Props) {
       header: "Acciones",
       renderCell: (p: ProductoRow) => (
         <div className="flex items-center flex-wrap gap-2">
-          <Button
+          <BotonPermiso
+            permiso={PERMISOS.productosAjustarStock}
             variant="outline"
             size="icon"
             color="purple"
@@ -79,8 +81,9 @@ export default function TablaProductos({ data, categorias }: Props) {
             onClick={() => { setEditingProduct(p); setStockModalOpen(true); setKeyStockModal(k => k + 1) }}
           >
             <PackagePlus className="size-4" />
-          </Button>
-          <Button
+          </BotonPermiso>
+          <BotonPermiso
+            permiso={PERMISOS.productosEditar}
             variant="outline"
             size="icon"
             color="blue"
@@ -88,8 +91,9 @@ export default function TablaProductos({ data, categorias }: Props) {
             onClick={() => { setEditingProduct(p); setEditModalOpen(true); }}
           >
             <Pencil className="size-4" />
-          </Button>
-          <Button 
+          </BotonPermiso>
+          <BotonPermiso
+            permiso={PERMISOS.productosCambiarEstado}
             variant="outline"
             size="icon"
             color={p.activo ? "red" : "green"}
@@ -101,7 +105,7 @@ export default function TablaProductos({ data, categorias }: Props) {
             ) : (
               <CheckCircleIcon className="size-4" />
             )}
-          </Button>
+          </BotonPermiso>
         </div>
       ),
     },

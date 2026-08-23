@@ -13,6 +13,7 @@ import { formatCurrency } from "@/lib/money";
 import { capitalizeFirstLetter } from "@/lib/text";
 import { crearVenta } from "../_actions/crear-venta.action";
 import { VentaCarritoSchema } from "../_schemas/crear-venta.schema";
+import { PERMISOS } from "@/lib/permisos";
 
 type Props = {
   productos: ProductoParaVenta[];
@@ -104,6 +105,7 @@ export default function ModalRegistrarVenta({ productos }: Props) {
       headerImgSrc="/shopping-cart.svg"
       textTriggerButton="Vender"
       triggerButtonVariant="default"
+      triggerButtonPermiso={PERMISOS.ventasCrear}
       iconTriggerButton={<ShoppingCart className="size-4" />}
       open={openModal}
       onOpenChange={(open) => {

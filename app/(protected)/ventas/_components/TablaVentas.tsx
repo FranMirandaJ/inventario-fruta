@@ -27,6 +27,9 @@ import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import BotonPermiso from "@/components/BotonPermiso";
+import DropdownMenuItemPermiso from "@/components/DropdownMenuItemPermiso";
+import { PERMISOS } from "@/lib/permisos";
 
 const ModalVerDetalle = dynamic(() => import("./ModalVerDetalle"));
 const AlertModalCancelar = dynamic(() => import("./AlertModalCancelar"));
@@ -65,8 +68,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <p className="text-sm text-muted-foreground leading-none">
             <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
-          <Button
+          <BotonPermiso
             type="button"
+            permiso={PERMISOS.ventasCancelar}
             variant="ghost"
             size="icon-sm"
             className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
@@ -74,7 +78,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           >
             <BanIcon />
             <span className="sr-only">Cancelar venta</span>
-          </Button>
+          </BotonPermiso>
         </div>
       </div>
 
@@ -133,8 +137,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <p className="text-sm text-muted-foreground leading-none">
             <i>{formatRelativeDate(venta.fecha)}</i>
           </p>
-          <Button
+          <BotonPermiso
             type="button"
+            permiso={PERMISOS.ventasCancelar}
             variant="outline"
             size="icon-sm"
             color="red"
@@ -142,7 +147,7 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           >
             <BanIcon />
             <span className="sr-only">Cancelar venta</span>
-          </Button>
+          </BotonPermiso>
         </div>
       </div>
 
@@ -179,9 +184,13 @@ function FilaVenta({ venta } : { venta: VentaRow }) {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setAbrirModalDetalles(true)}>Ver detalle</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAbrirConfirmarCancelar(true)} variant="destructive">
+              <DropdownMenuItemPermiso
+                permiso={PERMISOS.ventasCancelar}
+                onClick={() => setAbrirConfirmarCancelar(true)}
+                variant="destructive"
+              >
                 Cancelar
-              </DropdownMenuItem>
+              </DropdownMenuItemPermiso>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>

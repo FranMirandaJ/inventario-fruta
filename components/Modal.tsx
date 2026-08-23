@@ -10,14 +10,17 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
+import BotonPermiso from "./BotonPermiso";
 import { ReactNode } from "react";
 import Image from "next/image";
+import type { Permiso } from "@/lib/permisos";
 
 export type ModalProps = {
   showTriggerButton?: boolean;
   textTriggerButton?: string;
   iconTriggerButton?: ReactNode;
   triggerButtonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  triggerButtonPermiso?: Permiso;
   title: string;
   description?: ReactNode;
   children?: ReactNode;
@@ -48,6 +51,7 @@ export default function Modal({
   textTriggerButton,
   iconTriggerButton,
   triggerButtonVariant = 'outline',
+  triggerButtonPermiso,
   title,
   description,
   children,
@@ -65,10 +69,21 @@ export default function Modal({
 
       {showTriggerButton && (
         <DialogTrigger asChild>
-          <Button variant={triggerButtonVariant} className="gap-2">
-            {iconTriggerButton}
-            {textTriggerButton}
-          </Button>
+          {triggerButtonPermiso ? (
+            <BotonPermiso
+              permiso={triggerButtonPermiso}
+              variant={triggerButtonVariant}
+              className="gap-2"
+            >
+              {iconTriggerButton}
+              {textTriggerButton}
+            </BotonPermiso>
+          ) : (
+            <Button variant={triggerButtonVariant} className="gap-2">
+              {iconTriggerButton}
+              {textTriggerButton}
+            </Button>
+          )}
         </DialogTrigger>
       )}
 

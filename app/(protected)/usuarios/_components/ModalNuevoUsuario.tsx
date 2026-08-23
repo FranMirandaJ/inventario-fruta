@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { crearUsuario } from "../_actions/crear-usuario";
+import { PERMISOS } from "@/lib/permisos";
 
 export default function ModalNuevoUsuario() {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,7 @@ export default function ModalNuevoUsuario() {
       textTriggerButton="Nuevo"
       iconTriggerButton={<Plus className="size-4" />}
       triggerButtonVariant="default"
+      triggerButtonPermiso={PERMISOS.usuariosCrear}
       headerImgSrc="/new-user.svg"
       open={open}
       onOpenChange={handleOpenChange}

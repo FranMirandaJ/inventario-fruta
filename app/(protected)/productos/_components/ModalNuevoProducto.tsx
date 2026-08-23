@@ -7,6 +7,7 @@ import type { CategoriaOption } from "@/lib/dal/categorias";
 import { useActionState, useState } from "react";
 import { crearProducto } from "../_actions/crear-producto.action";
 import FormProducto from "./FormProducto";
+import { PERMISOS } from "@/lib/permisos";
 
 type Props = {
   categorias: CategoriaOption[];
@@ -34,6 +35,7 @@ export default function ModalNuevoProducto({
       textTriggerButton="Nuevo"
       iconTriggerButton={<Plus className="size-4" />}
       triggerButtonVariant="default"
+      triggerButtonPermiso={PERMISOS.productosCrear}
       open={open}
       onOpenChange={handleOpenChange}
       footer={

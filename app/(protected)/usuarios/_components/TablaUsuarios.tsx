@@ -8,6 +8,8 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { rolLabels } from "@/lib/usuarios";
 import { useSession } from "@/lib/contexts/session-context";
+import BotonPermiso from "@/components/BotonPermiso";
+import { PERMISOS } from "@/lib/permisos";
 
 const ModalEditarUsuario = dynamic(() => import("./ModalEditarUsuario"));
 const AlertModalDeshabilitarUsuario = dynamic(() => import("./AlertModalDeshabilitarUsuario"));
@@ -47,45 +49,50 @@ export default function TablaUsuarios({ data }: Props) {
     },
     {
       header: "Acciones",
-      renderCell: (u: UsuarioActivo) => (
-        <div className="flex items-center flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            color="blue"
-            title="Editar"
-            onClick={() => {
-              setEditingUser(u);
-              setEditModalOpen(true);
-            }}
-          >
-            <Pencil className="size-4" />
-          </Button>
-          {Number(currentSession.id_usuario) !== u.id ? (
-            <Button
+      renderCell: (u: UsuarioActivo) => {
+        const esMismoUsuario = Number(currentSession.id_usuario) === u.id;
+        return (
+          <div className="flex items-center flex-wrap gap-2">
+            <BotonPermiso
+              permiso={PERMISOS.usuariosEditar}
               variant="outline"
               size="icon"
-              color="red"
-              title="Deshabilitar"
+              color="blue"
+              title="Editar"
               onClick={() => {
-                setDisablingUser(u);
-                setDisableAlertOpen(true);
+                setEditingUser(u);
+                setEditModalOpen(true);
               }}
             >
-              <UserXIcon className="size-4" />
-            </Button>
-          ): (
-            <Button
-              variant="outline"
-              size="icon"
-              color="default"
-              disabled={true}
-            >
-              <UserXIcon className="size-4" />
-            </Button>
-          )}
-        </div>
-      ),
+              <Pencil className="size-4" />
+            </BotonPermiso>
+            {esMismoUsuario ? (
+              <Button
+                variant="outline"
+                size="icon"
+                color="default"
+                disabled={true}
+              >
+                <UserXIcon className="size-4" />
+              </Button>
+            ) : (
+              <BotonPermiso
+                permiso={PERMISOS.usuariosDeshabilitar}
+                variant="outline"
+                size="icon"
+                color="red"
+                title="Deshabilitar"
+                onClick={() => {
+                  setDisablingUser(u);
+                  setDisableAlertOpen(true);
+                }}
+              >
+                <UserXIcon className="size-4" />
+              </BotonPermiso>
+            )}
+          </div>
+        );
+      }
     },
   ];
 
