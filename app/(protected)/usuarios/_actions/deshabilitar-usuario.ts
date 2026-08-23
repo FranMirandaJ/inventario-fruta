@@ -5,6 +5,7 @@ import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { createLogger } from "@/lib/logger";
 import { isPrismaError } from "@/lib/prisma-errors";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/lib/form-state";
 import z from "zod";
@@ -16,6 +17,18 @@ export const deshabilitarUsuario = async (
 ): Promise<FormState> => {
   const usuarioLogueado = await verifySession();
   const id_usuarioLogueado = Number(usuarioLogueado.id_usuario);
+
+  if (!puede(usuarioLogueado.rol, PERMISOS.usuariosDeshabilitar)) {
+    log.warn("Intento de deshabilitar usuario sin permisos.", {
+      id_usuario: usuarioLogueado.id_usuario,
+      rol: usuarioLogueado.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const schemaId = z.coerce
     .number("Usuario no válido.")

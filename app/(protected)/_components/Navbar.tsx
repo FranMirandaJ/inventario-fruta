@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { cerrarSesion } from "../_actions/navbar.action";
 import { obtenerInicialesAvatar } from "@/lib/text";
 import { useSession } from "@/lib/contexts/session-context";
+import { puede, PERMISOS, type Permiso } from "@/lib/permisos";
 
 export default function Navbar() {
 
@@ -32,12 +33,16 @@ export default function Navbar() {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   }, [setTheme, resolvedTheme]);
 
-  const enlaces = [
-    { label: "Inicio", href: "/dashboard" },
-    { label: "Productos", href: "/productos" },
-    { label: "Ventas", href: "/ventas" },
-    { label: "Usuarios", href: "/usuarios" },
+  const enlaces: { label: string; href: string; permiso: Permiso }[] = [
+    { label: "Inicio", href: "/dashboard", permiso: PERMISOS.dashboardVer },
+    { label: "Productos", href: "/productos", permiso: PERMISOS.productosVer },
+    { label: "Ventas", href: "/ventas", permiso: PERMISOS.ventasVer },
+    { label: "Usuarios", href: "/usuarios", permiso: PERMISOS.usuariosVer },
   ];
+
+  const enlacesPermitidos = enlaces.filter((enlace) =>
+    puede(currentSession.rol, enlace.permiso),
+  );
 
   const estaActivo = (href: string) =>
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
@@ -78,7 +83,7 @@ export default function Navbar() {
       >
         <Separator className="mb-2 bg-border sm:hidden" />
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-          {enlaces.map((enlace) => (
+          {enlacesPermitidos.map((enlace) => (
             <Button
               key={enlace.href}
               variant="ghost"

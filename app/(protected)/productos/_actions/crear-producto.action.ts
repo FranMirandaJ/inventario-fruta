@@ -7,12 +7,25 @@ import { revalidatePath } from "next/cache";
 import { ProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 
 const log = createLogger("Productos/Crear");
 
 export const crearProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
   const usuario = await verifySession();
   const id_usuario = Number(usuario.id_usuario);
+
+  if (!puede(usuario.rol, PERMISOS.productosCrear)) {
+    log.warn("Intento de crear producto sin permisos.", {
+      id_usuario: usuario.id_usuario,
+      rol: usuario.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const rawFormData  = {
     nombre: formData.get("nombre")?.toString() || "",

@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/session';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
+import { puede, type Permiso } from '@/lib/permisos';
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get('session')?.value;
@@ -21,5 +22,15 @@ export const verifySession = cache(async () => {
     rol: session.rol,
     debe_cambiar_password: session.debe_cambiar_password,
   };
+});
+
+export const requirePermiso = cache(async (permiso: Permiso) => {
+  const session = await verifySession();
+
+  if (!puede(session.rol, permiso)) {
+    redirect('/dashboard');
+  }
+
+  return session;
 });
 

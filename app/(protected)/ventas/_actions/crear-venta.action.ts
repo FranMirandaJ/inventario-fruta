@@ -9,6 +9,7 @@ import {
 } from "../_schemas/crear-venta.schema";
 import type { ConfirmarVentaItem } from "../_types";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("Ventas/Crear");
@@ -21,6 +22,18 @@ export const crearVenta = async (
   try {
     const usuario = await verifySession();
     const usuario_id = Number(usuario.id_usuario);
+
+    if (!puede(usuario.rol, PERMISOS.ventasCrear)) {
+      log.warn("Intento de registrar venta sin permisos.", {
+        id_usuario: usuario.id_usuario,
+        rol: usuario.rol,
+      });
+      return {
+        success: false,
+        message: "No tienes permisos para realizar esta acción.",
+        timestamp: Date.now(),
+      };
+    }
   
     const carritoValidado = VentaCarritoSchema.safeParse(data);
 

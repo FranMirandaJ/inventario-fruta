@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { EditarUsuarioFormSchema } from "../_schemas/editar-usuario.schema";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/lib/form-state";
@@ -17,6 +18,18 @@ export const editarUsuario = async (
 ): Promise<FormState> => {
   const usuario = await verifySession();
   const id_usuario_editor = Number(usuario.id_usuario);
+
+  if (!puede(usuario.rol, PERMISOS.usuariosEditar)) {
+    log.warn("Intento de editar usuario sin permisos.", {
+      id_usuario: usuario.id_usuario,
+      rol: usuario.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const id_usuario_a_editar = Number(formData.get("id_usuario_a_editar"));
 

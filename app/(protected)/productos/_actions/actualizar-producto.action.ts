@@ -7,6 +7,7 @@ import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { ProductoFormSchema, type ProductoFormState } from "../_schemas/crear-producto.schema";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { isPrismaError } from "@/lib/prisma-errors";
 
 const log = createLogger("Productos/Actualizar");
@@ -14,6 +15,18 @@ const log = createLogger("Productos/Actualizar");
 export const actualizarProducto = async (_state: ProductoFormState, formData: FormData): Promise<ProductoFormState> => {
   const usuario = await verifySession();
   const id_usuario = Number(usuario.id_usuario);
+
+  if (!puede(usuario.rol, PERMISOS.productosEditar)) {
+    log.warn("Intento de actualizar producto sin permisos.", {
+      id_usuario: usuario.id_usuario,
+      rol: usuario.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const id = Number(formData.get("producto_id"));
 

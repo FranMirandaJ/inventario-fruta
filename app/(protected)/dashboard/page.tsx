@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { requirePermiso } from "@/lib/dal/auth";
+import { PERMISOS } from "@/lib/permisos";
 import { obtenerCategoriasStatsInicio } from "@/lib/dal/categorias";
 import { obtenerAlertasStock, obtenerNProductosMasVendidos } from "@/lib/dal/productos";
 import ContenedorPagina from "@/components/ContenedorPagina";
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
+  await requirePermiso(PERMISOS.dashboardVer);
 
   const [categoriasStats, alertasStock, productosMasVendidos] = await Promise.all([
     obtenerCategoriasStatsInicio(),

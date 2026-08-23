@@ -7,6 +7,8 @@ import FiltrosVentas from "./_components/FiltrosVentas";
 import { obtenerProductosActivosDisponibles } from "@/lib/dal/productos";
 import { obtenerVentas } from "@/lib/dal/ventas";
 import { ensureValidPage } from "@/lib/pagination";
+import { requirePermiso } from "@/lib/dal/auth";
+import { PERMISOS } from "@/lib/permisos";
 
 const ModalRegistrarVenta = dynamic(() => import("./_components/ModalRegistrarVenta"));
 
@@ -24,6 +26,7 @@ export default async function VentasPage(props: {
     pageSize?: string;
   }>
 }) {
+  await requirePermiso(PERMISOS.ventasVer);
 
   const searchParams = await props.searchParams;
   const query = searchParams?.q || "";

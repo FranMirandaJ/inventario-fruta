@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { createLogger } from "@/lib/logger";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { CrearUsuarioFormSchema } from "../_schemas/crear-usuario.schema";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/lib/form-state";
@@ -17,6 +18,18 @@ export const crearUsuario = async (
   formData: FormData,
 ): Promise<FormState> => {
   const usuario = await verifySession();
+
+  if (!puede(usuario.rol, PERMISOS.usuariosCrear)) {
+    log.warn("Intento de crear usuario sin permisos.", {
+      id_usuario: usuario.id_usuario,
+      rol: usuario.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const rawFormData = {
     nombre: formData.get("nombre")?.toString() || "",

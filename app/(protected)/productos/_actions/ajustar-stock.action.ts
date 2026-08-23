@@ -5,6 +5,7 @@ import { TipoMovimiento } from "@/generated/prisma";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/client";
 import { AjustarStockFormSchema, type AjustarStockFormState } from "../_schemas/ajustar-stock.schema";
 import { verifySession } from "@/lib/dal/auth";
+import { puede, PERMISOS } from "@/lib/permisos";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { isPrismaError } from "@/lib/prisma-errors";
@@ -17,6 +18,18 @@ export const ajustarStock = async (
 ): Promise<AjustarStockFormState> => {
   const usuario = await verifySession();
   const id_usuario = Number(usuario.id_usuario);
+
+  if (!puede(usuario.rol, PERMISOS.productosAjustarStock)) {
+    log.warn("Intento de ajustar stock sin permisos.", {
+      id_usuario: usuario.id_usuario,
+      rol: usuario.rol,
+    });
+    return {
+      success: false,
+      message: "No tienes permisos para realizar esta acción.",
+      timestamp: Date.now(),
+    };
+  }
 
   const rawFormData = {
     id_producto: formData.get("id_producto")?.toString() || "",
