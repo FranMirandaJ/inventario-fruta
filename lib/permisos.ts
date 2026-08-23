@@ -1,3 +1,5 @@
+import { RolUsuario } from "@/generated/prisma";
+
 export const PERMISOS = {
   dashboardVer: "dashboard.ver",
   productosVer: "productos.ver",
@@ -17,11 +19,14 @@ export const PERMISOS = {
 
 export type Permiso = (typeof PERMISOS)[keyof typeof PERMISOS];
 
-export type Rol = "ADMIN" | "VENDEDOR";
+export const rolLabels: Record<RolUsuario, string> = {
+  ADMIN: "Administrador",
+  VENDEDOR: "Vendedor",
+};
 
 const TODOS_LOS_PERMISOS = Object.values(PERMISOS);
 
-const PERMISOS_POR_ROL: Record<Rol, readonly Permiso[]> = {
+const PERMISOS_POR_ROL: Record<RolUsuario, readonly Permiso[]> = {
   ADMIN: TODOS_LOS_PERMISOS,
   VENDEDOR: TODOS_LOS_PERMISOS.filter(
     (p) =>
@@ -30,7 +35,7 @@ const PERMISOS_POR_ROL: Record<Rol, readonly Permiso[]> = {
 };
 
 export function puede(rol: string, permiso: Permiso): boolean {
-  const permisosDelRol = PERMISOS_POR_ROL[rol as Rol];
+  const permisosDelRol = PERMISOS_POR_ROL[rol as RolUsuario];
   if (!permisosDelRol) return false;
   return permisosDelRol.includes(permiso);
 }

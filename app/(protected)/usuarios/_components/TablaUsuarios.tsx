@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, UserXIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { rolLabels } from "@/lib/usuarios";
+import { rolLabels } from "@/lib/permisos";
 import { useSession } from "@/lib/contexts/session-context";
 import BotonPermiso from "@/components/BotonPermiso";
 import { PERMISOS } from "@/lib/permisos";

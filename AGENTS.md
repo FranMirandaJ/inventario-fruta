@@ -153,12 +153,11 @@ inventario-fruta/
 │   ├── prisma.ts                      # Prisma client singleton (MariaDB adapter)
 │   ├── session.ts                     # JWT session management (server-only)
 │   ├── definitions.ts                 # Shared type definitions (SessionPayload)
-│   ├── permisos.ts                    # RBAC: permission constants + role→permissions matrix + puede()
+│   ├── permisos.ts                    # RBAC: permission constants + role→permissions matrix + puede() + rolLabels
 │   ├── form-state.ts                  # Generic FormState type for server actions
 │   ├── money.ts                       # Currency formatting (MXN)
 │   ├── text.ts                        # Text utilities (capitalize, normalize, accents)
 │   ├── utils.ts                       # General utilities (cn, clsx, twMerge)
-│   ├── usuarios.ts                    # Shared user constants (rolLabels)
 │   ├── prisma-errors.ts              # isPrismaError() helper (Prisma 7 compatible)
 │   ├── contexts/
 │   │   └── session-context.tsx       # SessionProvider + useSession() hook
@@ -412,7 +411,7 @@ Navigation links in `Navbar.tsx` declare a `permiso` per link and are **filtered
 
 - Restrict an existing capability → remove the permission from the role's array in `PERMISOS_POR_ROL`. Pages redirect, actions reject, and buttons disable automatically.
 - New capability → add it to `PERMISOS`, wire `requirePermiso` into the page, add the guard to the action(s), use `BotonPermiso`/`DropdownMenuItemPermiso`/`triggerButtonPermiso` in the UI.
-- New role → add it to the `Rol` type and give it an explicit entry in `PERMISOS_POR_ROL` (it will have zero permissions otherwise).
+- New role → add it to the Prisma `RolUsuario` enum; `PERMISOS_POR_ROL` and `rolLabels` (typed `Record<RolUsuario, ...>`) will then fail to compile until you give the role an explicit entry (it would have zero permissions otherwise).
 
 ### Styling
 

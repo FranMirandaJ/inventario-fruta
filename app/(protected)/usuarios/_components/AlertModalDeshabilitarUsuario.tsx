@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { UsuarioActivo } from "@/lib/dal/usuarios";
 import { capitalizeWords } from "@/lib/text";
-import { rolLabels } from "@/lib/usuarios";
+import { rolLabels } from "@/lib/permisos";
 import { useTransition } from "react";
 import { deshabilitarUsuario } from "../_actions/deshabilitar-usuario";
 import { toast } from "sonner";

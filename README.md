@@ -140,11 +140,11 @@ inventario-fruta/
 │   ├── prisma.ts                      # Singleton del cliente Prisma (adapter MariaDB)
 │   ├── session.ts                     # Gestión de sesiones JWT (server-only)
 │   ├── definitions.ts                 # Definiciones de tipos compartidos (SessionPayload)
+│   ├── permisos.ts                    # RBAC: constantes de permisos + matriz rol→permisos + puede() + rolLabels
 │   ├── form-state.ts                  # Tipo genérico FormState para server actions
 │   ├── money.ts                       # Formateo de moneda (MXN)
 │   ├── text.ts                        # Utilidades de texto (capitalizar, normalizar, acentos)
 │   ├── utils.ts                       # Utilidades generales (cn, clsx, twMerge)
-│   ├── usuarios.ts                    # Constantes compartidas de usuarios (rolLabels)
 │   ├── prisma-errors.ts              # Helper isPrismaError() (compatible con Prisma 7)
 │   ├── contexts/
 │   │   └── session-context.tsx       # SessionProvider + hook useSession()

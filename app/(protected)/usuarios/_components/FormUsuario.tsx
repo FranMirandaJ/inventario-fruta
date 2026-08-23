@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/input-group";
 import { RolUsuario } from "@/generated/prisma";
 import { generateRandomPassword } from "@/lib/password";
-import { rolLabels } from "@/lib/usuarios";
+import { rolLabels } from "@/lib/permisos";
 import { Copy, Check } from "lucide-react";
 import { useCopyToClipboard } from "@/lib/hooks/useCopyToClipboard";
 import { useState, useRef, useEffect, useActionState } from "react";
