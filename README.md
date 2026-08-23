@@ -14,7 +14,7 @@ Sistema de inventario y ventas diseñado específicamente para pequeños negocio
 - 🔄 **Movimientos de inventario** - Registro de entradas, salidas y ajustes con motivos
 - 👥 **Gestión de usuarios** - Crear, editar y deshabilitar usuarios con roles (Admin/Vendedor)
 - 🔑 **Control de acceso por roles (RBAC)** - Permisos granulares por acción aplicados en páginas, server actions e interfaz
-- 🔒 **Seguridad** - Auto-disable guard, contraseñas hasheadas con bcrypt, sesiones JWT
+- 🔒 **Seguridad** - Revocación inmediata de sesiones al deshabilitar usuarios, contraseñas hasheadas con bcrypt, sesiones JWT
 - 📊 **Dashboard** - Vista general del negocio con métricas clave
 - 🎨 **Interfaz moderna** - UI responsiva con modo claro/oscuro
 
@@ -151,7 +151,7 @@ inventario-fruta/
 │   ├── hooks/
 │   │   └── useCopyToClipboard.ts     # Hook de portapapeles con auto-reset
 │   ├── dal/                           # Data Access Layer (server-only, cacheado)
-│   │   ├── auth.ts                    # verifySession() - guarda de auth + redirect
+│   │   ├── auth.ts                    # verifySession() + requirePermiso() - guardas de auth y permisos
 │   │   ├── categorias.ts             # Consultas de categorías
 │   │   └── productos.ts             # Consultas de productos
 │   ├── dto/                           # Data Transfer Objects (placeholder)

@@ -307,9 +307,9 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 
 ### Authentication Flow
 
-1. User submits login form → `login.action.ts` validates with Zod, checks bcrypt hash, creates JWT session via `createSession()`
+1. User submits login form → `login.action.ts` validates with Zod, checks bcrypt hash (only for `activo: true` users), creates JWT session via `createSession()`
 2. Session stored in httpOnly cookie (`session`), 7-day expiry, HS256
-3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie, redirects to `/login` if invalid
+3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie and redirects to `/api/sesion-expirada` if invalid. It then re-validates the user against the DB (`activo` flag) — disabled/deleted users are kicked out immediately even with an unexpired JWT. Both cases exit through the `/api/sesion-expirada` route handler, which clears the session cookie and lands on `/login`; redirecting straight to `/login` is not enough because the proxy (`proxy.ts`) bounces cookie-bearing visitors back to `/dashboard`, creating a loop. It returns fresh `nombre`/`rol` from the DB, so role changes apply on the next request without waiting for token expiry. Wrapped in React `cache()`, so this costs at most one PK query per request
 4. Dashboard layout calls `verifySession()` to protect all dashboard routes
 5. `AppShell` (`components/AppShell.tsx`) wraps protected routes with `<SessionProvider session={session}>`, making session data available to all client components
 6. Client components access session via `useSession()` hook from `@/lib/contexts/session-context`
@@ -618,6 +618,6 @@ All seed operations are idempotent (upserts, skipDuplicates, existence checks).
 ## Important Notes
 
 - The Prisma client output directory is `generated/prisma/`, not the default `node_modules/@prisma/client`. Always import from `@/generated/prisma`.
-- There are **no API routes** (`route.ts` files) in this project. All server-side mutations go through Server Actions.
+- There are **no business API routes** in this project. All server-side mutations go through Server Actions. The single exception is `app/api/sesion-expirada/route.ts` — session-lifecycle infrastructure (clears the cookie when a session is revoked/expired) that cannot be a Server Action because it must run during page-render redirects, where cookies are read-only.
 - The `sandbox/` route is for development/testing only, inherits the root layout (no auth shell), and should not be deployed to production.
-- The `app/api/` directory exists but contains only a placeholder `text.txt` file.
+- The `app/api/` directory contains only `sesion-expirada/route.ts` (session-lifecycle, see Authentication Flow) and the placeholder `text.txt` file.

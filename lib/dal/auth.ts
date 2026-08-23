@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/session';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 import { puede, type Permiso } from '@/lib/permisos';
 
 export const verifySession = cache(async () => {
@@ -12,14 +13,23 @@ export const verifySession = cache(async () => {
   const session = await decrypt(cookie);
  
   if (!session?.id_usuario) {
-    redirect('/login');
+    redirect('/api/sesion-expirada');
+  }
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: Number(session.id_usuario) },
+    select: { nombre: true, rol: true, activo: true },
+  });
+
+  if (!usuario?.activo) {
+    redirect('/api/sesion-expirada');
   }
  
   return { 
     isAuth: true,
     id_usuario: session.id_usuario,
-    nombre: session.nombre,
-    rol: session.rol,
+    nombre: usuario.nombre,
+    rol: usuario.rol,
     debe_cambiar_password: session.debe_cambiar_password,
   };
 });
