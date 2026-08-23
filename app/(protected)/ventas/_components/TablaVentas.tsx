@@ -71,9 +71,9 @@ function CardVenta({ venta }: { venta: VentaRow }) {
           <BotonPermiso
             type="button"
             permiso={PERMISOS.ventasCancelar}
-            variant="ghost"
+            variant="outline"
             size="icon-sm"
-            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
+            color="red"
             onClick={(e) => { e.stopPropagation(); setAbrirConfirmarCancelar(true); }}
           >
             <BanIcon />

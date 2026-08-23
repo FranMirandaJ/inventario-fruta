@@ -13,6 +13,7 @@ Sistema de inventario y ventas diseñado específicamente para pequeños negocio
 - 💰 **Registro de ventas** - Sistema completo de ventas con detalles por producto
 - 🔄 **Movimientos de inventario** - Registro de entradas, salidas y ajustes con motivos
 - 👥 **Gestión de usuarios** - Crear, editar y deshabilitar usuarios con roles (Admin/Vendedor)
+- 🔑 **Control de acceso por roles (RBAC)** - Permisos granulares por acción aplicados en páginas, server actions e interfaz
 - 🔒 **Seguridad** - Auto-disable guard, contraseñas hasheadas con bcrypt, sesiones JWT
 - 📊 **Dashboard** - Vista general del negocio con métricas clave
 - 🎨 **Interfaz moderna** - UI responsiva con modo claro/oscuro
@@ -288,6 +289,33 @@ Después de ejecutar el seed, puedes iniciar sesión con:
 - **Contraseña**: La configurada en `ADMIN_PASSWORD` (por defecto: `admin`)
 
 > ⚠️ **Importante**: Cambia estas credenciales en producción por razones de seguridad.
+
+## 🔑 Roles y permisos
+
+El sistema cuenta con control de acceso basado en roles (**RBAC**) con permisos granulares por acción, definidos en un solo lugar: `lib/permisos.ts`.
+
+### Matriz actual de permisos
+
+| Módulo | ADMIN | VENDEDOR |
+|---|---|---|
+| Dashboard | ✅ | ✅ |
+| Productos (ver / crear / editar / cambiar estado / ajustar stock) | ✅ | ✅ |
+| Ventas (ver / registrar / cancelar) | ✅ | ✅ |
+| Usuarios (ver / crear / editar / deshabilitar) | ✅ | ❌ |
+
+### ¿Cómo se aplica?
+
+Los permisos se refuerzan en **tres niveles**:
+
+1. **Páginas** — cada página protegida llama a `requirePermiso()`; si el rol no tiene el permiso, es redirigido a `/dashboard` sin llegar a renderizar nada.
+2. **Server Actions** — toda acción de escritura verifica `puede(rol, permiso)` en el servidor antes de tocar la base de datos y rechaza con "No tienes permisos para realizar esta acción." Este es el nivel que realmente garantiza la seguridad.
+3. **Interfaz** — los botones usan componentes conscientes de permisos (`BotonPermiso`, `DropdownMenuItemPermiso`): si falta el permiso se muestran deshabilitados y sin acción alguna. Los enlaces de navegación sin permiso simplemente no aparecen.
+
+> 💡 La interfaz deshabilitada es solo experiencia de usuario; la seguridad real vive íntegramente en el servidor.
+
+### Modificar permisos
+
+Para restringir o habilitar capacidades basta editar el mapa `PERMISOS_POR_ROL` en `lib/permisos.ts` — las páginas redirigen, las actions rechazan y los botones se deshabilitan automáticamente al cambiarlo. Para agregar un permiso nuevo, añádelo a `PERMISOS` y cablea su guard en la página/action correspondiente.
 
 ## 📊 Modelo de datos (Prisma)
 

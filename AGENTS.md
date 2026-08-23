@@ -141,9 +141,11 @@ inventario-fruta/
 │
 ├── components/                        # Shared components
 │   ├── AppShell.tsx                   # Auth shell wrapper (SessionProvider, Navbar, Footer)
+│   ├── BotonPermiso.tsx               # Permission-aware button (renders disabled without handler if denied)
+│   ├── DropdownMenuItemPermiso.tsx    # Permission-aware dropdown item
 │   ├── ContenedorPagina.tsx           # Page container wrapper
 │   ├── Datatable.tsx                  # Reusable data table
-│   ├── Modal.tsx                      # Reusable modal wrapper
+│   ├── Modal.tsx                      # Reusable modal wrapper (triggerButtonPermiso prop)
 │   ├── Paginacion.tsx                 # Server-side pagination (URL-driven)
 │   └── ui/                           # shadcn/ui primitives (27 components)
 │
@@ -151,6 +153,7 @@ inventario-fruta/
 │   ├── prisma.ts                      # Prisma client singleton (MariaDB adapter)
 │   ├── session.ts                     # JWT session management (server-only)
 │   ├── definitions.ts                 # Shared type definitions (SessionPayload)
+│   ├── permisos.ts                    # RBAC: permission constants + role→permissions matrix + puede()
 │   ├── form-state.ts                  # Generic FormState type for server actions
 │   ├── money.ts                       # Currency formatting (MXN)
 │   ├── text.ts                        # Text utilities (capitalize, normalize, accents)
@@ -162,7 +165,7 @@ inventario-fruta/
 │   ├── hooks/
 │   │   └── useCopyToClipboard.ts     # Clipboard hook with auto-reset
 │   ├── dal/                           # Data Access Layer (server-only, cached)
-│   │   ├── auth.ts                    # verifySession() - auth guard + redirect
+│   │   ├── auth.ts                    # verifySession() + requirePermiso() - auth/permission guards
 │   │   ├── categorias.ts             # Category queries
 │   │   └── productos.ts              # Product queries
 │   ├── dto/                           # Data Transfer Objects (placeholder)
@@ -330,6 +333,83 @@ export function MyComponent() {
 ```
 
 **Pattern:** `SessionProvider` wraps all protected routes in `AppShell.tsx`. Session data comes from `verifySession()` in the server component layout.
+
+### Role-Based Access Control (RBAC)
+
+Granular permission system defined in **`lib/permisos.ts`** — the single source of truth for permissions and role assignments. It is client-safe (no `server-only` import) so both server and client code can use it.
+
+- Permissions are string constants shaped `"resource.action"` (e.g., `"usuarios.crear"`) exported via the `PERMISOS` object.
+- `PERMISOS_POR_ROL` maps each role to its permission list. **Deny by default**: unknown roles get no permissions.
+- Helper: `puede(rol: string, permiso: Permiso): boolean`.
+
+Current matrix:
+
+| Resource | ADMIN | VENDEDOR |
+|---|---|---|
+| Dashboard | ✅ | ✅ |
+| Products (ver/crear/editar/estado/stock) | ✅ | ✅ |
+| Sales (ver/crear/cancelar) | ✅ | ✅ |
+| Users (ver/crear/editar/deshabilitar) | ✅ | ❌ |
+
+**Three enforcement layers — all three are mandatory for any new page/action/button:**
+
+#### 1. Pages (`requirePermiso`)
+
+Every protected `page.tsx` starts with a permission guard. Unauthorized roles are redirected to `/dashboard` server-side (no flash):
+
+```typescript
+import { requirePermiso } from "@/lib/dal/auth";
+import { PERMISOS } from "@/lib/permisos";
+
+export default async function MiPagina() {
+  await requirePermiso(PERMISOS.miRecursoVer);
+  // ...
+}
+```
+
+#### 2. Server Actions (guard)
+
+Every mutating action adds an early guard right after `verifySession()`. This is the real security layer — UI state is never trusted. Returns a `FormState` rejection + logs a warning:
+
+```typescript
+import { puede, PERMISOS } from "@/lib/permisos";
+
+const usuario = await verifySession();
+
+if (!puede(usuario.rol, PERMISOS.usuariosCrear)) {
+  log.warn("Intento de crear usuario sin permisos.", {
+    id_usuario: usuario.id_usuario,
+    rol: usuario.rol,
+  });
+  return {
+    success: false,
+    message: "No tienes permisos para realizar esta acción.",
+    timestamp: Date.now(),
+  };
+}
+```
+
+Logout (`navbar.action.ts`) is universal and has no guard.
+
+#### 3. UI Components
+
+Action buttons are rendered through permission-aware wrappers that internally branch on the permission: if denied they render visually identical but `disabled` with **no handlers at all**; if allowed, a normal element with handlers.
+
+- `components/BotonPermiso.tsx` → `<BotonPermiso permiso={PERMISOS.x} onClick={...} {...buttonProps}>`
+- `components/DropdownMenuItemPermiso.tsx` → same pattern for dropdown items
+- `Modal.tsx` accepts `triggerButtonPermiso?: Permiso` to protect creation triggers
+
+Both wrappers derive their props from the underlying shadcn components and deliberately **omit `disabled` from their API** — lack of permission is the only way they disable. Do not reimplement this with inline `disabled={!tienePermiso}` conditionals.
+
+Navigation links in `Navbar.tsx` declare a `permiso` per link and are **filtered out** (hidden) rather than disabled — navigation is not an action.
+
+**Security principle:** disabled/hidden UI is UX only and has zero security value. Dev-tools manipulation cannot be prevented client-side; the server-side guards (layers 1–2) are what actually enforce access control and must never be skipped because "the button already handles it".
+
+**How to extend:**
+
+- Restrict an existing capability → remove the permission from the role's array in `PERMISOS_POR_ROL`. Pages redirect, actions reject, and buttons disable automatically.
+- New capability → add it to `PERMISOS`, wire `requirePermiso` into the page, add the guard to the action(s), use `BotonPermiso`/`DropdownMenuItemPermiso`/`triggerButtonPermiso` in the UI.
+- New role → add it to the `Rol` type and give it an explicit entry in `PERMISOS_POR_ROL` (it will have zero permissions otherwise).
 
 ### Styling
 
