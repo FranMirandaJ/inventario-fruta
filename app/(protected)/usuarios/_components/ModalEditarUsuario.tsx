@@ -22,8 +22,6 @@ export default function ModalEditarUsuario({
 
   const [pending, setPending] = useState(false);
 
-  if (!usuario) return <></>;
-
   return (
     <Modal
       open={open}
@@ -53,15 +51,17 @@ export default function ModalEditarUsuario({
       headerImgSrc="/edit-user.svg"
       headerImgAlt="Imagen de edición de usuario"
     >
-      <FormUsuario
-        key={usuario.id}
-        mode="edit"
-        serverAction={editarUsuario}
-        onSuccess={() => onOpenChange(false)}
-        onPendingChange={setPending}
-        idUsuarioAEditar={usuario.id}
-        usuarioAEditar={usuario}
-      />
+      {usuario && (
+        <FormUsuario
+          key={usuario.id}
+          mode="edit"
+          serverAction={editarUsuario}
+          onSuccess={() => onOpenChange(false)}
+          onPendingChange={setPending}
+          idUsuarioAEditar={usuario.id}
+          usuarioAEditar={usuario}
+        />
+      )}
     </Modal>
   );
 }

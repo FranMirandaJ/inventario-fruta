@@ -93,7 +93,13 @@ export default function Modal({
             ? "flex flex-col"
             : "overflow-y-auto"
         } max-h-[calc(100vh-12rem)] sm:max-h-[90vh] ${sizeClasses[size]} ${contentClassName}`}
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          const content = e.currentTarget as HTMLElement | null;
+          content
+            ?.querySelector<HTMLElement>("[data-slot='dialog-title']")
+            ?.focus();
+        }}
       >
 
         <DialogHeader className="flex flex-col sm:items-start gap-2">
