@@ -36,6 +36,7 @@ const buttonVariants = cva(
         green: "text-green-600 border-green-200 hover:bg-green-100 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-950/40",
         red: "text-red-600 border-red-200 hover:bg-red-100 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/40",
         purple: "text-purple-600 border-purple-200 hover:bg-purple-100 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-950/40",
+        orange: "text-orange-600 border-orange-200 hover:bg-orange-100 dark:text-orange-400 dark:border-orange-800 dark:hover:bg-orange-950/40",
       },
     },
     defaultVariants: {

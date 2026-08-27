@@ -3,13 +3,14 @@
 import type { UsuarioActivo } from "@/lib/dal/usuarios";
 import DataTable, { ColumnDef } from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
-import { Pencil, UserXIcon } from "lucide-react";
+import { Pencil, UserXIcon, LockKeyholeOpen } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { rolLabels } from "@/lib/permisos";
 import { useSession } from "@/lib/contexts/session-context";
 import BotonPermiso from "@/components/BotonPermiso";
 import { PERMISOS } from "@/lib/permisos";
+import ModalRegenerarPassword from "./ModalRegenerarPassword";
 
 const ModalEditarUsuario = dynamic(() => import("./ModalEditarUsuario"));
 const AlertModalDeshabilitarUsuario = dynamic(() => import("./AlertModalDeshabilitarUsuario"));
@@ -26,6 +27,9 @@ export default function TablaUsuarios({ data }: Props) {
 
   const [disableAlertOpen, setDisableAlertOpen] = useState<boolean>(false);
   const [disablingUser, setDisablingUser] = useState<UsuarioActivo | null>(null);
+
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState<boolean>(false);
+  const [changePasswordUser, setChangePasswordUser] = useState<UsuarioActivo | null>(null);
 
   const columns: ColumnDef<UsuarioActivo>[] = [
     {
@@ -65,6 +69,18 @@ export default function TablaUsuarios({ data }: Props) {
               }}
             >
               <Pencil className="size-4" />
+            </BotonPermiso>
+            <BotonPermiso
+              permiso="usuarios.generarNuevaPassword"
+              variant="outline"
+              color="purple"
+              title="Regenerar contraseña"
+              onClick={() => {
+                setChangePasswordUser(u);
+                setChangePasswordModalOpen(true);
+              }}
+            >
+              <LockKeyholeOpen className="size-4" />
             </BotonPermiso>
             {esMismoUsuario ? (
               <Button
@@ -122,6 +138,10 @@ export default function TablaUsuarios({ data }: Props) {
         usuario={disablingUser}
         open={disableAlertOpen}
         onOpenChange={setDisableAlertOpen}
+      />
+
+      <ModalRegenerarPassword
+        
       />
 
     </>
