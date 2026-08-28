@@ -70,18 +70,30 @@ export default function TablaUsuarios({ data }: Props) {
             >
               <Pencil className="size-4" />
             </BotonPermiso>
-            <BotonPermiso
-              permiso="usuarios.generarNuevaPassword"
-              variant="outline"
-              color="purple"
-              title="Regenerar contraseña"
-              onClick={() => {
-                setChangePasswordUser(u);
-                setChangePasswordModalOpen(true);
-              }}
-            >
-              <LockKeyholeOpen className="size-4" />
-            </BotonPermiso>
+            {esMismoUsuario ? (
+              <Button
+                variant="outline"
+                size="icon"
+                color="default"
+                disabled={true}
+                title="No puedes reestablecer tu propia contraseña"
+              >
+                <LockKeyholeOpen className="size-4" />
+              </Button>
+            ) : (
+              <BotonPermiso
+                permiso="usuarios.generarNuevaPassword"
+                variant="outline"
+                color="purple"
+                title="Regenerar contraseña"
+                onClick={() => {
+                  setChangePasswordUser(u);
+                  setChangePasswordModalOpen(true);
+                }}
+              >
+                <LockKeyholeOpen className="size-4" />
+              </BotonPermiso>
+            )}
             {esMismoUsuario ? (
               <Button
                 variant="outline"
@@ -141,7 +153,9 @@ export default function TablaUsuarios({ data }: Props) {
       />
 
       <ModalRegenerarPassword
-        
+        usuario={changePasswordUser}
+        open={changePasswordModalOpen}
+        onOpenChange={setChangePasswordModalOpen}
       />
 
     </>

@@ -70,6 +70,7 @@ export default function FormProducto({
     } else {
       toast.error(state.message);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.timestamp, onSuccess, hasSubmitted]);
 
   const getFieldErrors = (field: string) =>

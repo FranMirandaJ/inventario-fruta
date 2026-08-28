@@ -117,6 +117,7 @@ export default function FormUsuario({
       } else {
         toast.error(state.message);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state?.timestamp, onSuccess]);
 
   return (
