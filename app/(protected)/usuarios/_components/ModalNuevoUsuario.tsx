@@ -5,7 +5,7 @@ import FormUsuario from "./FormUsuario";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { crearUsuario } from "../_actions/crear-usuario";
+import { crearUsuario } from "../_actions/crear-usuario.action";
 import { PERMISOS } from "@/lib/permisos";
 
 export default function ModalNuevoUsuario() {

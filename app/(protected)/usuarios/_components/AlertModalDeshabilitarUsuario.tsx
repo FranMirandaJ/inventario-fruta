@@ -14,7 +14,7 @@ import type { UsuarioActivo } from "@/lib/dal/usuarios";
 import { capitalizeWords } from "@/lib/text";
 import { rolLabels } from "@/lib/permisos";
 import { useTransition } from "react";
-import { deshabilitarUsuario } from "../_actions/deshabilitar-usuario";
+import { deshabilitarUsuario } from "../_actions/deshabilitar-usuario.action";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 

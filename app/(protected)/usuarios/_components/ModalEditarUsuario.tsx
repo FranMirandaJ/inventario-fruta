@@ -5,7 +5,7 @@ import Modal from "@/components/Modal";
 import { Loader2 } from "lucide-react";
 import FormUsuario from "./FormUsuario";
 import type { UsuarioActivo } from "@/lib/dal/usuarios";
-import { editarUsuario } from "../_actions/editar-usuario";
+import { editarUsuario } from "../_actions/editar-usuario.action";
 import { useState } from "react";
 
 type Props = {
