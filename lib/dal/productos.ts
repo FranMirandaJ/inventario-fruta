@@ -121,17 +121,17 @@ export const obtenerAlertasStock = cache(async (limite = 5): Promise<AlertaStock
         c.nombre AS categoria_nombre,
         p.stock_actual,
         p.stock_minimo
-      FROM Producto AS p
-      INNER JOIN Categoria AS c
+      FROM "Producto" AS p
+      INNER JOIN "Categoria" AS c
       ON c.id = p.categoria_id
-      WHERE p.activo = 1 AND p.stock_actual <= p.stock_minimo
+      WHERE p.activo = true AND p.stock_actual <= p.stock_minimo
       ORDER BY p.stock_actual ASC, p.nombre ASC
       LIMIT ${limite}
     `,
     prisma.$queryRaw<TotalAlertasRow[]>`
       SELECT COUNT(*) AS total
-      FROM Producto AS p
-      WHERE p.activo = 1 AND p.stock_actual <= p.stock_minimo
+      FROM "Producto" AS p
+      WHERE p.activo = true AND p.stock_actual <= p.stock_minimo
     `,
   ]);
 
@@ -147,10 +147,10 @@ export const obtenerNProductosMasVendidos = cache(async(n = 5): Promise<Producto
       dv.producto_id AS id,
       p.nombre,
       SUM(dv.cantidad) AS total_vendido
-    FROM Producto AS p
-    INNER JOIN DetalleVenta AS dv ON p.id = dv.producto_id
-    INNER JOIN Venta AS v ON v.id = dv.venta_id
-    WHERE v.estado = 'ACTIVA' AND p.activo = 1
+    FROM "Producto" AS p
+    INNER JOIN "DetalleVenta" AS dv ON p.id = dv.producto_id
+    INNER JOIN "Venta" AS v ON v.id = dv.venta_id
+    WHERE v.estado = 'ACTIVA' AND p.activo = true
     GROUP BY dv.producto_id, p.nombre
     ORDER BY total_vendido DESC, p.nombre ASC
     LIMIT ${n}

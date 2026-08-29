@@ -12,8 +12,8 @@ The app manages product categories, stock control, inventory movements (entries/
 
 - **Framework**: Next.js 16 (App Router, RSC)
 - **UI**: React 19, TypeScript 5, Tailwind CSS v4, shadcn/ui (new-york style)
-- **ORM**: Prisma 7 with `@prisma/adapter-mariadb`
-- **Database**: MySQL/MariaDB
+- **ORM**: Prisma 7 with `@prisma/adapter-pg`
+- **Database**: PostgreSQL
 - **Auth**: JWT via `jose` + `bcryptjs`, httpOnly cookies, 7-day sessions
 - **Validation**: Zod v4
 - **Icons**: Lucide React
@@ -44,12 +44,7 @@ pnpm prisma studio          # Open Prisma Studio GUI
 Required in `.env` (see `.env.example`):
 
 ```
-DATABASE_URL=mysql://user:password@localhost:3306/inventario_fruta
-DATABASE_USER=root
-DATABASE_PASSWORD=root
-DATABASE_NAME=inventario_fruta
-DATABASE_HOST=localhost
-DATABASE_PORT=3306
+DATABASE_URL=postgresql://user:password@localhost:5432/inventario_fruta
 ADMIN_PASSWORD=admin
 ADMIN_MAIL=prueba@gmail.com
 SESSION_SECRET=<random-secret-key>
@@ -150,7 +145,7 @@ inventario-fruta/
 │   └── ui/                           # shadcn/ui primitives (27 components)
 │
 ├── lib/                               # Utilities and business logic
-│   ├── prisma.ts                      # Prisma client singleton (MariaDB adapter)
+│   ├── prisma.ts                      # Prisma client singleton (PostgreSQL adapter)
 │   ├── session.ts                     # JWT session management (server-only)
 │   ├── definitions.ts                 # Shared type definitions (SessionPayload)
 │   ├── permisos.ts                    # RBAC: permission constants + role→permissions matrix + puede() + rolLabels
@@ -276,10 +271,11 @@ export const someAction = async (_state: SomeFormState, formData: FormData): Pro
 - All files in `lib/dal/` must have `import "server-only";` as the first import
 - All query functions must be wrapped in `cache()` from React
 - Example: `export const obtenerProductos = cache(async () => { ... })`
+- **Raw SQL (`$queryRaw`)**: PostgreSQL is case-sensitive when identifiers are quoted. Prisma maps model names with the exact casing (e.g. `Producto`, `DetalleVenta`), so table/column names in raw queries **must be double-quoted** (`"Producto"`, `p."stock_actual"`); unquoted names are lowercased by Postgres and fail with `42P01`. Boolean columns compare with `= true`, not `= 1`. Reference: `lib/dal/productos.ts`, `lib/dal/categorias.ts`.
 
 ### Prisma Client
 
-- Singleton pattern in `lib/prisma.ts` using `@prisma/adapter-mariadb`
+- Singleton pattern in `lib/prisma.ts` using `@prisma/adapter-pg`
 - Client output is `generated/prisma/` (not default `node_modules`)
 - Import: `import { prisma } from "@/lib/prisma"`
 - Types/enums: `import { SomeType } from "@/generated/prisma"`

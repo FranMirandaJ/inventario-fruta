@@ -34,8 +34,8 @@ Este proyecto está construido con tecnologías modernas para garantizar rendimi
 
 ### Backend
 - **[Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)** - Mutaciones del lado del servidor
-- **[Prisma 7](https://www.prisma.io/)** - ORM moderno para TypeScript con `@prisma/adapter-mariadb`
-- **[MySQL/MariaDB](https://www.mysql.com/)** - Base de datos relacional
+- **[Prisma 7](https://www.prisma.io/)** - ORM moderno para TypeScript con `@prisma/adapter-pg`
+- **[PostgreSQL](https://www.postgresql.org/)** - Base de datos relacional
 - **[Jose](https://github.com/panva/jose)** - Autenticación JWT (HS256, httpOnly cookies)
 - **[bcryptjs](https://github.com/dcodeIO/bcrypt.js)** - Hash de contraseñas
 - **[Zod v4](https://zod.dev/)** - Validación de esquemas y tipos
@@ -137,7 +137,7 @@ inventario-fruta/
 │   └── ui/                           # Componentes primitivos de shadcn/ui (27 componentes)
 │
 ├── lib/                               # Utilidades y lógica de negocio
-│   ├── prisma.ts                      # Singleton del cliente Prisma (adapter MariaDB)
+│   ├── prisma.ts                      # Singleton del cliente Prisma (adapter PostgreSQL)
 │   ├── session.ts                     # Gestión de sesiones JWT (server-only)
 │   ├── definitions.ts                 # Definiciones de tipos compartidos (SessionPayload)
 │   ├── permisos.ts                    # RBAC: constantes de permisos + matriz rol→permisos + puede() + rolLabels
@@ -183,7 +183,7 @@ Asegúrate de tener instalado:
 
 - **Node.js** v24.0.0 o superior ([Descargar](https://nodejs.org/))
 - **pnpm** v11.2.2 o superior ([Instalar](https://pnpm.io/installation))
-- **MySQL/MariaDB** 8.0+ o 10.5+ ([Descargar MySQL](https://dev.mysql.com/downloads/mysql/) | [Descargar MariaDB](https://mariadb.org/download/))
+- **PostgreSQL** 13+ ([Descargar PostgreSQL](https://www.postgresql.org/download/))
 
 ### Pasos de instalación
 
@@ -217,14 +217,9 @@ cp .env.example .env
 Edita el archivo `.env` con tus credenciales:
 
 ```env
-# Base de datos MySQL
-DATABASE_URL=mysql://usuario:contraseña@localhost:3306/inventario_fruta
-DATABASE_USER=tu_usuario
-DATABASE_PASSWORD=tu_contraseña
-DATABASE_NAME=inventario_fruta
-DATABASE_HOST=localhost
-DATABASE_PORT=3306
-
+# Base de datos PostgreSQL
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/inventario_fruta
+ 
 # Credenciales del administrador inicial
 ADMIN_PASSWORD=tu_contraseña_admin
 ADMIN_MAIL=admin@tuempresa.com
@@ -235,10 +230,10 @@ SESSION_SECRET=tu_clave_secreta_muy_larga_y_aleatoria
 
 5. **Crear la base de datos**
 
-Conéctate a MySQL y crea la base de datos:
+Conéctate a PostgreSQL y crea la base de datos:
 
 ```sql
-CREATE DATABASE inventario_fruta CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE inventario_fruta;
 ```
 
 6. **Ejecutar migraciones de Prisma**

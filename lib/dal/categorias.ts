@@ -39,9 +39,9 @@ export const obtenerCategoriasStatsInicio = cache(async(): Promise<CategoriaStat
       cat.nombre,
       COALESCE(SUM(pr.stock_actual), 0) AS total_stock,
       COALESCE(SUM(pr.stock_actual * pr.precio), 0) AS valor_inventario
-    FROM Categoria AS cat
-    LEFT JOIN Producto AS pr
-    ON pr.categoria_id = cat.id AND pr.activo = 1
+    FROM "Categoria" AS cat
+    LEFT JOIN "Producto" AS pr
+    ON pr.categoria_id = cat.id AND pr.activo = true
     GROUP BY cat.id, cat.nombre
     ORDER BY cat.nombre ASC;
   `;
