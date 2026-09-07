@@ -66,12 +66,16 @@ inventario-fruta/
 │   │   └── login.schema.ts            # Zod validation schema
 │   │
 │   ├── (protected)/                   # Route group — authenticated pages
-│   │   ├── layout.tsx                 # Auth shell (Navbar, Footer, background, verifySession)
+│   │   ├── layout.tsx                 # Auth shell (Navbar, Footer, background, verifySession + compuerta cambio de contraseña)
 │   │   ├── _actions/
-│   │   │   └── navbar.action.ts       # Logout action
+│   │   │   ├── navbar.action.ts       # Logout action
+│   │   │   └── cambiar-password.action.ts  # Cambio forzado de contraseña (self-service)
 │   │   ├── _components/
 │   │   │   ├── Navbar.tsx             # Navigation bar
-│   │   │   └── Footer.tsx             # App footer
+│   │   │   ├── Footer.tsx             # App footer
+│   │   │   └── CambiarPasswordForm.tsx  # Formulario que bloquea la app si debe_cambiar_password
+│   │   ├── _schemas/
+│   │   │   └── cambiar-password.schema.ts # Zod schema del cambio de contraseña
 │   │   │
 │   │   ├── dashboard/                 # URL: /dashboard — Home page
 │   │   │   ├── page.tsx
@@ -305,11 +309,12 @@ The `_` prefix ensures Next.js does not treat these as URL segments.
 
 1. User submits login form → `login.action.ts` validates with Zod, checks bcrypt hash (only for `activo: true` users), creates JWT session via `createSession()`
 2. Session stored in httpOnly cookie (`session`), 7-day expiry, HS256
-3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie and redirects to `/api/sesion-expirada` if invalid. It then re-validates the user against the DB (`activo` flag) — disabled/deleted users are kicked out immediately even with an unexpired JWT. Both cases exit through the `/api/sesion-expirada` route handler, which clears the session cookie and lands on `/login`; redirecting straight to `/login` is not enough because the proxy (`proxy.ts`) bounces cookie-bearing visitors back to `/dashboard`, creating a loop. It returns fresh `nombre`/`rol` from the DB, so role changes apply on the next request without waiting for token expiry. Wrapped in React `cache()`, so this costs at most one PK query per request
+3. `verifySession()` in `lib/dal/auth.ts` decrypts cookie and redirects to `/api/sesion-expirada` if invalid. It then re-validates the user against the DB (`activo` flag) — disabled/deleted users are kicked out immediately even with an unexpired JWT. Both cases exit through the `/api/sesion-expirada` route handler, which clears the session cookie and lands on `/login`; redirecting straight to `/login` is not enough because the proxy (`proxy.ts`) bounces cookie-bearing visitors back to `/dashboard`, creating a loop. It returns fresh `nombre`/`rol`/`debe_cambiar_password` from the DB, so role changes and the forced-password flag apply on the next request without waiting for token expiry. Wrapped in React `cache()`, so this costs at most one PK query per request
 4. Dashboard layout calls `verifySession()` to protect all dashboard routes
-5. `AppShell` (`components/AppShell.tsx`) wraps protected routes with `<SessionProvider session={session}>`, making session data available to all client components
-6. Client components access session via `useSession()` hook from `@/lib/contexts/session-context`
-7. Logout via `cerrarSesion()` in `navbar.action.ts` deletes cookie and redirects
+5. **Forced password change gate:** the `(protected)/layout.tsx` renders `CambiarPasswordForm` (no AppShell, no navigation) instead of `children` whenever `session.debe_cambiar_password` is truthy. This blocks the entire app until the user changes their password from `_components/CambiarPasswordForm.tsx`. The server action `cambiar-password.action.ts` verifies the current password (`bcrypt.compare`), rejects reusing the same password, sets `debe_cambiar_password = false` in the DB, clears the JWT flag via `updateSession({ debe_cambiar_password: 0 })`, and the client redirects to `/dashboard`. The screen always offers "Cerrar sesión" so the user is never trapped
+6. `AppShell` (`components/AppShell.tsx`) wraps protected routes with `<SessionProvider session={session}>`, making session data available to all client components
+7. Client components access session via `useSession()` hook from `@/lib/contexts/session-context`
+8. Logout via `cerrarSesion()` in `navbar.action.ts` deletes cookie and redirects
 
 ### Session Context
 
@@ -615,5 +620,6 @@ All seed operations are idempotent (upserts, skipDuplicates, existence checks).
 
 - The Prisma client output directory is `generated/prisma/`, not the default `node_modules/@prisma/client`. Always import from `@/generated/prisma`.
 - There are **no business API routes** in this project. All server-side mutations go through Server Actions. The single exception is `app/api/sesion-expirada/route.ts` — session-lifecycle infrastructure (clears the cookie when a session is revoked/expired) that cannot be a Server Action because it must run during page-render redirects, where cookies are read-only.
+- **Password standard:** the minimum password length is **6 characters**, defined as `PASSWORD_MIN_LENGTH` in `lib/password.ts` (single source of truth). All password schemas (`crear-usuario`, `regenerar-password`, `cambiar-password`) reference this constant — never hardcode the length inline. `generateRandomPassword()` also defaults to that length.
 - The `sandbox/` route is for development/testing only, inherits the root layout (no auth shell), and should not be deployed to production.
 - The `app/api/` directory contains only `sesion-expirada/route.ts` (session-lifecycle, see Authentication Flow) and the placeholder `text.txt` file.

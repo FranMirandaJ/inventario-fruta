@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import { RolUsuario } from '@/generated/prisma';
+import { PASSWORD_MIN_LENGTH } from '@/lib/password';
 
 export const CrearUsuarioFormSchema = z.object({
     nombre: z
@@ -13,5 +14,5 @@ export const CrearUsuarioFormSchema = z.object({
         .string()
         .trim()
         .min(1, "La contraseña es requerida.")
-        .min(12, "La contraseña no esta alineada al formato establecido del sistema."), // lib/password.ts => generateRandomPassword()
+        .min(PASSWORD_MIN_LENGTH, `La contraseña debe tener al menos ${PASSWORD_MIN_LENGTH} caracteres.`), // lib/password.ts => PASSWORD_MIN_LENGTH
 });

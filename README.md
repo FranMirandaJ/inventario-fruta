@@ -14,7 +14,7 @@ Sistema de inventario y ventas diseñado específicamente para pequeños negocio
 - 🔄 **Movimientos de inventario** - Registro de entradas, salidas y ajustes con motivos
 - 👥 **Gestión de usuarios** - Crear, editar y deshabilitar usuarios con roles (Admin/Vendedor)
 - 🔑 **Control de acceso por roles (RBAC)** - Permisos granulares por acción aplicados en páginas, server actions e interfaz
-- 🔒 **Seguridad** - Revocación inmediata de sesiones al deshabilitar usuarios, contraseñas hasheadas con bcrypt, sesiones JWT
+- 🔒 **Seguridad** - Revocación inmediata de sesiones al deshabilitar usuarios, contraseñas hasheadas con bcrypt, sesiones JWT y cambio de contraseña obligatorio al primer inicio de sesión (usuarios nuevos y contraseñas regeneradas)
 - 📊 **Dashboard** - Vista general del negocio con métricas clave
 - 🎨 **Interfaz moderna** - UI responsiva con modo claro/oscuro
 
@@ -61,12 +61,16 @@ inventario-fruta/
 │   │   └── login.schema.ts           # Esquema de validación Zod
 │   │
 │   ├── (protected)/                   # Route group — páginas autenticadas
-│   │   ├── layout.tsx                 # Shell (Navbar, Footer, fondo, verifySession)
+│   │   ├── layout.tsx                 # Shell (Navbar, Footer, fondo, verifySession + compuerta de cambio de contraseña)
 │   │   ├── _actions/
-│   │   │   └── navbar.action.ts       # Acción de cerrar sesión
+│   │   │   ├── navbar.action.ts       # Acción de cerrar sesión
+│   │   │   └── cambiar-password.action.ts  # Cambio forzado de contraseña (self-service)
 │   │   ├── _components/
 │   │   │   ├── Navbar.tsx             # Barra de navegación
-│   │   │   └── Footer.tsx             # Footer de la app
+│   │   │   ├── Footer.tsx             # Footer de la app
+│   │   │   └── CambiarPasswordForm.tsx  # Bloquea la app si debe_cambiar_password
+│   │   ├── _schemas/
+│   │   │   └── cambiar-password.schema.ts # Zod schema del cambio de contraseña
 │   │   │
 │   │   ├── dashboard/                 # URL: /dashboard — Inicio
 │   │   │   ├── page.tsx

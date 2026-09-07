@@ -18,7 +18,7 @@ export const verifySession = cache(async () => {
 
   const usuario = await prisma.usuario.findUnique({
     where: { id: Number(session.id_usuario) },
-    select: { nombre: true, rol: true, activo: true },
+    select: { nombre: true, rol: true, activo: true, debe_cambiar_password: true },
   });
 
   if (!usuario?.activo) {
@@ -30,7 +30,7 @@ export const verifySession = cache(async () => {
     id_usuario: session.id_usuario,
     nombre: usuario.nombre,
     rol: usuario.rol,
-    debe_cambiar_password: session.debe_cambiar_password,
+    debe_cambiar_password: usuario.debe_cambiar_password ? 1 : 0,
   };
 });
 

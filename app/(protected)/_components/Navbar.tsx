@@ -19,6 +19,7 @@ import { cerrarSesion } from "../_actions/navbar.action";
 import { obtenerInicialesAvatar } from "@/lib/text";
 import { useSession } from "@/lib/contexts/session-context";
 import { puede, PERMISOS, type Permiso } from "@/lib/permisos";
+import { capitalizeFirstLetter } from "@/lib/text";
 
 export default function Navbar() {
 
@@ -60,7 +61,7 @@ export default function Navbar() {
               FrutaStock
             </span>
             <span className="text-sm text-muted-foreground capitalize mt-1 leading-none truncate">
-              Hola, {currentSession.nombre.split(" ")[0]}.
+              Hola, {capitalizeFirstLetter(currentSession.nombre.split(" ")[0])}.
             </span>
           </div>
         </div>

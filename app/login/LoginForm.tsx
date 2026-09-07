@@ -26,7 +26,7 @@ export default function LoginForm({}) {
               id="email"
               name="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="email@example.com"
               required
               aria-invalid={!!state?.errors?.email}
               disabled={pending}
