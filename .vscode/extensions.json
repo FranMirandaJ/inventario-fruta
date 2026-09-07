@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "eamodio.gitlens",
+    "prisma.prisma",
+    "usernamehw.errorlens",
+    "rodrigovallades.es7-react-js-snippets",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "yoavbls.pretty-ts-errors",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+  ],
+  "unwantedRecommendations": [
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}

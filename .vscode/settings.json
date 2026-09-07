@@ -1,0 +1,23 @@
+{
+  // --- ESLint (fuente única de formato del proyecto) ---
+  "eslint.useFlatConfig": true,
+  "eslint.run": "onType",
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": false,
+
+  // --- TypeScript: usar la versión del proyecto (TS ^5) ---
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+
+  // --- Tailwind v4: ignora directivas (@theme, @apply, etc.) en globals.css ---
+  "css.lint.unknownAtRules": "ignore",
+
+  // --- Consistencia de archivo (evita conflictos en Windows/Linux) ---
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false
+}
