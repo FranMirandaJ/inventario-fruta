@@ -8,7 +8,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prisma:generate": "prisma generate",
+    "prebuild": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "devEngines": {
     "runtime": {

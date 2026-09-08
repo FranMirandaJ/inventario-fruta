@@ -11,10 +11,10 @@ async function main() {
   logger.info("Iniciando seed...");
   try {
     await crearAdmin();
-    await crearVendedor();
+    //await crearVendedor();
     await crearCategorias();
-    await crearProductos();
-    await crearVentas();
+    //await crearProductos();
+    //await crearVentas();
     logger.success(`¡Seed completado con éxito!`);
   } catch (e) {
     logger.error(`Error crítico durante el seed: ${e}`);
@@ -42,7 +42,7 @@ const crearAdmin = async () => {
         nombre: "Administrador Principal",
         email: correoAdmin,
         password: hashedPassword,
-        rol: RolUsuario.ADMIN, 
+        rol: RolUsuario.ADMIN,
       },
     });
 
@@ -80,11 +80,13 @@ const crearCategorias = async () => {
     { nombre: "Bolis de leche" },
     { nombre: "Pulpas de fruta" },
     { nombre: "Concentrados" },
+    { nombre: "Hielo" },
+    { nombre: "Fruta/Verdura" },
   ];
 
     const resultado = await prisma.categoria.createMany({
       data: categoriasBase,
-      skipDuplicates: true, 
+      skipDuplicates: true,
     });
 
     if (resultado.count > 0) {
